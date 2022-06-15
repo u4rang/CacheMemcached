@@ -13,17 +13,17 @@
 > 기존 시스템이 있는 경우 기존 시스템 분석 내용 기술
 
 
-## 1.2 Cache 솔루션 선정 사유
+## 1.1 수행 목표
 
-IT 서비스를 구성하는 기본적인 Component 중 널리 사용가능하며 범용적인 역할을 하는 Cache 솔루션을 과제로 선정한 사유는 다음 2가지 이다.
+- 높은 수준의 안정성과 Cache 솔루션에 필수적인 기능 확보를 위한 Cache 아키텍처 제시
+- BMT 및 PoC 수행을 통한 OpenSource 대비하여 성능 및 안정성, 기능성 비교
 
-### 1.2.1 GDC[^1] 확대에 따른 CI 부서의 통폐합 및 역할 변경
 
-[^1]: Global Delivery Center
+## 1.2 선정 배경
 
- 2022년, 김경환 프로가 속한 CI 부서가 통폐합, 사무실 이전 계획 및 담당업무, 역할 변경이 계획되어 있다. 따라서 개인 과제는 이러한  변화에 대한 영향이 가장 적은 주제로 선택하도록한다.
+IT 서비스를 구성하는 기본적인 Component 중 널리 사용가능하며 범용적인 역할을 하는 Cache 솔루션을 과제로 선정한 배경은 다음 3 가지 이다.
 
-### 1.2.2 오픈소스 라이센스 변경 이슈와  프로테스트웨서 (Protestware)
+### 1.2.1 오픈소스 라이센스 변경 이슈와  프로테스트웨서 (Protestware)
 
 2022년, IT 산업에서는 2 가지의 오픈소스 이슈가 있다. 
 
@@ -42,10 +42,40 @@ IT 서비스를 구성하는 기본적인 Component 중 널리 사용가능하�
 위와 같은 오픈소스 이슈 때문에, IT컨설팅, 시스템 통합(SI) 과 IT유지보수 그리고 CSP 사업을 하는 S 社 는 오픈소스 기반 솔루션 중 Cache 솔루션을 선택하여 내제화하여 물류시스템에 적용하고 CSP 사업에 관리형, 완전 관리형 서비스로 제공하기로 결정하였다.
 
 
+### 1.2.2 CSP에서 필수적인 Cache 서비스
+
+Global CSP 사업자의 경우 OpenSource 기반으로 완전 관리형 또는 관리형 서비스로 Cache를 제공한다.
+
+| CSP 社 | 서비스 명              | 특징                    |
+| ------ | ---------------------- | ----------------------- |
+| AWS    | ElasticCache Memcached | 오픈소스 Memcached 기반 |
+| AWS    | ElasticCache Redis     | 오픈소스 Redis 기반     |
+| GCP    | Memorystore Memcached  | 오픈소스 Memcached 기반 |
+| GCP    | Memorystore Redis      | 오픈소스 Redis 기반     |
+| Azure  | Azure Cache for Redis  | 오픈소스 Redis 기반     |
+
+따라서 CSP 사업자로 Cache 서비스를 서비스 카테고리에 추가해야 한다.
+
+
+### 1.2.3 GDC[^1] 확대에 따른 CI 부서의 통폐합 및 역할 변경
+
+[^1]: Global Delivery Center
+
+ 2022년, 김경환 프로가 속한 CI 부서가 통폐합, 사무실 이전 계획 및 담당업무, 역할 변경이 계획되어 있다. 따라서 개인 과제는 이러한  변화에 대한 영향이 가장 적은 주제로 선택하도록한다.
+
 
 ## 1.3 Project Overview
 
-### 1.3.1 Stakeholder
+### 1.3.1 수행 목표
+
+금번 과제를 통해 해결하고자 하는 목표는 다음과 같다.
+
+- Cache 솔루션의 기본적인 기능인 읽기, 쓰기, 삭제 확보를 목표로 한다.
+- 기본적인 기능을 기반으로 성능 및 안정성 확보를 목표로 한다.
+- 오픈소스 Memcached 와 Redis 의 장점을 Cache 솔루션에 적용을 목표로 한다.
+
+
+### 1.3.2 Stakeholder
 
 Cache 솔루션의 Stakeholder는 다음과 같다.
 
@@ -53,15 +83,14 @@ Cache 솔루션의 Stakeholder는 다음과 같다.
 
 
 
-### 1.3.2 Busincess Context
+### 1.3.3 Busincess Context
 
 금번 과제의 Business Context는 다음과 같다.
 
 ![image-20220410233258258](https://raw.githubusercontent.com/u4rang/save-image-repo/main/img/image-20220410233258258.png)
 
 
-
-### 1.3.3 Business Goal
+### 1.3.4 Business Goal
 
 Cache 솔루션이 제공됨에 따라 Stakeholder들이 기대하는 Business 목표이다.
 
@@ -75,7 +104,6 @@ Cache 솔루션이 제공됨에 따라 Stakeholder들이 기대하는 Business �
 | CSP시스템사용자  | BG-06 | 관리형, 완전관리형 Cache 솔루션으로 관리 요소 감소 기대      | 중                     |
 
 
-
 ## 1.4 Cache 솔루션 RoadMap
 
 Cache 솔루션은 우선 내제화한다. 내제화의 단계는 크게 Standalone 과 Cluster 단계로 구분한다. Standalone 에서는 Cache 의 기본적인 기능인 읽기, 쓰기, 삭제을 구현한다. Cluster 단계 에서는 여러 개의 노드로 구성하여 구축하는 것을 목표로 한다.
@@ -85,14 +113,16 @@ Cache 솔루션은 우선 내제화한다. 내제화의 단계는 크게 Standal
 ![image-20220410234147561](https://raw.githubusercontent.com/u4rang/save-image-repo/main/img/image-20220410234147561.png)
 
 
-
-
-
 ## 1.5 기존 Cache 솔루션 기능 분석
 
 Cache 솔루션을 확보하기 위해서는 선도 CSP 社에서 제공하는 Cache 솔루션을 조사한다. 이를 기반으로 Cache의 기본적인 기능 외에 他 Cache 솔루션이 제공하는 기능을  조사한다. 
 
-다음은 선도 CSP 社에서 서비스하는 Cache 솔루션 이다.
+
+### 1.5.1 선진 CSP사社 Cahche 서비스
+
+다음은 선진 CSP 社에서 서비스하는 Cache 서비스 이다.
+
+**TODO 조금 더 자세하게 작성할 것!**
 
 | CSP 社 | 서비스 명              | 특징                    |
 | ------ | ---------------------- | ----------------------- |
@@ -102,7 +132,11 @@ Cache 솔루션을 확보하기 위해서는 선도 CSP 社에서 제공하는 C
 | GCP    | Memorystore Redis      | 오픈소스 Redis 기반     |
 | Azure  | Azure Cache for Redis  | 오픈소스 Redis 기반     |
 
-대표적인 오픈소스 Cache 솔루션은 Memcached와 Redis 가 대표적이다. 다음은 대표적인 기능에 대한 두 솔루션의 비교이다.
+
+### 1.5.2 Opensource Cache 솔루션
+
+대표적인 Opensource Cache 솔루션은 Memcached와 Redis 그리고 ehcache, ignite가 대표적이다.
+다음은 대표적인 기능에 대한 각 솔루션이 지원하는 여부이다.
 
 | 기능                                                   | Memcached | Redis  |
 | ------------------------------------------------------ | --------- | ------ |
@@ -115,19 +149,22 @@ Cache 솔루션을 확보하기 위해서는 선도 CSP 社에서 제공하는 C
 | 자동 장애조치가 있는 다중 가용 영역                    | 아니요    | 아니요 |
 | 지속성                                                 | 아니요    | 아니요 |
 
-Cache 솔루션은 Memcached와 Redis의 장점만을 취하여  적용한다.
+Cache 솔루션은 Memcached와 Redis의 장점을 취하여 설계한다.
+그리고 ehcache 및 ignite 에서 제공하는 일부 기능에 대해 설계에 반영한다.
 
 
-
-## 1.6 과제 목표
-
-금번 과제를 통해 해결하고자 하는 목표는 다음과 같다.
-
-- Cache 솔루션의 기본적인 기능인 읽기, 쓰기, 삭제 확보를 목표로 한다.
-- 기본적인 기능을 기반으로 성능 및 안정성 확보를 목표로 한다.
-- 오픈소스 Memcached 와 Redis 의 장점을 Cache 솔루션에 적용을 목표로 한다.
+### 1.5.3 기존 Opensource Cache 솔루션 문제점 분석
 
 
+## 1.6 Cache 솔루션을 사용하는 업무 서비스
+
+### 1.6.1 업무 서비스 구성도
+
+### 1.6.2 업무 서비스에서 Cache 솔루션을 사용하는 기능 분석
+
+- Session
+- DB Data 조회
+- API Data 조회
 
 ## 1.7 과제 범위
 
