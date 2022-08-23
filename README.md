@@ -1,12 +1,10 @@
-
-
 [TOC]
 
 ------
 
 
 
-# 1. Cache 솔루션 개요
+# 1. 시스템 개요
 
 > 과제 대상 시스템 개념, 구성 등 시스템 이해를 위한 기술
 >
@@ -14,208 +12,167 @@
 
 
 
-## 1.1 수행 목표
+## 1.1 프로젝트 개요
 
-- 높은 수준의 안정성과 Cache 솔루션에 필수적인 기능 확보를 위한 Cache 아키텍처 제시
-- BMT 및 PoC 수행을 통한 Opensource 대비하여 성능 및 안정성, 기능성 비교
+### 1.1.1 프로젝트 배경
 
-
-
-## 1.2 선정 배경
-
-IT 서비스를 구성하는 기본적인 Component 중 널리 사용 가능하며 범용적인 역할을 하는 Cache 솔루션을 과제로 선정한 배경은 다음 3 가지이다.
+IT 서비스를 구성하는 기본 Component 중 널리 사용 가능하며 범용적인 역할을 하는 Cache 솔루션을 과제로 선정한 배경은 다음 3 가지이다.
 
 
 
-### 1.2.1 오픈소스 라이센스 변경 이슈와  프로테스트웨서 (Protestware)
+#### 1.1.1.1 고객사 물류 시스템의 외부 API 반복 호출로 인한 성능 저하 이슈
 
-2022년, IT 산업에서는 2 가지의 오픈소스 이슈가 있다. 
+고객사의 물류 시스템 사용자가 상품 배송 상태를 조회 시, 물류 시스템의 전체 기능에 대한 응답속도가 느려지는 성능 저하 이슈가 있다.
 
-첫 번째는 오픈소스 라이센스 변경 이슈 이다. 변경에 따라 사용하는 오픈소스를 더 이상 사용하기 불가하여 대체 솔루션으로 변경해야 하는 상황이다.  최근 사례로는 Object Storage 인 minIO 가 있다. 라이센스 변경에 따라 minIO를 사용하는 솔루션은 소스코드를 공개 해야 하는 의무가 발생하였다.
+성능 개선을 위해 적극적인 Cache 활용과 분석결과에 따라 물류 시스템에 대한 아키텍처의 재설계가 필요하다. 
 
-두 번째는 프로테스트웨어 (Protestware) 이다. 프로테스트웨어는 개발자가 스스로 자신의 코드를 훼손하는 사보타주 행위이다. 개발자가 자신의 소프트웨어를 수정할 권리가 있지만 이 같은 행동은 오픈소스 생태계의 신뢰를 손상한다.
+
+
+#### 1.1.1.2 Opensource 라이센스 변경 이슈와  프로테스트웨어 (Protestware)
+
+2022년, IT 산업에서는 2 가지의 Opensource 이슈가 있다. 
+
+첫 번째는 Opensource 라이센스 변경 이슈 이다. 변경에 따라 사용하는 Opensource 더 이상 사용하기 불가하여 대체 솔루션으로 변경해야 하는 상황이다.  최근 사례로는 Object Storage 인 minIO 가 있다. 라이센스 변경에 따라 minIO를 사용하는 솔루션은 소스코드를 공개 해야 하는 의무가 발생하였다.
+
+두 번째는 프로테스트웨어 이다. 프로테스트웨어는 개발자가 스스로 자신의 코드를 훼손하는 사보타주 행위이다. 개발자가 자신의 소프트웨어를 수정할 권리가 있지만 이 같은 행동은 Opensource 생태계의 신뢰를 손상한다.
 
 2022년 1월부터 3월까지 3건의 프로테스트웨어가 있다.
 
-| 일시       | 사건                                                         |
-| ---------- | ------------------------------------------------------------ |
+|    일시    | 사건                                                         |
+| :--------: | ------------------------------------------------------------ |
 | 2022년 1월 | 개발자에 의한 NPM 라이브러리 Faker.js, Colors.js 에 무한 루프 삽입 한 사건 |
 | 2022년 2월 | 특정 테라폼 모듈이 라이센스 항목을 변경하여, 러시아의 침공을 인정하고 "푸틴은 멍청이(Putin khuylo!)" 라는 내용에 동의해야만 사용가능하게 만든 사건 |
 | 2022년 3월 | npm 리포지토리에 호스팅된 자바스크립트 구성요소, node-ipc 개발자가 러시아의 우크라이나 침공을 비판하기 위해 사용자의 컴퓨터에 임의로 파일을 추가하거나 삭제하는 코드를 배포하는 사건 |
 
-위와 같은 오픈소스 이슈 때문에, IT컨설팅, 시스템 통합(SI) 과 IT유지보수 그리고 CSP 사업을 하는 당 사는 오픈소스 기반 솔루션 중 Cache 솔루션을 선택하여 내제화(內製化)하여 고객사에 적용하고 CSP 사업에 관리형(Managed), 완전 관리형(Fully Managed) 서비스로 제공하기로 결정하였다.
-
-그리고 고객사의 담당자 경우 Opensource 사용으로 인한 Risk Hedge를 위해 관계사에게 개발 및 서비스 제공하는 Cache 서비스로 최근 발생하는 Opensource에 대한 Risk에 대해 Hedge를 원한다.
+위와 같은 Opensource 이슈 때문에, IT컨설팅, 시스템 통합(SI) 과 IT유지보수 그리고 CSP 사업을 하는 당 사는 Opensource 기반 솔루션 중 Cache 솔루션을 선택하여 내제화(內製化)하여 고객사에 적용하고, CSP 사업에 관리형(Managed), 완전 관리형(Fully Managed) 서비스로 제공하기로 결정하였다.
 
 
 
-### 1.2.2 CSP에서 필수적인 Cache 서비스
+#### 1.1.1.3 CSP에서 필수적인 Cache 서비스
 
 Global 선도 
 
 [^CSP]: Cloud Service Provider
 
- 사업자의 경우 Opensource 기반으로 관리형 또는 완전 관리형 서비스로 Cache를 제공한다.
+ 사업자의 경우 Opensource 기반 관리형 또는 완전 관리형 서비스 Cache를 상품으로 제공한다.
 
-| CSP 社 | 서비스 명              | 특징                    |
-| ------ | ---------------------- | ----------------------- |
-| AWS    | ElasticCache Memcached | 오픈소스 Memcached 기반 |
-| AWS    | ElasticCache Redis     | 오픈소스 Redis 기반     |
-| GCP    | Memorystore Memcached  | 오픈소스 Memcached 기반 |
-| GCP    | Memorystore Redis      | 오픈소스 Redis 기반     |
-| Azure  | Azure Cache for Redis  | 오픈소스 Redis 기반     |
+| CSP 社 |       서비스 명        | 특징                      |
+| :----: | :--------------------: | ------------------------- |
+|  AWS   | ElasticCache Memcached | Opensource Memcached 기반 |
+|  AWS   |   ElasticCache Redis   | Opensource Redis 기반     |
+|  GCP   | Memorystore Memcached  | Opensource Memcached 기반 |
+|  GCP   |   Memorystore Redis    | Opensource Redis 기반     |
+| Azure  | Azure Cache for Redis  | Opensource Redis 기반     |
+|  SDS   |     SCP for Redis      | Opensource Redis 기반     |
 
-따라서 당사는 CSP 사업자로 Cache 서비스를 서비스 카테고리에 추가해야 한다.
-
-
-
-### 1.2.3 GDC[^GDC] 확대에 따른 CI 부서의 통폐합 및 역할 변경
-
-[^GDC]: Global Delivery Center
-
- 2022년, 김경환 프로가 속한 CI 부서가 통폐합, 사무실 이전 계획 및 담당업무, 역할 변경이 계획되어 있다. 따라서 개인 과제는 이러한  변화에 대한 영향이 가장 작은 주제로 선택하도록 한다.
+따라서 당사는 CSP 사업자로 Opensource 기반 Cache 서비스 외 내제화된 Cache 서비스를 상품 카테고리에 추가하여 경쟁력 확보가 필요하다
 
 
 
-## 1.3 Project Overview
+### 1.1.2 프로젝트 범위
 
-### 1.3.1 수행 목표
+본 프로젝트의 범위는 다음과 같다.
 
-금번 과제를 통해 해결하고자 하는 목표는 다음과 같다.
-
-- Cache 솔루션의 기본적인 기능인 읽기, 쓰기, 삭제 확보를 목표로 한다.
-- 기본적인 기능을 기반으로 성능 및 안정성 확보를 목표로 한다.
-- 오픈소스 Memcached 와 Redis 그리고 ehcache, Ignite 의 장점을 분석하여 Cache 솔루션의 설계에 적용하는 것을 목표로 한다.
+- 고객사 물류 시스템의 Pain Point 분석 및 개선 아키텍처 제시
+- 목표 성능 및 안정성, 그리고 기본 기능 제공 하는  Cache 아키텍처 제시 및 솔루션 확보
+- BMT 및 PoC 수행을 통한 기존 Opensource 대비 성능 및 안정성, 기능성 비교
 
 
 
-### 1.3.2 Stakeholder
+### 1.1.3 Busincess Context
 
-Cache 솔루션의 Stakeholder는 다음과 같다.
+금번 프로젝트의 Business Context는 다음과 같다.
 
-![image-20220410233048266](https://raw.githubusercontent.com/u4rang/save-image-repo/main/img/image-20220410233048266.png)
-
-
-
-### 1.3.3 Busincess Context
-
-금번 과제의 Business Context는 다음과 같다.
-
-![image-20220410233258258](https://raw.githubusercontent.com/u4rang/save-image-repo/main/img/image-20220410233258258.png)
+![BusinessContext](https://user-images.githubusercontent.com/26420767/183408332-44a72b13-4460-422d-84c8-28e6bacf7c71.png)
 
 
 
-### 1.3.4 Business Goal
+Cache 솔루션의 주요 Stakeholder와 주요 Concern는 다음과 같다.
+
+![주요관심사](https://user-images.githubusercontent.com/26420767/183408469-8daad8f1-dc61-4c28-a35b-12f191e19598.png)
+
+
+
+### 1.1.4 Business Goal
 
 Cache 솔루션이 제공됨에 따라 Stakeholder들이 기대하는 Business 목표이다.
 
-| Stakeholder      | ID    | Statement                                                    | Importance(상, 중, 하) |
-| ---------------- | ----- | ------------------------------------------------------------ | ---------------------- |
-| 물류시스템개발자 | BG-01 | Cache 솔루션의 효율적인 대체                                 | 상                     |
-| 물류시스템운영자 | BG-02 | 안정적인 운영과 Cache 솔루션 오픈소스 이슈 Hedge             | 상                     |
-| 물류시스템사용자 | BG-03 | Cache 솔루션 도입으로 안정적인 서비스 기대                   | 상                     |
-| CSP시스템개발자  | BG-04 | 관리형, 완전관리형 Cache 솔루션 개발                         | 중                     |
-| CSP시스템운영자  | BG-05 | Cache 솔루션 오픈소스 이슈 Hedge와 Cache 솔루션에 대한 VOC 해결 | 중                     |
-| CSP시스템사용자  | BG-06 | 관리형, 완전관리형 Cache 솔루션으로 관리 요소 감소 기대      | 중                     |
+|   Stakeholder    |  ID   | Statement                                                    | Importance(상, 중, 하) |
+| :--------------: | :---: | ------------------------------------------------------------ | :--------------------: |
+| 물류시스템개발자 | BG-01 | Cache 솔루션의 효율적인 대체                                 |           상           |
+| 물류시스템운영자 | BG-02 | 안정적인 운영과 Cache 솔루션 오픈소스 이슈 Hedge             |           상           |
+| 물류시스템사용자 | BG-03 | Cache 솔루션 도입으로 안정적인 서비스 기대                   |           상           |
+| CSP시스템개발자  | BG-04 | 관리형, 완전관리형 Cache 솔루션 개발                         |           중           |
+| CSP시스템운영자  | BG-05 | Cache 솔루션 오픈소스 이슈 Hedge와 Cache 솔루션에 대한 VOC 해결 |           중           |
+| CSP시스템사용자  | BG-06 | 관리형, 완전관리형 Cache 솔루션으로 관리 요소 감소 기대      |           중           |
 
 
 
-## 1.4 Cache 솔루션 RoadMap
+## 1.2 AS-IS 분석
 
-Cache 솔루션은 우선 내제화한다. 내제화의 단계는 크게 Standalone 과 Cluster 단계로 구분한다. Standalone 에서는 Cache 의 기본적인 기능인 읽기, 쓰기, 삭제을 구현한다. Cluster 단계 에서는 여러 개의 노드로 구성하여 구축하는 것을 목표로 한다.
+### 1.2.1 고객사 물류 시스템
 
-그리고 CSP 사업에서 활용하도록 관리형 서비스 단계와 완전 관리형 서비스 단계로 한다.
+#### 1.2.1.1 고객사 물류 시스템의 Software Stack
 
-![image-20220410234147561](https://raw.githubusercontent.com/u4rang/save-image-repo/main/img/image-20220410234147561.png)
-
-
-
-## 1.5 기존 Cache 솔루션 기능 분석
-
-Cache 솔루션을 확보하기 위해서는 선진 CSP 社에서 제공하는 Cache 솔루션을 조사한다. 이를 기반으로 Cache의 기본적인 기능 외에 他 Cache 솔루션이 제공하는 기능을  조사한다. 
-
-
-
-### 1.5.1 선진 CSP사社 Cache 서비스
-
-다음은 선진 CSP 社에서 서비스하는 Cache 서비스이다.
-
-| CSP 社 | 서비스 명              | 특징                    |
-| ------ | ---------------------- | ----------------------- |
-| AWS    | ElasticCache Memcached | 오픈소스 Memcached 기반 |
-| AWS    | ElasticCache Redis     | 오픈소스 Redis 기반     |
-| GCP    | Memorystore Memcached  | 오픈소스 Memcached 기반 |
-| GCP    | Memorystore Redis      | 오픈소스 Redis 기반     |
-| Azure  | Azure Cache for Redis  | 오픈소스 Redis 기반     |
+|     항목     |  Software  | Version |    비고     |
+| :----------: | :--------: | :-----: | :---------: |
+|     Java     |  OpenJDK   |   1.8   | Opensource  |
+|  Framework   | SpringBoot |   2.5   | Opensource  |
+|  Framework   |    Lego    |         | 당사 솔루션 |
+| UI Framework |   Vue.js   |   2.X   | Opensource  |
+|      UI      |   UI Dev   |         | 당사 솔루션 |
+|   Database   | PostgreSQL |   10    | Opensource  |
 
 
 
-### 1.5.2 Opensource Cache 솔루션
+#### 1.2.1.2 고객사 물류 시스템의 Runtime View
 
-대표적인 Opensource Cache 솔루션은 Memcached와 Redis 그리고 ehcache, ignite가 대표적이다.
-다음은 대표적인 기능에 대한 각 솔루션이 지원하는 여부이다.
+다음은 고객사 물류 시스템의 Runtime View(Component Diagram) 이다.
 
-| 기능                                                   | Memcached | Redis  |
-| ------------------------------------------------------ | --------- | ------ |
-| DB 부하를 오프로드하는 단순 캐시                       | 예        | 예     |
-| 쓰기 및 스토리지를 위해 수평적으로 확장할 수 있는 기능 | 예        | 예     |
-| 다중 스레드 유형                                       | 예        | 아니요 |
-| 고급 데이터 유형                                       | 아니요    | 예     |
-| 데이터 세트 정렬 및 순위 지정                          | 아니요    | 예     |
-| Publish와 Subscribe 기능                               | 아니요    | 예     |
-| 자동 장애조치가 있는 다중 가용 영역                    | 아니요    | 아니요 |
-| 지속성                                                 | 아니요    | 아니요 |
-
-Cache 솔루션은 Memcached와 Redis의 장점을 취하여 설계한다. 그리고 ehcache 및 ignite에서 제공하는 일부 기능에 대해 설계에 반영한다.
+![RUNTIME_VIEW_AS-IS_물류시스템](https://user-images.githubusercontent.com/26420767/182987494-547db422-e569-4af8-802c-f44fcb3dcb37.png)
 
 
 
-### 1.5.3 기존 Opensource Cache 솔루션 문제점 분석
+#### 1.2.1.3 고객사 물류 시스템의 Module View
 
-Memcached 의 문제점
+다음은 공통 시스템을 제외한 물류시스템(myLogi)의 Module View 이다.
 
-- Collection 에 대한 지원 안함
-
-
-
-Redis
-
-- Single Thread
-  - 시간이 오래 걸리는 요청(A)이 들어오면 나머지 요청은 A가 종료될 때까지 대기하여 전체적인 성능을 하락하는 원인이 됨
+![MODULE_VIEW_AS-IS_물류시스템](https://user-images.githubusercontent.com/26420767/182988462-4bc61589-cecf-4bd6-8368-65e27be31c06.png)
 
 
 
-## 1.6 Cache 솔루션을 사용하는 업무 서비스
+#### 1.2.1.4 고객사 물류 시스템의 성능 이슈 분석
 
-### 1.6.1 업무 서비스 구성도
+고객사 물류 시스템의 배송 상태를 확인하는 기능은 다수의 사용자에 의해 조회된다. 물류 시스템은 조회가 발생할 때 마다 상품의 배송 상태에 대해 배송사가 제공하는 API를 호출하여 정보를 제공한다. 그리고 상품의 배송 정보를 저장하는 테이블에 갱신한다.
 
+사용자가 배송 상태를 자주 조회하는 업무시간, 즉 오전 10시부터 오후 4시까지 다음과 같이 2가지 문제가 발생한다.
 
-
-### 1.6.2 업무 서비스에서 Cache 솔루션을 사용하는 기능 분석
-
-물류 시스템에서 Cache를 이용하는 기능은 사용자 Session 정보, 공통 코드 정보, 배송상태 정보이다.
-
-#### 1.6.2.1 Session 정보
-
-#### 1.6.2.2 공통 코드 정보
-
-#### 1.6.2.3 배송 상태 정보
-
-![물류시스템_배송상태.drawio](https://raw.githubusercontent.com/u4rang/save-image-repo/main/img/물류시스템_배송상태.drawio.png)
-
-DeliveryStatusAPIJob은 배치이다.
-
-스케줄: 0 9 */1 ? * *
-
-| 항목 | 0    | 9    | */1  | ?    | *    | *    |
-| ---- | ---- | ---- | ---- | ---- | ---- | ---- |
-| 설명 | 초   | 분   | 시   | 일   | 월   | 요일 |
-
-매 시 9분 0초에 배치 Job 이 실행된다. 
+| 항목 | 문제                                                         | 비고 |
+| :--: | ------------------------------------------------------------ | ---- |
+| 문1. | "사용자로 부터 배송 상태를 조회하는데, 조회가 느리다." 라는 SR이 1주일에 2 ~3회 건 정도  접수된다. |      |
+| 문2. | 물류시스템 운영담당자는 ARMS 로부터 **DML Row Lock** 에 대한 Warning 메시지를 1일 5회 이상 전달 받는다. |      |
 
 
 
-실행된 배치 Job 에서 배송사에서 배송에 대한 상태정보를 조회하면 다음과 같이 결과를 받는다.
+다음은 문2. 에서 발생하는 Warning 메세지이다.
+
+![LocK메시지](https://user-images.githubusercontent.com/26420767/183354035-383b1162-c41c-4818-bda9-69a8ada7917c.png)
+
+
+
+다음은 Warning 메시지 발생 원인 "RawExclusiveLock" 상세 내용이다.
+
+![Lock메시지2](https://user-images.githubusercontent.com/26420767/183408959-1dcb15e0-4266-4cfe-91f5-d90644db18a2.png)
+
+
+
+다음은 사용자가 배송상태를 조회하는 Sequence Diagrame 이다.
+
+![SEQ_AS-IS_배송상태조회](https://user-images.githubusercontent.com/26420767/182987235-7654843a-88b2-4d9c-973a-93867d82d59a.png)
+
+
+
+배송사에서 배송에 대한 상태정보를 조회하면 다음과 같은 배송상태 정보를 받는다.
 
 ~~~json
 {
@@ -239,29 +196,281 @@ DeliveryStatusAPIJob은 배치이다.
 }
 ~~~
 
-결과를 받아서 JSON 타입 으로 처리하여 저장, 화면에서 조회 시 배송상태 정보 제공한다.
+
+
+2가지 문제에 대해 Sequence Diagram 으로 분석하면 다음과 같다.
+
+![SEQ_AS-IS_배송상태조회_문제점분석](https://user-images.githubusercontent.com/26420767/182991294-f62ff374-e5ad-4440-86e6-5bc9dfcf9d02.png)
 
 
 
-## 1.7 과제 범위
-
-내제화 단계 중 Standalone을 범위로 제한한다.
-
-![image-20220411001829658](https://raw.githubusercontent.com/u4rang/save-image-repo/main/img/image-20220411001829658.png)
-
-
-
-금번 과제에는 Cache 솔루션의 Cluster 구현은 제외한다. 
+| 항목 | 원인분석                                                     | 비고 |
+| :--: | ------------------------------------------------------------ | ---- |
+| 문1. | 배송상태를 실시간 동기 방식으로 조회 한다. <br />외부 시스템인 Nuxt의 상태 또는 네트워크 상태 등 외부 요인으로 인하여 지연이 발생한다. |      |
+| 문2. | 여러 사용자가 동시에 같은 송장번호를 조회 한다.<br /> 송장번호의 배송 상태를  갱신하기 위한 DML Row Lock 이 발생하며  시스템 자원의 불필요한 이벤트 발생과 응답속도을 지연한다. |      |
 
 
 
-기 운영중인 서비스인 B社 물류시스템에 금번 과제에서 구현한 Cache 솔루션을 Standalone으로 적용하여 테스트한다.
+### 1.2.2 기존 Cache 솔루션 분석
+
+Cache 솔루션을 확보하기 위해서는 선진 CSP 社에서 제공하는 Cache 솔루션을 조사한다. 이를 기반으로 Cache의 기본적인 기능 외에 他 Cache 솔루션이 제공하는 기능을  조사한다. 
 
 
 
-Cache 솔루션의 특징인 성능과 안정성을 부하분산기 Apache jMeter를 이용하여 검증한다.
+#### 1.2.2.1 선진 CSP사社 Cache 서비스
 
-검증 대상은 물류시스템에 대해 Database의 데이터 조회와 API 조회에 대하여 Cache 를 이용하는 시나리오로 한다.
+다음은 선진 CSP 社에서 서비스하는 Cache 서비스이다.
+
+| CSP 社 |       서비스 명        |          특징           |
+| :----: | :--------------------: | :---------------------: |
+|  AWS   | ElasticCache Memcached | 오픈소스 Memcached 기반 |
+|  AWS   |   ElasticCache Redis   |   오픈소스 Redis 기반   |
+|  GCP   | Memorystore Memcached  | 오픈소스 Memcached 기반 |
+|  GCP   |   Memorystore Redis    |   오픈소스 Redis 기반   |
+| Azure  | Azure Cache for Redis  |   오픈소스 Redis 기반   |
+
+
+
+선진 CSP에서 사용하는 대표적인 Opensource Cache 솔루션은 Memcached와 Redis 이다.  그 외에 Opensource Cache 솔루션으로 잘 알려진  ehcache, ignite가 대표적이다. 
+
+프로젝트에서는 CSP 에서 주로 사용되는 **Memached**와 **Redis**을 목표로 Cache 솔루션을 분석, 설계 그리고 개발 테스트 한다.
+
+
+
+#### 1.2.2.2 Opensource Cache 솔루션 대표 기능 분석
+
+다음은 대표적인 기능에 대한 각 솔루션이 지원하는 여부이다.
+
+|                          기능                          |  Memcached  |    Redis     |
+| :----------------------------------------------------: | :---------: | :----------: |
+|            DB 부하를 오프로드하는 단순 캐시            |     예      |      예      |
+| 쓰기 및 스토리지를 위해 수평적으로 확장할 수 있는 기능 |     예      |      예      |
+|                    다중 스레드 유형                    |     예      |    아니요    |
+|          고급 데이터 유형[^고급 데이터 유형]           |   아니요    |      예      |
+|                      데이터 저장                       | Only Memroy | Memory, Disk |
+|             데이터 세트 정렬 및 순위 지정              |   아니요    |      예      |
+|                Publish와 Subscribe 기능                |   아니요    |      예      |
+|                      Replication                       |   아니요    |      예      |
+|          자동 장애조치가 있는 다중 가용 영역           |   아니요    |    아니요    |
+|                         지속성                         |   아니요    |    아니요    |
+
+Memcached와 Redis의 **공통점은 In Memory와 Key-Value 방식**이다. Cache 솔루션은 Memcached을 기본으로  Redis의 장점을 취하여 설계한다.
+
+[^고급 데이터 유형]: string, set, sorted set, hashes, list
+
+
+
+#### 1.2.2.3 Memcached 분석
+
+##### 1.2.2.3.1 Memcached 개요
+
+-  메모리 객체 캐싱 시스템
+- 범용 분산형 메모리 캐시 시스템
+- 주요 용도 : 데이터와 객체를 메모리에 캐시하여 DB사용을 줄여 서비스 속도를 빠르게 함
+- "애플리케이션 -- memcached(고속) -- DB(저속)" 순으로 배치
+- LRU 방식 : 신규 데이터 들어오면 예전 데이터를 사용빈도 낮은 것부터 삭제
+-  Key 및 Value 길이 제한
+   -  Key : 250 Bytes
+   -  Value : 1 MB
+
+-  기본포트 : 11211
+-  라이선스 : BSD
+
+
+
+##### 1.2.2.3.2 Memcached 명령어
+
+|  명령어   |             설명             |          비고          |
+| :-------: | :--------------------------: | :--------------------: |
+|    get    |           값 읽기            | <code>get mykey</code> |
+|    set    |          키 값 설정          |   신규 키이면 추가됨   |
+|    add    |        새로운 키 추가        | 기존 키가 있으면 무효  |
+|  replace  |      기존 키에 덮어쓰기      |                        |
+|  append   | 기존 키에 데이터를 뒤에 추가 |                        |
+|  prepend  | 기존 키에 데이터를 앞에 추가 |                        |
+|   incr    |   숫자 값 지정한만큼 증가    |                        |
+|   decr    |   숫자 값 지정한만큼 감소    |                        |
+|  delete   |           키 삭제            |                        |
+| flush_all |         모두 비우기          |                        |
+|   stats   |          통계 보기           |                        |
+|  version  |        서버 버전 출력        |                        |
+| verbosity |        로그 레벨 증가        |                        |
+|   quit    |        텔넷 세션 종료        |                        |
+
+
+
+##### 1.2.2.3.3 Memcached HA(High Availability)
+
+|   HA 항목   | 설명                                                         |
+| :---------: | ------------------------------------------------------------ |
+| Moxi: Proxy | - Client의 Consistency Hashing 을 통한 분산 지원을 기반<br />- Server 만 Client에 추가하여 분산환경 구성<br />- Moxi의 Proxy 역할로 분산처리 |
+
+
+
+##### 1.2.2.3.4 Memcached 데이터 구조
+
+|       항목        |                             설명                             |
+| :---------------: | :----------------------------------------------------------: |
+|    Hash Table     |                       Cache 항목 조회                        |
+|     LRU[^LRU]     | Cache가 가득 찼을 때 Cache 항목 제거(evication) 순서 결정하는 알고리즘 |
+| Cache 데이터 구조 |        Key, Data, Flage 및 Point 을 담고 있는 구조체         |
+|  Slab Allocator   |               Cache 항목 데이터 메모리 관리자                |
+
+[^LRU]: Least Recently Used
+
+
+
+##### 1.2.2.3.5 Memcached Network
+
+|     항목     | 옵션                   | 설명                                                         |
+| :----------: | ---------------------- | ------------------------------------------------------------ |
+|     TCP      | <code>-p</code>        | - 1.5.6 버전 이후 기본값                                     |
+|     UDP      | <code>-U</code>        | - 1.5.6 버전 이후 <code>disabled</code> 기본값               |
+| Unix Sockets | <code>-s <file></code> | - 단일 사용자가 Daemon에 엑세스 할 수 있도록 제한 또는 Network를 통해 Daemon을 노출하지 않을 때 사용<br />- 활성화 시 <code>TCP</code>와 <code>UDP</code> 는 <code>disabled</code> |
+
+
+
+#### 1.2.2.4 Redis 분석
+
+##### 1.2.2.4.1 Redis 개요
+
+- 오픈소스 인메모리 키-값 저장소
+- 데이터베이스, 캐시, 메시지 브로커 등으로 사용됨
+- 선택적 영구성 키-값 저장소
+- string, set, sorted set, hashes, list 자료구조 지원
+- Shard(Master + Slave) 1, 2, 3 ... 확장 구조
+- (MongoDB 대비) 읽기/쓰기 빠름
+- 라이선스 : BSD
+- 기본포트 : 6379
+- key내의 구분자로는 콜론(:) 을 쓰는 것이 관례지만 다른 기호를 구분자로 써도 됨
+
+
+
+##### 1.2.2.4.2 Redis 명령어
+
+|   명령어    |             설명             |
+| :---------: | :--------------------------: |
+| CLIENT LIST |     클라이언트 목록 조회     |
+|     DEL     |           키 삭제            |
+|    DUMP     |         키의 값 덤프         |
+|   EXISTS    |         키 존재 여부         |
+|  FLUSHALL   |         모두 비우기          |
+|     GET     |         키의 값 조회         |
+|    INFO     |       레디스 정보 조회       |
+|     KEY     | 패턴을 만족하는 키의 값 조회 |
+|    KEYS     |        키의 목록 조회        |
+|     SET     |         키 - 값 설정         |
+
+
+
+##### 1.2.2.4.3 Redis HA(High Availability)
+
+|                     HA 종류                     | 설명                                                         |
+| :---------------------------------------------: | ------------------------------------------------------------ |
+|         Standalone: <br />No HA, Master         | - Redis 서버 1대로 구성, Master Node<br />- 서버 다운 시 AOF 또는 RDB 파일을 이용해서 재시작 |
+|      이중화: <br />Half HA, Master - Slave      | - Redis 서버 2대로 구성, Master - Slave<br />- Slave는 Master 의 데이터를 실시간으로 전달받아 보관<br />- Master 다운 시 Slave 를 이용해서 서비스를 계속 할 수 있지만, 수동으로 Slave를 Master로 변경 필요<br />- 애플리케이션이 새로운 Master 로 접속하도록 변경 필요 |
+| 이중화 + Sentinel: <br />HA, 무중단 서비스 가능 | - Master - Slave 구성에 Sentinel 을 추가해서 각 서버를 감시<br />- Sentinel은 Master 서버를 감시하고 있다가 다운되면 Slave를 Master로 승격<br />- Redis Client은 새로운 Master로 접속해서 서비스를 계속<br />- 다운되었던 Master가 다시 시작하면 Sentinel이 Slave로 전환<br />- 일반적으로 Sentinel은 3대로 구성 |
+|   Redis Cluster: <br />HA, 무중단 서비스 가능   | - 샤딩: 클러스터는 샤딩(sharding) 방법을 제공하는 것이다. 클러스터 Master가 3대이면 데이터가 3대에 나누어 저장<br />           예를 들어, 100개의 데이터가 있다면 1번 마스터에 33개, 2번 Master에 다른 33개, 3번 마스터에 나머지 34개가 저장되는 방식<br />- Hash 함수: 데이터를 나누는 방식은 키에 hash 함수를 적용해서 값을 추출하고, 이 값을 각 Master 서버에 할당<br />                     예를 들어, 1~100까지 나오는 hash 함수가 있고, 클러스터 Master 서버가 3대이면 1번 서버에 1~33까지, 2번 서버에 34~66까지, 3번 서버에 67~100까지 할당.  <br />                     클러스터 구성 시에 각 Master 서버에 할당<br />- 16384 슬롯(slot): Redis에서 hash 값의 개수는 16384(0~16383)<br />- Redis Client: Client는 서버와 동일한 hash 함수를 가지고 있으며, Master 서버에 접속해서 각 서버에 할당된 슬롯 정보 보유.  키가 입력되면 hash 함수를 적용해서 어느 Master에 저장할지 판단해서 해당 Master에 저장<br />데이터 서버 + Sentinel: 각 Master 서버는 데이터의 처리와 Sentinel의 역할을 같이 수행<br />                                    예를 들어, 1번 마스터 서버가 다운되면 나머지 살아있는 마스터들 중에서 리더를 선출해서 리더가 1번 마스터의 슬레이브를 마스터로 승격<br />- 최소 3대 구성: Master 서버는 최소 3대로 구성하고 각각은 Slave를 가질 수 있음<br />                        Master를 관리하는 Master(master of master)는 없음<br />- 샤딩(Sharding): 대량의 데이터를 처리하기 위해 여러 개의 데이터베이스에 분할하는 기술<br />                           즉, DBMS안에서 데이터를 나누는 것이 아니고 DBMS 밖에서 데이터를 나누는 방식<br />                           레디스 클러스터는 샤딩방식 |
+
+
+
+#### 1.2.2.5 Opensource Cache 솔루션 문제점 분석
+
+다음은 Opensource Cache 솔루션 Memcached와 Redis 에 대한 문제점 분석이다.
+
+##### 1.2.2.5.1 Memcached의 문제점
+
+|                  항목                   | 설명                                                         | 비고   |
+| :-------------------------------------: | ------------------------------------------------------------ | ------ |
+| Collection 자료구조에<br /> 대한 미지원 | - 문자열과 숫자에 대한 데이터 타입만 지원                    | 기능성 |
+|           Replication 미지원            | - Cache에 대하여 Disk에 보관하지 않고 모든 것을 Memory에서 관리하여 Replication 미지원<br />- 3rd party Library "**repcached**[^repcached]" 을 통해 부분적 지원 | 안전성 |
+
+[^repcached]: http://repcached.lab.klab.org/
+
+
+
+##### 1.2.2.5.2 Redis의 문제점
+
+|     항목      | 설명                                                         | 비고 |
+| :-----------: | ------------------------------------------------------------ | ---- |
+| Signle Thread | - 시간이 오래 걸리는 요청(A)이 들어오면 나머지 요청은 A가 종료될 때까지 대기하여 전체적인 성능을 하락하는 원인이 됨 | 성능 |
+
+
+
+### 1.2.3 Opensource Cache Client 분석 
+
+#### 1.2.3.1 Memcached
+
+|    Client    | 지원 언어 | 비동기 | Thread safe | 비고 |
+| :----------: | :-------: | :----: | :---------: | :--: |
+| spymemcached |   Java    | 미지원 | Thread safe |      |
+
+
+
+#### 1.2.3.2 Redis
+
+| Client  | 지원 언어 | 비동기 |  Thread safe  |                 비고                  |
+| :-----: | :-------: | :----: | :-----------: | :-----------------------------------: |
+|  Jedis  |   Java    | 미지원 | Thread unsafe |                                       |
+| Lettuce |   Java    |  지원  |  Thread safe  | Strping Boot 2.0 부터 기본 클라이언트 |
+| Hiredis |     C     |  지원  |       -       |            Cluster 미지원             |
+
+
+
+### 1.2.4 SCP Cache 상품 문제점 분석
+
+#### 1.2.4.1 상품 카테고리 내 Cache 부재
+
+타 CSP와는 달리 상품 카테고리에 Cache 상품이 없다.
+
+![상품01](https://user-images.githubusercontent.com/26420767/185856734-cbc78a5f-97ca-46da-98b0-a9e216681c68.png)
+
+
+
+#### 1.2.4.2 Community 버전의 Redis 만 지원
+
+DB Service 상품에 Redis 만 지원한다. 하지만 지원하는 Redis 는 Community 버전으로 이중화 구성 시, Sentinel 을 기반으로 하는 Active-Standby 구조이다. 
+
+![상품02](https://user-images.githubusercontent.com/26420767/185857537-0f15209b-a6dc-4225-8093-f81c1cc22f70.png)
+
+
+
+#### 1.2.4.3 SCP의 Cache 상품의 문제점
+
+|            항목             | 설명                                                         |   비고   |
+| :-------------------------: | ------------------------------------------------------------ | :------: |
+| 상품 내 Cache 카테고리 부재 | - IT에서 성능 향상을 위해 사용되는 Cache에 대한 미지원       | 기본기능 |
+|  Cache 상품의 다양성 미흡   | - 타 SCP 대비 Cache 상품에 대한 목록 및 기능, 구성에 대한 지원 미흡 |  다양성  |
+
+
+
+참고사이트 : Samsung Cloud Platform 상품 페이지[^SCP]
+
+[^SCP]: https://cloud.samsungsds.com/serviceportal/product.html
+
+
+
+## 1.3 Cache 솔루션 RoadMap 및 프로젝트 범위
+
+### 1.3.1 Cache 솔루션 RoadMap
+
+Cache 솔루션은 우선 내제화한다. 내제화의 단계는 크게 Standalone 과 Cluster 단계로 구분한다. Standalone 에서는 Cache 의 기본적인 기능인 읽기, 쓰기, 삭제을 구현한다. Cluster 단계 에서는 여러 개의 노드로 구성하여 가용성 및 안정성을 확보하도록 한다. 가용성 부분에서는 Active-Standby와 Active-Active 에 대하여 단계적으로 확보한다. 그리고 CSP 사업에서 활용하도록 관리형 서비스 단계와 완전 관리형 서비스 단계로 한다.
+
+![image-20220410234147561](https://raw.githubusercontent.com/u4rang/save-image-repo/main/img/image-20220410234147561.png)
+
+
+
+### 1.3.2 프로젝트 범위
+
+|        분류        |                        과업                         | 범위 여부 |
+| :----------------: | :-------------------------------------------------: | :-------: |
+| 고객사 물류 시스템 | 배송 상태 조회 기능 문제 분석 및 대안 아키텍처 설계 |   포함    |
+|                    |  배송 상태 조회 기능 대안 아키텍처 적용 및 테스트   |   포함    |
+|                    |          대안 아키텍처에 Cache 솔루션 활용          |   포함    |
+|    Cache 솔루션    |          Cache 기본 기능 및 아키텍처 설계           |   포함    |
+|                    |           Cache Replication 아키텍처 설계           |   포함    |
+|                    |           Cache 기본 기능 개발 및 테스트            |   포함    |
+|                    |        Cache Replication 기능 개발 및 테스트        |  미포함   |
 
 
 
@@ -269,27 +478,42 @@ Cache 솔루션의 특징인 성능과 안정성을 부하분산기 Apache jMete
 
 ## 2.1 System Overview
 
-<System Context 그림 추가>
+![SystemContextDiagram](https://user-images.githubusercontent.com/26420767/183411357-35970741-dcbe-45fe-a956-41cfe1b3930d.png)
+
+
 
 ### 2.1.1 External Entity
 
-| 구분 | 설명 | 기대사항 |
-| ---- | ---- | -------- |
-|      |      |          |
-|      |      |          |
-|      |      |          |
-|      |      |          |
+|    구분    | 설명                                                         |
+| :--------: | ------------------------------------------------------------ |
+|   myLogi   | - 상품에 대한 배송 계획 수립 및 배송사에 최신 배송 상태를 조회하여 배송 상태 정보를 제공한다.<br />- 기대사항 : 사용자가 배송 계획 수립 및 배송 상태 확인을 1,000 ms 이하의 응답속도로 제공해야 한다. |
+| 신규시스템 | - 고객사의 A업무을 정보화하여 서비스를 제공한다.<br />- 기대사항 : 고객사 A 업무 담당자가 기대하는 기능을 정확하게 제공해야 한다. |
+|  SDSCache  | - 보통의 Cache 솔루션이 제공하는 GET, SET, DEL 기능을 myLogi 및 신규시스템에 제공한다. <br />- 기대사항 : Cache 솔루션은 myLogi 및 신규시스템이 기대하는 기능을 정확하게 제공해야 한다. |
 
 
 
 ### 2.1.2 External Interface
 
-| 구분 | 설명 |
-| ---- | ---- |
-|      |      |
-|      |      |
-|      |      |
-|      |      |
+|   분류   |           구분           | 설명                                                         |
+| :------: | :----------------------: | ------------------------------------------------------------ |
+| SDSCache |      SET KEY VALUE       | - 역할 : KEY와 VALUE 저장<br />- User Interface : TCP / UDP / Unix Socket<br />- 특성<br />  - 부하 상황에서도 10 ms 이내로 전송한다.<br />  - 기존 Cache 를 대체하는 표준화된 인터페이스를 제공한다. |
+| SDSCache |         GET KEY          | - 역할 : KEY에 따른 VALUE 조회<br />- User Interface : TCP / UDP / Unix Socket<br />- 특성<br />  - 부하 상황에서도 10 ms 이내로 전송한다.<br />  - 기존 Cache 를 대체하는 표준화된 인터페이스를 제공한다. |
+| SDSCache |         DEL KEY          | - 역할 : KEY에 따른 VALUE 삭제<br />- User Interface : TCP / UDP / Unix Socket<br />- 특성<br />  - 부하 상황에서도 10 ms 이내로 전송한다.<br />  - 기존 Cache 를 대체하는 표준화된 인터페이스를 제공한다. |
+| SDSCache |    EXPIRE KEY SECOND     | - 역할 : KEY에 TTL(Time To Live)을 설정<br />- User Interface : TCP / UDP / Unix Socket<br />- 특성<br />  - 지정한 시간 이 후 Cache를 자동 삭제한다. |
+| SDSCache |         TTL KEY          | - 역할 : 남은 TTL을 초 단위로 확인<br />- User Interface : TCP / UDP / Unix Socket<br />- 특성<br />  - Cache의 유효시간을 확인한다. |
+|  myLogi  | RETRIEVE DELIVERY STATUS | - 역할 : 송장번호에 따른 배송상태 조회<br />- User Interface : REST API<br />- 특성<br />  - 외부 배송사의 API 규약에 따라 호출한다.<br />  - 외부 시스템의 환경에 따라 myLogi 서비스 품질에 영향을 미친다. |
+
+
+
+### 2.1.3 System Feature
+
+|  ID   |                Title                |                             설명                             | 중요도 |   Biz. Goal ID    |
+| :---: | :---------------------------------: | :----------------------------------------------------------: | :----: | :---------------: |
+| SF-01 | 대량의 KEY, VALUE 조회 및 저장 기능 | 시스템이 요청하는 대량의 KEY, VALUE 조회 및 저장을 안정적으로 서비스 한다. |   상   | BG-02,<br />BG-03 |
+| SF-02 |        정확한 명령 수행 기능        | 시스템이 요청하는 명령들에 대해 유실 없이 100% 서비스 한다.  |   상   | BG-02,<br />BG-03 |
+| SF-03 |      표준화된 인터페이스 제공       | 기존 Cache를 효율적으로 대체 할 수 있도록 표준화된 인터페이스를 제공한다. |   상   | BG-01,<br />BG-05 |
+| SF-04 |          유연한 확장 기능           |     Cache 부하 상황에 따른 유연한 확장 기능을 제공한다.      |   중   | BG-04,<br />BG-06 |
+| SF-05 |       장애 발생 시 복구 기능        |      Cache 장해 사항 발생 시 빠른 복구 시간을 보장한다.      |   중   | BG-04,<br />BG-06 |
 
 
 
@@ -299,7 +523,9 @@ Cache 솔루션의 특징인 성능과 안정성을 부하분산기 Apache jMete
 >
 > 전체 범위와 구현 대상 범위를 구분
 
-![image-20220411033627670](https://raw.githubusercontent.com/u4rang/save-image-repo/main/img/image-20220411033627670.png)
+### 2.2.1 Cache 솔루션에 대한 기능 요구사항
+
+![UseCaseDiagram_Cache](https://user-images.githubusercontent.com/26420767/183437733-eeb12eea-0744-4a9f-96d0-e55f6344e93b.png)
 
 다음은 Cache의 기본 기능이며 주요 UseCase이다.
 
@@ -309,32 +535,38 @@ Cache 솔루션의 특징인 성능과 안정성을 부하분산기 Apache jMete
 
 
 
-다음은 UseCase 목록이다.
+다음은 **"Cache Mode적용한다"**에 대한 상세 UseCase 이다.
 
-| ID    | Title                   | 설명                                                         | 중요도 | 난이도 | System Feature ID |
-| ----- | ----------------------- | ------------------------------------------------------------ | ------ | ------ | ----------------- |
-| UC-01 | Cache추가한다           | Database, AP 에서 조회한 데이터 A를 Cache에 저장한다.        | 상     | 상     |                   |
-| UC-02 | Cache삭제한다           | Cache에 저장된 데이터 A를 Cache에서 더이상 사용하지 않도록 관리하다. | 상     | 상     |                   |
-| UC-03 | Cache조회한다           | Cache에 저장된 데이터 A를 조회한다.                          | 상     | 상     |                   |
-| UC-04 | TTL설정한다             | Cache의 데이터 A에 TTL(Time to Live )을 설정하여 유효시간을 관리한다. | 상     | 상     |                   |
-| UC-05 | Cache제거한다           | Cache의 데이터 A를 무효화한다.                               | 상     | 상     |                   |
-| UC-06 | CacheMode적용한다       | Local, Partitioned, Replicated 중 Mode 를 적용한다.          | 중     | 상     |                   |
-| UC-07 | Cache모니터링한다       | Cache 솔루션에 대하여 서버 리소스에서부터 Cache 의 HitRatio 까지 모니터링한다. | 상     | 상     |                   |
-| UC-08 | Cache알고리즘적용한다   | Cache 솔루션의 HitRatio 를 높이기 위한 알고리즘을 선택한다.  | 중     | 상     |                   |
-| UC-09 | Cache알고리즘추가한다   | Cache 솔루션의 HitRatio 를 높이기 위한 알고리즘을 추가한다.  | 중     | 상     |                   |
-| UC-10 | LocalMode설정한다       | 데이터가 읽기 전용 또는 특정 만료 빈도로 주기적으로 새로 고쳐질 수 있는 시나리오에 적합한 Local Mode를 설정한다. | 중     | 상     |                   |
-| UC-11 | PartitionedMode설정한다 | 데이터 세트가 작고 업데이트가 자주 발생하지 않는 시나리오에 적합한 Partitioned Mode를 설정한다. | 중     | 상     |                   |
-| UC-12 | ReplicatedMode설정한다  | 대규모 데이터 세트로 작업하고 업데이트가 빈번한 시나리오에 적합한 Replicated Mode를 설정한다. | 중     | 상     |                   |
-| UC-13 | Cache노드관리한다       | Cache 솔루션이 Cluster 인 경우 노드를 추가하거나 삭제한다.   | 중     | 중     |                   |
+![UseCaseDiagram_Cache_CacheMode](https://user-images.githubusercontent.com/26420767/183441224-961c08c4-494a-4d12-88a7-c298260aa741.png)
 
 
 
-### 2.2.1 UC-01 Cache추가한다
+다음은  Cache 솔루션에 대한 UseCase 목록이다.
 
-| UC-01    | Cache추가한다                                                |
-| -------- | ------------------------------------------------------------ |
-| 설명     | Database, API에서 조회한 데이터 A를 Cache에 저장한다         |
-| 행위자   | 물류시스템, CSP시스템사용자                                  |
+|  ID   |          Title          |                             설명                             | 중요도 | 난이도 |       System Feature ID       |
+| :---: | :---------------------: | :----------------------------------------------------------: | :----: | :----: | :---------------------------: |
+| UC-01 |      Cache추가한다      |    Database, AP 에서 조회한 데이터 A를 Cache에 저장한다.     |   상   |   상   | SF-01,<br />SF-02,<br />SF-03 |
+| UC-02 |      Cache삭제한다      | Cache에 저장된 데이터 A를 Cache에서 더이상 사용하지 않도록 관리하다. |   상   |   상   |       SF-01.<br />SF-02       |
+| UC-03 |      Cache조회한다      |             Cache에 저장된 데이터 A를 조회한다.              |   상   |   상   | SF-01,<br />SF-02,<br />SF-03 |
+| UC-04 |       TTL설정한다       | Cache의 데이터 A에 TTL(Time to Live )을 설정하여 유효시간을 관리한다. |   상   |   상   |       SF-02,<br />SF-03       |
+| UC-05 |      Cache제거한다      |                Cache의 데이터 A를 무효화한다.                |   상   |   상   |       SF-02,<br />SF-03       |
+| UC-06 |    CacheMode적용한다    |      Local, Partition, Replication 중 Mode를 적용한다.       |   중   |   상   |       SF-04,<br />SF-05       |
+| UC-07 |    Cache모니터링한다    | Cache 솔루션에 대하여 서버 리소스에서부터 Cache 의 HitRatio까지 모니터링한다. |   상   |   상   |             SF-03             |
+| UC-08 |  Cache알고리즘적용한다  |  Cache 솔루션의 HitRatio를 높이기 위한 알고리즘을 선택한다.  |   중   |   상   |             SF-04             |
+| UC-09 |  Cache알고리즘추가한다  |  Cache 솔루션의 HitRatio를 높이기 위한 알고리즘을 추가한다.  |   중   |   상   |             SF-04             |
+| UC-10 |    LocalMode설정한다    | 데이터가 읽기 전용 또는 특정 만료 빈도로 주기적으로 새로 고쳐질 수 있는 시나리오에 적합한 Local Mode를 설정한다. |   중   |   상   |       SF-03,<br />SF-04       |
+| UC-11 |  PartitionMode설정한다  | 데이터 세트가 작고 업데이트가 자주 발생하지 않는 시나리오에 적합한 Partitioned Mode를 설정한다. |   중   |   상   |       SF-03,<br />SF-04       |
+| UC-12 | ReplicationMode설정한다 | 대규모 데이터 세트로 작업하고 업데이트가 빈번한 시나리오에 적합한 Replicated Mode를 설정한다. |   중   |   상   |       SF-03,<br />SF-04       |
+| UC-13 |    Cache노드관리한다    |  Cache 솔루션이 Cluster 인 경우 노드를 추가하거나 삭제한다.  |   중   |   중   |       SF-04,<br />SF-05       |
+
+
+
+### 2.2.1.1 UC-01 Cache추가한다
+
+|  UC-01   | Cache추가한다                                                |
+| :------: | ------------------------------------------------------------ |
+|   설명   | Database, API에서 조회한 데이터 A를 Cache에 저장한다         |
+|  행위자  | 물류시스템, CSP시스템사용자                                  |
 | 선행조건 | 조회하는 데이터 A가 Cache 솔루션에 미존재                    |
 | 후행조건 | -                                                            |
 | 기존동작 | 1. 물류시스템이 Database 또는 API에서 데이터 A를 조회한다.<br />2. 물류시스템이 받은 데이터 A를 Cache 솔루션에 추가한다. |
@@ -342,12 +574,12 @@ Cache 솔루션의 특징인 성능과 안정성을 부하분산기 Apache jMete
 
 
 
-### 2.2.2 UC-02 Cache삭제한다
+### 2.2.1.2 UC-02 Cache삭제한다
 
-| UC-02    | Cache삭제한다                                                |
-| -------- | ------------------------------------------------------------ |
-| 설명     | Cache에 저장된 데이터 A를 Cache에서 더이상 사용하지 않도록 관리한다 |
-| 행위자   | 물류시스템, CSP시스템사용자                                  |
+|  UC-02   | Cache삭제한다                                                |
+| :------: | ------------------------------------------------------------ |
+|   설명   | Cache에 저장된 데이터 A를 Cache에서 더이상 사용하지 않도록 관리한다 |
+|  행위자  | 물류시스템, CSP시스템사용자                                  |
 | 선행조건 | 조회하는 데이터 A가 Cache 솔루션에 존재                      |
 | 후행조건 | 데이터 A가 Cache 솔루션에 유효하지 않은 상태 또는 삭제       |
 | 기존동작 | 1. 물류시스템 또는 CSP시스템사용자이 Cache 솔루션의 데이터 A를 삭제 요청한다 |
@@ -355,12 +587,12 @@ Cache 솔루션의 특징인 성능과 안정성을 부하분산기 Apache jMete
 
 
 
-### 2.2.3 UC-03 Cache조회한다
+### 2.2.1.3 UC-03 Cache조회한다
 
-| UC-03    | Cache조회한다                                                |
-| -------- | ------------------------------------------------------------ |
-| 설명     | Cache에 저장된 데이터 A를 조회한다                           |
-| 행위자   | 물류시스템, CSP시스템사용자                                  |
+|  UC-03   | Cache조회한다                                                |
+| :------: | ------------------------------------------------------------ |
+|   설명   | Cache에 저장된 데이터 A를 조회한다                           |
+|  행위자  | 물류시스템, CSP시스템사용자                                  |
 | 선행조건 | 조회하는 데이터 A가 Cache 솔루션에 존재                      |
 | 후행조건 | -                                                            |
 | 기존동작 | 1. 물류시스템이 데이터 A를 Cache 솔루션에 조회한다.<br />2. Cache 솔루션은 데이터 A가 있으면 물류시스템에 제공한다. |
@@ -368,12 +600,12 @@ Cache 솔루션의 특징인 성능과 안정성을 부하분산기 Apache jMete
 
 
 
-### 2.2.4 UC-04 TTL설정한다
+### 2.2.1.4 UC-04 TTL설정한다
 
-| UC-04    | TTL설정한다                                                  |
-| -------- | ------------------------------------------------------------ |
-| 설명     | Cache의 데이터 A에 TTL(Time to Live )을 설정하여 유효시간을 관리한다 |
-| 행위자   | 물류시스템, CSP시스템사용자                                  |
+|  UC-04   | TTL설정한다                                                  |
+| :------: | ------------------------------------------------------------ |
+|   설명   | Cache의 데이터 A에 TTL(Time to Live )을 설정하여 유효시간을 관리한다 |
+|  행위자  | 물류시스템, CSP시스템사용자                                  |
 | 선행조건 | UC-02 "Cache삭제한다"                                        |
 | 후행조건 | -                                                            |
 | 기존동작 | 1. 물류시스템 또는 CSP시스템사용자는 Cache의 데이터 A에 대해 삭제 지시한다.<br />2. Cache 솔루션은 Cache의 데이터 A에 대한 TTL을 변경하여 유효시간을 변경한다. <br />`expected expire time = current time + set expire time, 단위 second` |
@@ -381,12 +613,12 @@ Cache 솔루션의 특징인 성능과 안정성을 부하분산기 Apache jMete
 
 
 
-### 2.2.5 UC-05 Cache제거한다
+### 2.2.1.5 UC-05 Cache제거한다
 
-| UC-05    | Cache제거한다                                                |
-| -------- | ------------------------------------------------------------ |
-| 설명     | Cache의 데이터 A를 무효화한다.                               |
-| 행위자   | 물류시스템, CSP시스템사용자                                  |
+|  UC-05   | Cache제거한다                                                |
+| :------: | ------------------------------------------------------------ |
+|   설명   | Cache의 데이터 A를 무효화한다.                               |
+|  행위자  | 물류시스템, CSP시스템사용자                                  |
 | 선행조건 | UC-02 "Cache삭제한다"                                        |
 | 후행조건 | -                                                            |
 | 기존동작 | 1. 물류시스템 또는 CSP시스템사용자가 Cache 솔루션에 Cache의 데이터 A를 무효화를 지시한다.<br />2. Cache 솔루션은 데이터 A에 대해 무효화 처리한다. |
@@ -394,12 +626,12 @@ Cache 솔루션의 특징인 성능과 안정성을 부하분산기 Apache jMete
 
 
 
-### 2.2.6 UC-06 CacheMode적용한다
+### 2.2.1.6 UC-06 CacheMode적용한다
 
-| UC-06    | CacheMode적용한다                                            |
-| -------- | ------------------------------------------------------------ |
-| 설명     | Local, Partitioned, Replicated 중 Mode를 적용한다            |
-| 행위자   | 물류시스템개발자, CSP시스템개발자                            |
+|  UC-06   | CacheMode적용한다                                            |
+| :------: | ------------------------------------------------------------ |
+|   설명   | Local, Partitioned, Replicated 중 Mode를 적용한다            |
+|  행위자  | 물류시스템개발자, CSP시스템개발자                            |
 | 선행조건 | Cache솔루션이 Cluster 형태이다                               |
 | 후행조건 | -                                                            |
 | 기존동작 | 1. 물류시스템개발자 또는 CSP시스템개발자가 Cache 솔루션의 Cache Mode를 변경 지시한다. |
@@ -407,14 +639,12 @@ Cache 솔루션의 특징인 성능과 안정성을 부하분산기 Apache jMete
 
 
 
+### 2.2.1.7 UC-07 Cache모니터링한다
 
-
-### 2.2.7 UC-07 Cache모니터링한다
-
-| UC-07    | Cache모니터링한다                                            |
-| -------- | ------------------------------------------------------------ |
-| 설명     | Cache 솔루션에 대하여 서버 리소스에서부터 Cache 의 HitRatio까지 모니터링한다 |
-| 행위자   | 물류시스템운영자, CSP시스템운영자                            |
+|  UC-07   | Cache모니터링한다                                            |
+| :------: | ------------------------------------------------------------ |
+|   설명   | Cache 솔루션에 대하여 서버 리소스에서부터 Cache 의 HitRatio까지 모니터링한다 |
+|  행위자  | 물류시스템운영자, CSP시스템운영자                            |
 | 선행조건 | -                                                            |
 | 후행조건 | -                                                            |
 | 기존동작 | 1. 물류시스템운영자 또는 CSP시스템운영자가 Cache 솔루션의 주요지표 Hit Ratio을 요청한다.<br />2. Cache 솔루션은 다음의 식을 기반으로 Hit Ratio 정보를 제공한다.<br />`hit ratio = Total number of cache hits / (Total Number of cache hits + Number of cache misses)` |
@@ -422,77 +652,77 @@ Cache 솔루션의 특징인 성능과 안정성을 부하분산기 Apache jMete
 
 
 
-### 2.2.8 UC-08 Cache알고리즘적용한다
+### 2.2.1.8 UC-08 Cache알고리즘적용한다
 
-| UC-08    | Cache알고리즘적용한다                                        |
-| -------- | ------------------------------------------------------------ |
-| 설명     | Cache 솔루션의 HitRatio 를 높이기 위한 알고리즘을 선택한다   |
-| 행위자   | CSP시스템개발자                                              |
-| 선행조건 | Hit Ratio 가 기존보다 좋은 Cache 알고리즘 X 존재             |
+|  UC-08   | Cache알고리즘적용한다                                        |
+| :------: | ------------------------------------------------------------ |
+|   설명   | Cache 솔루션의 HitRatio 를 높이기 위한 알고리즘을 선택한다   |
+|  행위자  | CSP시스템개발자                                              |
+| 선행조건 | Hit Ratio 가 기존보다 좋은 Cache 알고리즘 A 존재             |
 | 후행조건 | -                                                            |
-| 기존동작 | 1. CSP시스템개발자는 Cache 솔루션에 새로운 Cache 알고리즘 X을 적용요청한다. |
+| 기존동작 | 1. CSP시스템개발자는 Cache 솔루션에 새로운 Cache 알고리즘 A을 적용요청한다. |
 | 추가동작 | -                                                            |
 
 
 
-### 2.2.9 UC-09 Cache알고리즘추가한다
+### 2.2.1.9 UC-09 Cache알고리즘추가한다
 
-| UC-09    | Cache알고리즘추가한다                                        |
-| -------- | ------------------------------------------------------------ |
-| 설명     | Cache 솔루션의 HitRatio를 높이기 위한 알고리즘을 추가한다    |
-| 행위자   | CSP시스템개발자                                              |
-| 선행조건 | - UC-08 "Cache알고리즘적용한다"<br />- Hit Ratio 가 기존보다 좋은 Cache 알고리즘 X 존재하며 Cache 솔루션에는 추가되지 않은 상태 |
+|  UC-09   | Cache알고리즘추가한다                                        |
+| :------: | ------------------------------------------------------------ |
+|   설명   | Cache 솔루션의 HitRatio를 높이기 위한 알고리즘을 추가한다    |
+|  행위자  | CSP시스템개발자                                              |
+| 선행조건 | - UC-08 "Cache알고리즘적용한다"<br />- Hit Ratio 가 기존보다 좋은 Cache 알고리즘 A 존재하며 Cache 솔루션에는 추가되지 않은 상태 |
 | 후행조건 | -                                                            |
-| 기존동작 | 1. CSP시스템개발자는 Cache 알고리즘X 을 템플릿에 맞추어 Cache 솔루션에 추가 지시한다.<br />2. Cache 솔루션은 Cache 알고리즘X을 알고리즘 목록 중 하나로 등록한다. |
+| 기존동작 | 1. CSP시스템개발자는 Cache 알고리즘A 을 템플릿에 맞추어 Cache 솔루션에 추가 지시한다.<br />2. Cache 솔루션은 Cache 알고리즘A 을 알고리즘 목록 중 하나로 등록한다. |
 | 추가동작 | -                                                            |
 
 
 
-### 2.2.10 UC-10 LocalMode설정한다
+### 2.2.1.10 UC-10 LocalMode설정한다
 
-| UC-10    | LocalMode설정한다                                            |
-| -------- | ------------------------------------------------------------ |
-| 설명     | 데이터가 읽기 전용 또는 특정 만료 빈도로 주기적으로 새로 고쳐질 수 있는 시나리오에 적합한 Local Mode를 설정한다. |
-| 행위자   | 물류시스템개발자, CSP시스템개발자                            |
-| 선행조건 | UC-06 CacheMode적용한다                                      |
+|  UC-10   | LocalMode설정한다                                            |
+| :------: | ------------------------------------------------------------ |
+|   설명   | 데이터가 읽기 전용 또는 특정 만료 빈도로 주기적으로 새로 고쳐질 수 있는 시나리오에 적합한 Local Mode를 설정한다. |
+|  행위자  | 물류시스템개발자, CSP시스템개발자                            |
+| 선행조건 | UC-06 CacheMode적용한다<br />Cache솔루션이 Cluster 형태이다  |
 | 후행조건 | -                                                            |
-| 기존동작 | [작성예정]                                                   |
+| 기존동작 | 1. Cache솔루션은 다른 노드에 캐시 데이터를 배포하지 않는다.<br /> |
 | 추가동작 | -                                                            |
 
 
 
-### 2.2.11 UC-11 PartitionedMode설정한다
+### 2.2.1.11 UC-11 PartitionMode설정한다
 
-| UC-11    | PartitionedMode설정한다                                      |
-| -------- | ------------------------------------------------------------ |
-| 설명     | 데이터 세트가 작고 업데이트가 자주 발생하지 않는 시나리오에 적합한 Partitioned Mode를 설정한다 |
-| 행위자   | 물류시스템개발자, CSP시스템개발자                            |
-| 선행조건 | UC-06 CacheMode적용한다                                      |
+|  UC-11   | PartitionMode설정한다                                        |
+| :------: | ------------------------------------------------------------ |
+|   설명   | 데이터 세트가 작고 업데이트가 자주 발생하지 않는 시나리오에 적합한 Partitioned Mode를 설정한다 |
+|  행위자  | 물류시스템개발자, CSP시스템개발자                            |
+| 선행조건 | UC-06 CacheMode적용한다<br />Cache솔루션이 Cluster 형태이다  |
 | 후행조건 | -                                                            |
-| 기존동작 | [작성예정]                                                   |
+| 기존동작 | 1. 모든 노드에 데이터의 사본을 복사한다.                     |
 | 추가동작 | -                                                            |
 
 
 
-### 2.2.12 UC-12 ReplicatedMode설정한다
+### 2.2.1.12 UC-12 ReplicationMode설정한다
 
-| UC-12    | ReplicatedMode설정한다                                       |
-| -------- | ------------------------------------------------------------ |
-| 설명     | 대규모 데이터 세트로 작업하고 업데이트가 빈번한 시나리오에 적합한 Replicated Mode를 설정한다 |
-| 행위자   | 물류시스템개발자, CSP시스템개발자                            |
-| 선행조건 | UC-06 CacheMode적용한다                                      |
+|  UC-12   | ReplicationMode설정한다                                      |
+| :------: | ------------------------------------------------------------ |
+|   설명   | 대규모 데이터 세트로 작업하고 업데이트가 빈번한 시나리오에 적합한 Replicated Mode를 설정한다 |
+|  행위자  | 물류시스템개발자, CSP시스템개발자                            |
+| 선행조건 | UC-06 CacheMode적용한다<br />Cache솔루션이 Cluster 형태이다  |
 | 후행조건 | -                                                            |
-| 기존동작 | [작성예정]                                                   |
+| 기존동작 | 1. 지정된 파티션 개수 만큼 노드에 데이터의 사본을 복사한다.  |
 | 추가동작 | -                                                            |
 
 
 
-### 2.2.13 UC-13 Cache노드관리한다
+### 2.2.1.13 UC-13 Cache노드관리한다
 
-| UC-13    | Cache노드관리한다                                            |
-| -------- | ------------------------------------------------------------ |
-| 설명     | Cache 솔루션이 Cluster 인 경우 노드를 추가하거나 삭제한다    |
-| 행위자   | 물류시스템운영자, CSP시스템운영자                            |
+|  UC-13   | Cache노드관리한다                                            |
+| :------: | ------------------------------------------------------------ |
+|   설명   | Cache 솔루션이 Cluster 인 경우 노드를 추가하거나 삭제한다    |
+|  행위자  | 물류시스템운영자, CSP시스템운영자                            |
 | 선행조건 | Cache솔루션이 Cluster 형태이다                               |
 | 후행조건 | -                                                            |
 | 기존동작 | 1. 물류시스템운영자 또는 CSP시스템운영자가 Cache 솔루션에 노드 추가 및 삭제를 요청한다.<br />2. Cache 솔루션은 노드의 추가 삭제 작업을 수행한다. |
@@ -500,131 +730,247 @@ Cache 솔루션의 특징인 성능과 안정성을 부하분산기 Apache jMete
 
 
 
+### 2.2.2 고객사 물류 시스템에 대한 기능 요구사항
+
+![UseCaseDiagram_물류시스템](https://user-images.githubusercontent.com/26420767/183445187-50a42997-9915-4ce3-92fe-176b707d0d57.png)
+
+
+
+다음은 고객사 물류 시스템에 대한 Usecase 이다.
+
+|  ID   |      Title       |                             설명                             | 중요도 | 난이도 | System Feature ID |
+| :---: | :--------------: | :----------------------------------------------------------: | :----: | :----: | :---------------: |
+| UC-14 | 배송상태조회한다 | 물류시스템사용자 김경환 프로가 상품의 송장번호로 배송상태를 조회한다. |   상   |   상   | SF-01,<br />SF-02 |
+
+
+
+### 2.2.2.1 UC-14 배송상태조회한다
+
+|  UC-14   | 배송상태조회한다                                             |
+| :------: | ------------------------------------------------------------ |
+|   설명   | 물류시스템사용자 김경환 프로가 상품의 송장번호로 배송상태를 조회한다. |
+|  행위자  | 물류시스템사용자                                             |
+| 선행조건 | 상품의 송장번호가 유효하다.                                  |
+| 후행조건 | -                                                            |
+| 기존동작 | 1. 물류시스템사용자 김경환 프로가 상품의 배송상태를 조회한다.<br />2. 물류시스템은 상품의 배송사에서 제공하는 API에 송장번호로 배송상태를 조회한다. |
+| 추가동작 | -                                                            |
+
 
 
 ## 2.3 품질 요구사항
 
 > 아키텍처 품질속성별 명확하고 정량적인 달성목표 작성
 
-품질 요구사항은 다음과 같다.
+### 2.3.1 Cache 솔루션에 대한 품질 요구사항
+
+Cache 솔루션에 대한 품질 요구사항은 다음과 같다.
 
 | ID     | 품질속성   | 품질속성 상세화                         | 품질속성 시나리오                                            | 중요도 | 난이도 | System Feature ID |
 | ------ | ---------- | --------------------------------------- | ------------------------------------------------------------ | ------ | ------ | ----------------- |
-| QAS-01 | 성능       | Cache 솔루션의 응답속도                 | 물류시스템사용자 김경환 프로가 3,600 초 이내 조회한 운송장번호 A 를 다시 조회하면 <br/>Cache 솔루션에 저장된 데이터를 기반으로 3,000 ms 이내 운송장번호 A 를 확인한다. | 상     | 상     |                   |
-| QAS-02 | 성능       | Cache 솔루션의 데이터 저장 및 응답 속도 | 물류시스템사용자 김경환 프로가 Cache에 없는 운송장번호 A의 배송상태를 조회하면, <br/>운송장번호 A의 배송상태는 Cache에 저장되고 김경환 프로에게 배송상태를 제공한다.<br/>3초 후, 김채이 프로가 운송장번호 A 를 조회하면 Cache에 저장된 <br/>운송장번호 A의 배송상태를 이용하여 3,000 ms 이내 배송상태를 제공한다.<br/> | 상     | 상     |                   |
-| QAS-03 | 내구성     | Cache 솔루션의 응답보장                 | 100,000 명의 물류시스템사용자가 동시에 운송장번호와 배송상태를 조회하면 동일한 운송장번호와 <br/>그 배송상태는 Cache 솔루션에 저장된 데이터를 기반으로 응답하며 <br/>물류사용자는 100,000 명의 요청에 따른 물류시스템의 부하에 대해 인지하지 못한다.<br/> | 상     | 중     |                   |
-| QAS-04 | 모듈성     | Cache 솔루션의 모듈화                   | Cache 알고리즘에 변경사항이 발생하면 변경의 범위는 해당 Cache 알고리즘에 한정되고 <br/>他 Cache 알고리즘은 변경에 영향을 받지 않는다. <br/> | 상     | 중     |                   |
-| QAS-05 | 정확성     | Cache 솔루션의 데이터 정확성            | Cache 솔루션은 같은 키에 대해서는 같은 값을 유효 TTL 이내 99.999999999 % 제공한다. | 중     | 상     |                   |
-| QAS-06 | 보안       | Cache 솔루션의 구간 암호화              | 물류시스템과 Cache 솔루션 간의 통신은 TLS 기반으로 암호화하여 통신한다. | 중     | 중     |                   |
-| QAS-07 | 유지보수성 | Cache 솔루션의 유지보수 용이성          | Cache 솔루션에 새로운 Cache 알고리즘(LRU)을 추가하면 <br/>2개월 이내 고급개발자 4MM 로 개발한다.<br/> | 중     | 중     |                   |
-| QAS-08 | 안정성     | Cache 솔루션의 정확성                   | Cache 솔루션은 배송상태의 키 A 인 캐시에 대해 배송상태 데이터를 물류시스템에게 99.999999999 % 제공한다. | 중     | 하     |                   |
+| QAS-01 | 성능       | Cache 솔루션의 응답속도                 | 물류시스템사용자 김경환 프로가 3,600 초 이내 조회한 운송장번호 A 를 다시 조회하면 <br/>Cache 솔루션에 저장된 데이터를 기반으로 1,000 ms 이내 운송장번호 A 를 확인한다. | 상     | 상     | SF-01,<br />SF-02 |
+| QAS-02 | 성능       | Cache 솔루션의 데이터 저장 및 응답 속도 | 물류시스템사용자 김경환 프로가 Cache에 없는 운송장번호 A의 배송상태를 조회하면, <br/>운송장번호 A의 배송상태는 Cache에 저장되고 김경환 프로에게 배송상태를 제공한다.<br/>1초 후, 김채이 프로가 운송장번호 A 를 조회하면 Cache에 저장된 <br/>운송장번호 A의 배송상태를 이용하여 1,000 ms 이내 배송상태를 제공한다.<br/> | 상     | 상     | SF-01,<br />SF-02 |
+| QAS-03 | 내구성     | Cache 솔루션의 응답보장                 | 1,000[^1,000명] 명의 물류시스템사용자가 동시에 운송장번호와 배송상태를 조회하면 동일한 운송장번호와 <br/>그 배송상태는 Cache 솔루션에 저장된 데이터를 기반으로 응답하며 <br/>물류사용자는 1,000 명의 요청에 따른 물류시스템의 부하에 대해 인지하지 못한다.<br/> | 상     | 중     | SF-02,<br />SF-04 |
+| QAS-04 | 유지보수성 | Cache 솔루션의 알고리즘  변경 용이      | Cache 알고리즘에 대한 정책이 변경되면<br />Cache 솔루션은 정책 변경 즉시, 새로운 알고리즘 정책으로 Cache 를 관리한다. | 상     | 중     | SF-03,<br />SF-04 |
+| QAS-05 | 정확성     | Cache 솔루션의 데이터 정확성            | Cache 솔루션은 같은 키에 대해서는 같은 값을 유효 TTL 이내 100 % 제공한다. | 중     | 상     | SF-01,<br />SF-02 |
+| QAS-06 | 보안       | Cache 솔루션의 구간 암호화              | 물류시스템과 Cache 솔루션 간의 통신은 TLS 기반으로 암호화하여 통신한다. | 중     | 중     | SF-03             |
+| QAS-07 | 유지보수성 | Cache 솔루션의 유지보수 용이성          | Cache 솔루션에 새로운 Cache 알고리즘(LRU)을 추가하면 <br/>2개월 이내 고급개발자 4MM로 개발한다.<br/> | 중     | 중     | SF-03,<br />SF-04 |
+| QAS-08 | 안정성     | Cache 솔루션의 정확성                   | Cache 솔루션은 배송상태의 키 A 인 캐시에 대해 배송상태 데이터를 물류시스템에게 100 % 제공한다. | 중     | 하     | SF-01,<br />SF-02 |
+| QAS-09 | 확장성     | Cache 솔루션의 가용성                   | Infra가 확보되어 있는 환경에서 Cache 솔루션 담당자가 Cache 노드를 증설하는 경우 시스템 중단 없이 60분 이내에 처리한다. | 중     | 중     | SF-04             |
+| QAS-10 | 신뢰성     | 노드 장애 시 Cache 유실 방지            | Cache 솔루션이 여러 개의 노드로 구성하고, 임의의 한 노드에서 장애가 발생하더라도 Cache는 유실되지 않는다. | 상     | 중     | SF-05             |
+
+응답속도 1,000 ms 에 대한 기준은 "별첨 3. 고객사 물류시스템의 응답시간 선정" 에 따른 결과이다.
+
+[^1,000명]: 2022년 08월, 고객사의 재직 중 임직원 수는 920명이다. 
 
 
 
-### 2.3.1 QAS-01 Cache 솔루션의 응답속도
+#### 2.3.1.1 QAS-01 Cache 솔루션의 응답속도
 
-| QAS-01   | Cache 솔루션의 응답속도                                      |
-| -------- | ------------------------------------------------------------ |
+|  QAS-01  | Cache 솔루션의 응답속도                                      |
+| :------: | ------------------------------------------------------------ |
 | 품질속성 | 성능                                                         |
-| 설명     | 물류시스템사용자 김경환 프로가 3,600 초 이내 조회한 운송장번호 A 를 다시 조회하면 <br/>Cache 솔루션에 저장된 데이터를 기반으로 3,000 ms 이내 운송장번호 A 를 확인한다. |
-| 자극     | 물류시스템사용자 김경환 프로                                 |
-| 환경     | 물류시스템이 Cache 솔루션과 함께 정상적으로 서비스하는 중    |
-| 반응     | Cache 솔루션이 Cached 데이터를 물류시스템에 전송한다.        |
-| 측정     | [요청 처리 속도] = [물류시스템사용자 김경환 프로가 요청한 시각] - [물류시스템WEB서버의 Access Log에 Response 기록한 시각] |
-| 제약     | [트래픽 처리 속도] < 3,000 ms                                |
+|   설명   | 물류시스템사용자 김경환 프로가 3,600 초 이내 조회한 운송장번호 A 를 다시 조회하면 <br/>Cache 솔루션에 저장된 데이터를 기반으로 1,000 ms 이내 운송장번호 A 를 확인한다. |
+|   자극   | 물류시스템사용자 김경환 프로                                 |
+|   환경   | 물류시스템이 Cache 솔루션과 함께 정상적으로 서비스하는 중    |
+|   반응   | Cache 솔루션이 Cached 데이터를 물류시스템에 전송한다.        |
+|   측정   | [요청 처리 속도] = [물류시스템사용자 김경환 프로가 요청한 시각] - [물류시스템WEB서버의 Access Log에 Response 기록한 시각] |
+|   제약   | [트래픽 처리 속도] < 1,000 ms                                |
 
 
 
-### 2.3.2 QAS-02 Cache 솔루션의 데이터 저장 및 응답 속도
+#### 2.3.1.2 QAS-02 Cache 솔루션의 데이터 저장 및 응답 속도
 
-| QAS-02   | Cache 솔루션의 데이터 저장 및 응답 속도                      |
-| -------- | ------------------------------------------------------------ |
+|  QAS-02  | Cache 솔루션의 데이터 저장 및 응답 속도                      |
+| :------: | ------------------------------------------------------------ |
 | 품질속성 | 성능                                                         |
-| 설명     | 물류시스템사용자 김경환 프로가 Cache에 없는 운송장번호 A의 배송상태를 조회하면, <br/>운송장번호 A의 배송상태는 Cache에 저장되고 김경환 프로에게 배송상태를 제공한다.<br/>3초 후, 김채이 프로가 운송장번호 A 를 조회하면 Cache에 저장된 <br/>운송장번호 A의 배송상태를 이용하여 3,000 ms 이내 배송상태를 제공한다.<br/> |
-| 자극     | 물류시스템사용자 김경환 프로                                 |
-| 환경     | 물류시스템이 Cache 솔루션과 함께 정상적으로 서비스하는 중    |
-| 반응     | 물류시스템이 조회한 운송장번호A를 물류시스템사용자 김경환 프로에게 전달하고, Cache 솔루션에 운송장번호A를 저장하도록 한다. |
-| 측정     | [트래픽 처리 속도] < 3,000 ms                                |
-| 제약     | -                                                            |
+|   설명   | 물류시스템사용자 김경환 프로가 Cache에 없는 운송장번호 A의 배송상태를 조회하면, <br/>운송장번호 A의 배송상태는 Cache에 저장되고 김경환 프로에게 배송상태를 제공한다.<br/>3초 후, 김채이 프로가 운송장번호 A 를 조회하면 Cache에 저장된 <br/>운송장번호 A의 배송상태를 이용하여 1,000 ms 이내 배송상태를 제공한다.<br/> |
+|   자극   | 물류시스템사용자 김경환 프로                                 |
+|   환경   | 물류시스템이 Cache 솔루션과 함께 정상적으로 서비스하는 중    |
+|   반응   | 물류시스템이 조회한 운송장번호A를 물류시스템사용자 김경환 프로에게 전달하고, Cache 솔루션에 운송장번호A를 저장하도록 한다. |
+|   측정   | [트래픽 처리 속도] < 1,000 ms                                |
+|   제약   | -                                                            |
 
 
 
-### 2.3.3 QAS-03 Cache 솔루션의 응답보장
+#### 2.3.1.3 QAS-03 Cache 솔루션의 응답보장
 
-| QAS-03   | Cache 솔루션의 응답보장                                      |
-| -------- | ------------------------------------------------------------ |
+|  QAS-03  | Cache 솔루션의 응답보장                                      |
+| :------: | ------------------------------------------------------------ |
 | 품질속성 | 내구성                                                       |
-| 설명     | 100,000 명의 물류시스템사용자가 동시에 운송장번호와 배송상태를 조회하면 동일한 운송장번호와 <br/>그 배송상태는 Cache 솔루션에 저장된 데이터를 기반으로 응답하며 <br/>물류사용자는 100,000 명의 요청에 따른 물류시스템의 부하에 대해 인지하지 못한다.<br/> |
-| 자극     | 100,000 명의 물류시스템사용자                                |
-| 환경     | 물류시스템이 Cache 솔루션과 함께 정상적으로 서비스하는 중    |
-| 반응     | 물류시스템은 운송장번호와 배송상태 정보에 대해 1차적으로 Cache 솔루션을 확인하고, 없으면 Database와 API를 조회한다. 조회된 데이터는 물류시스템 사용자에게 전달하고, Cache 솔루션에 전달하여 저장하도록 지시한다. |
-| 측정     | `[요청 처리 속도] = [물류시스템WEB서버의 Access Log에 Request기록한 시각] - [물류시스템WEB서버의 Access Log에 Response 기록한 시각]<`br />`hit ratio = Total number of cache hits / (Total Number of cache hits + Number of cache misses` |
-| 제약     | -                                                            |
+|   설명   | 1,000 명의 물류시스템사용자가 동시에 운송장번호와 배송상태를 조회하면 동일한 운송장번호와 <br/>그 배송상태는 Cache 솔루션에 저장된 데이터를 기반으로 응답하며 <br/>물류사용자는 1,000 명의 요청에 따른 물류시스템의 부하에 대해 인지하지 못한다.<br/> |
+|   자극   | 1,000 명의 물류시스템사용자                                  |
+|   환경   | 물류시스템이 Cache 솔루션과 함께 정상적으로 서비스하는 중    |
+|   반응   | 물류시스템은 운송장번호와 배송상태 정보에 대해 1차적으로 Cache 솔루션을 확인하고, 없으면 Database와 API를 조회한다. 조회된 데이터는 물류시스템 사용자에게 전달하고, Cache 솔루션에 전달하여 저장하도록 지시한다. |
+|   측정   | `[요청 처리 속도] = [물류시스템WEB서버의 Access Log에 Request기록한 시각] - [물류시스템WEB서버의 Access Log에 Response 기록한 시각]<`br />`hit ratio = Total number of cache hits / (Total Number of cache hits + Number of cache misses` |
+|   제약   | -                                                            |
 
 
 
-### 2.3.4 QAS-04 Cache 솔루션의 모듈화
+#### 2.3.1.4 QAS-04 Cache 솔루션의 알고리즘 변경 용이
 
-| QAS-04   | Cache 솔루션의 모듈화                                        |
-| -------- | ------------------------------------------------------------ |
-| 품질속성 | 모듈성                                                       |
-| 설명     | Cache 알고리즘에 변경사항이 발생하면 변경의 범위는 해당 Cache 알고리즘에 한정되고 <br/>他 Cache 알고리즘은 변경에 영향을 받지 않는다. <br/> |
-| 자극     | Hit Ratio 가 기존보다 좋은 Cache 알고리즘 X 존재             |
-| 환경     | 물류시스템이 Cache 솔루션과 함께 정상적으로 서비스하는 중    |
-| 반응     | Cache 솔루션은 Cache 알고리즘 X를 추가한다. 추가 시, 他 알고리즘에 영향을 미치지 않는다. |
-| 측정     | Cache 알고리즘 X가 추가되어도 기존 알고리즘은 기존과 동일하게 동작한다. |
+|  QAS-04  | Cache 솔루션의 알고리즘 변경 용이                            |
+| :------: | ------------------------------------------------------------ |
+| 품질속성 | 유지보수성                                                   |
+|   설명   | Cache 알고리즘에 대한 정책이 변경되면<br />Cache 솔루션은 정책 변경 즉시, 새로운 알고리즘 정책으로 Cache 를 관리한다. |
+|   자극   | 업무의 특성에 따라 적용된 알고리즘 A보다 Hit Ratio 가 좋은 Cache 알고리즘 B 존재 |
+|   환경   | 물류시스템이 Cache 솔루션과 함께 정상적으로 서비스하는 중    |
+|   반응   | Cache 솔루션은 Cache 알고리즘 B로 변경한다. 변경 즉시, 변경된 알고리즘 B로 동작하다.. |
+|   측정   | Cache 알고리즘이 변경되면 변경된 알고리즘 B으로 동작한다.    |
 
 
 
-### 2.3.5 QAS-05 Cache 솔루션의 데이터 정확성
+#### 2.3.1.5 QAS-05 Cache 솔루션의 데이터 정확성
 
-| QAS-05   | Cache 솔루션의 데이터 정확성                                 |
-| -------- | ------------------------------------------------------------ |
+|  QAS-05  | Cache 솔루션의 데이터 정확성                                 |
+| :------: | ------------------------------------------------------------ |
 | 품질속성 | 정확성                                                       |
-| 설명     | Cache 솔루션은 같은 키에 대해서는 같은 값을 유효 TTL 이내 99.999999999 % 제공한다. |
-| 자극     | 물류시스템사용자 김경환 프로                                 |
-| 환경     | 물류시스템이 Cache 솔루션과 함께 정상적으로 서비스하는 중    |
-| 반응     | 같은 키을 가진 데이터에 대해 일관된 결과를 제공한다.         |
-| 측정     | `hit ratio = Total number of cache hits / (Total Number of cache hits + Number of cache misses` |
+|   설명   | Cache 솔루션은 같은 키에 대해서는 같은 값을 유효 TTL 이내 100 % 제공한다. |
+|   자극   | 물류시스템사용자 김경환 프로                                 |
+|   환경   | 물류시스템이 Cache 솔루션과 함께 정상적으로 서비스하는 중    |
+|   반응   | 같은 키을 가진 데이터에 대해 일관된 결과를 제공한다.         |
+|   측정   | `hit ratio = Total number of cache hits / (Total Number of cache hits + Number of cache misses` |
 
 
 
-### 2.3.6 QAS-06 Cache 솔루션의 구간 암호화
+#### 2.3.1.6 QAS-06 Cache 솔루션의 구간 암호화
 
-| QAS-06   | Cache 솔루션의 구간 암호화                                   |
-| -------- | ------------------------------------------------------------ |
+|  QAS-06  | Cache 솔루션의 구간 암호화                                   |
+| :------: | ------------------------------------------------------------ |
 | 품질속성 | 보안                                                         |
-| 설명     | 물류시스템과 Cache 솔루션 간의 통신은 TLS 기반으로 암호화하여 통신한다. |
-| 자극     | 보안부서의 통신구간 암호화 강제화                            |
-| 환경     | 물류시스템이 Cache 솔루션과 함께 정상적으로 서비스하는 중    |
-| 반응     | TLS 기반으로 물류시스템과 Cache 솔루션은 네트워크 통신한다.  |
-| 측정     | TLS1.3 기반 통신구간 암호화                                  |
+|   설명   | 물류시스템과 Cache 솔루션 간의 통신은 TLS 기반으로 암호화하여 통신한다. |
+|   자극   | 보안부서의 통신구간 암호화 강제화                            |
+|   환경   | 물류시스템이 Cache 솔루션과 함께 정상적으로 서비스하는 중    |
+|   반응   | TLS 기반으로 물류시스템과 Cache 솔루션은 네트워크 통신한다.  |
+|   측정   | TLS1.3 기반 통신구간 암호화                                  |
 
 
 
-### 2.3.7 QAS-07 Cache 솔루션의 유지보수 용이성
+#### 2.3.1.7 QAS-07 Cache 솔루션의 유지보수 용이성
 
 | QAS-07   | Cache 솔루션의 유지보수 용이성                               |
 | -------- | ------------------------------------------------------------ |
 | 품질속성 | 유지보수성                                                   |
-| 설명     | Cache 솔루션에 새로운 Cache 알고리즘(LRU)을 추가하면 <br/>2개월 이내 고급개발자 4MM 로 개발한다.<br/> |
+| 설명     | Cache 솔루션에 새로운 Cache 알고리즘(LRU)을 추가하면 <br/>2개월 이내 고급개발자 4MM 로 개발한다. |
 | 자극     | 새로운 Cache 알고리즘(LRU) 추가                              |
 | 환경     | 물류시스템이 Cache 솔루션과 함께 정상적으로 서비스하는 중    |
 | 반응     | Cache 솔루션은 Cache 알고리즘(LRU) 를 추가한다. 추가 시, 他 알고리즘에 영향을 미치지 않는다. |
-| 측정     |                                                              |
+| 측정     | 새로운 Cache 알고리즘 추가 후 기존 Cache 알고리즘 동작 이상 없음 확인 |
 
 
 
-### 2.3.8 QAS-08 Cache 솔루션의 정확성
+#### 2.3.1.8 QAS-08 Cache 솔루션의 정확성
 
-| QAS-08   | Cache 솔루션의 정확성                                        |
-| -------- | ------------------------------------------------------------ |
+|  QAS-08  | Cache 솔루션의 정확성                                        |
+| :------: | ------------------------------------------------------------ |
 | 품질속성 | 안정성                                                       |
-| 설명     | Cache 솔루션은 배송상태의 키 A 인 캐시에 대해 배송상태 데이터를 물류시스템에게 99.999999999 % 제공한다. |
+|   설명   | Cache 솔루션은 배송상태의 키 A 인 캐시에 대해 배송상태 데이터를 물류시스템에게 100 % 제공한다. |
+|   자극   | 물류시스템사용자 김경환 프로                                 |
+|   환경   | 물류시스템이 Cache 솔루션과 함께 정상적으로 서비스하는 중    |
+|   반응   | Cache에 저장된 배송상태의 키 A에 대해 유효 TTL 동안 데이터를 제공한다. |
+|   측정   | `hit ratio = Total number of cache hits / (Total Number of cache hits + Number of cache misses` |
+
+
+
+#### 2.3.1.9 QAS-09 Cache 솔루션의 가용성
+
+| QAS-09   | Cache 솔루션의 가용성                                        |
+| -------- | ------------------------------------------------------------ |
+| 품질속성 | 가용성                                                       |
+| 설명     | Infra가 확보되어 있는 환경에서 Cache 솔루션 담당자가 Cache 노드를 증설하는 경우 시스템 중단 없이 60분 이내에 처리한다. |
+| 자극     | Cache 솔루션의 노드 증설 시도                                |
+| 대상     | Cache 솔루션 클러스터                                        |
+| 환경     | 물류시스템이 Cache 솔루션과 함께 정상적으로 서비스하는 중    |
+| 반응     | 신규 Cache 노드가 Cache 솔루션 클러스터에 포함               |
+| 측정     | 노드 추가 결정 시점부터 60분 이내 신규 Cache 노드가 추가되어 서비스한다. |
+
+
+
+#### 2.3.1.10 QAS-10 노드 장애 시 Cache 유실 방지
+
+| QAS-10   | 노드 장애 시 Cache 유실 방지                                 |
+| -------- | ------------------------------------------------------------ |
+| 품질속성 | 신뢰성                                                       |
+| 설명     | Cache 솔루션이 여러 개의 노드로 구성하고, 임의의 한 노드에서 장애가 발생하더라도 Cache는 유실되지 않는다. |
+| 자극     | Cache 솔루션 클러스터 중 임의의 한 개 노드에 장애            |
+| 대상     | Cache 솔루션 클러스터                                        |
+| 환경     | 물류시스템이 Cache 솔루션과 함께 정상적으로 서비스하는 중    |
+| 반응     | 임의의 한 개 노드에 장애가 발생, 나머지 Cache 솔루션 클러스터에서 정상적으로 서비스 |
+| 측정     | 장애 발생 전 후, 유효 Cache 의 개수와 내용이  100% 일치      |
+
+
+
+
+
+### 2.3.2 고객사 물류 시스템에 대한 품질 요구사항
+
+고객사 물류시스템에 대한 품질 요구사항은 다음과 같다.
+
+| ID     | 품질속성 | 품질속성 상세화                                  | 품질속성 시나리오                                            | 중요도 | 난이도 | System Feature ID             |
+| ------ | -------- | ------------------------------------------------ | ------------------------------------------------------------ | ------ | ------ | ----------------------------- |
+| QAS-11 | 성능     | 고객사 물류시스템의 응답속도                     | 물류시스템사용자 김경환 프로가 3,600 초 이내 조회한 운송장번호 A 를 다시 조회하면 <br/>Cache 솔루션에 저장된 데이터를 기반으로 1,000 ms 이내 운송장번호에 대한 배송상태를 확인한다. | 상     | 상     | SF-01,<br />SF-02             |
+| QAS-12 | 성능     | 고객사 물류시스템의 응답보장                     | 물류시스템사용자 김경환 프로가 Cache에 없는 운송장번호 A의 배송상태를 조회하면, <br/>운송장번호 A의 배송상태는 Cache에 저장되고 김경환 프로에게 배송상태를 제공한다.<br/>1초 후, 김채이 프로가 운송장번호 A 를 조회하면 Cache에 저장된 <br/>운송장번호 A의 배송상태를 이용하여 1,000 ms 이내 배송상태를 제공한다. | 상     | 상     | SF-01,<br />SF-02,<br />SF-03 |
+| QAS-13 | 정확성   | 고객사 물류시스템의 요청 기능에 대한 동작 정확성 | 1,000 명의 물류시스템사용자가 동시에 운송장번호와 배송상태를 조회하면 동일한 운송장번호와 <br/>그 배송상태는 Cache 솔루션에 저장된 데이터를 기반으로 응답하며 <br/>사용자 김채이 프로가 요청한 기능에 대해 100% 정확하게 동작한다. | 상     | 중     | SF-01,<br />SF-02             |
+
+
+
+#### 2.3.2.1 QAS-11 고객사 물류시스템의 응답속도
+
+| QAS-11   | 고객사 물류시스템의 응답속도                                 |
+| -------- | ------------------------------------------------------------ |
+| 품질속성 | 성능                                                         |
+| 설명     | 물류시스템사용자 김경환 프로가 3,600 초 이내 조회한 운송장번호 A 를 다시 조회하면 <br/>Cache 솔루션에 저장된 데이터를 기반으로 1,000 ms 이내 운송장번호 A에 대한 배송상태를 확인한다. |
 | 자극     | 물류시스템사용자 김경환 프로                                 |
 | 환경     | 물류시스템이 Cache 솔루션과 함께 정상적으로 서비스하는 중    |
-| 반응     | Cache에 저장된 배송상태의 키 A에 대해 유효 TTL 동안 데이터를 제공한다. |
-| 측정     | `hit ratio = Total number of cache hits / (Total Number of cache hits + Number of cache misses` |
+| 반응     | Cache 솔루션이 Cached 데이터를 물류시스템에 전송한다.        |
+| 측정     | [요청 처리 속도] = [물류시스템사용자 김경환 프로가 요청한 시각] - [물류시스템WEB서버의 Access Log에 Response 기록한 시각] |
+
+
+
+#### 2.3.2.2 QAS-12 고객사 물류시스템의 응답보장
+
+| QAS-12   | 고객사 물류시스템의 응답보장                                 |
+| -------- | ------------------------------------------------------------ |
+| 품질속성 | 성능                                                         |
+| 설명     | 물류시스템사용자 김경환 프로가 Cache에 없는 운송장번호 A의 배송상태를 조회하면, <br/>운송장번호 A의 배송상태는 Cache에 저장되고 김경환 프로에게 배송상태를 제공한다.<br/>3초 후, 김채이 프로가 운송장번호 A 를 조회하면 Cache에 저장된 <br/>운송장번호 A의 배송상태를 이용하여 1,000 ms 이내 배송상태를 제공한다. |
+| 자극     | 물류시스템사용자 김경환 프로                                 |
+| 환경     | 물류시스템이 Cache 솔루션과 함께 정상적으로 서비스하는 중    |
+| 반응     | 물류시스템이 조회한 운송장번호A를 물류시스템사용자 김경환 프로에게 전달하고, Cache 솔루션에 운송장번호A를 저장하도록 한다. |
+| 측정     | [트래픽 처리 속도] < 1,000 ms                                |
+| 제약     | -                                                            |
+
+
+
+#### 2.3.2.3 QAS-13 고객사 물류시스템의 요청 기능에 대한 동작 정확성
+
+| QAS-13   | 고객사 물류시스템의 요청 기능에 대한 동작 정확성             |
+| -------- | ------------------------------------------------------------ |
+| 품질속성 | 정확성                                                       |
+| 설명     | 1,000 명의 물류시스템사용자가 동시에 운송장번호와 배송상태를 조회하면 동일한 운송장번호와 <br/>그 배송상태는 Cache 솔루션에 저장된 데이터를 기반으로 응답하며 <br/>사용자 김채이 프로가 요청한 기능에 대해 100% 정확하게 동작한다. |
+| 자극     | 100,000 명의 물류시스템사용자                                |
+| 환경     | 물류시스템이 Cache 솔루션과 함께 정상적으로 서비스하는 중    |
+| 반응     | 물류시스템은 운송장번호와 배송상태 정보에 대해 1차적으로 Cache 솔루션을 확인하고, 없으면 Database와 API를 조회한다. 조회된 데이터는 물류시스템 사용자에게 전달하고, Cache 솔루션에 전달하여 저장하도록 지시한다. |
+| 측정     | [기대한결과응답횟수] / [전체요청회수] * 100                  |
+| 제약     | -                                                            |
 
 
 
@@ -634,18 +980,34 @@ Cache 솔루션의 특징인 성능과 안정성을 부하분산기 Apache jMete
 
 아키텍처 제약사항은 다음 2 가지이다.
 
-| ID    | 설명                                              |
-| ----- | ------------------------------------------------- |
-| CR-01 | OS는 Linux 중 Ubuntu LTS 20.04 버전으로 한정한다. |
-| CR-02 | 언어는 Golang으로 구현한다.                       |
+| ID    | 설명                                                 |
+| ----- | ---------------------------------------------------- |
+| CR-01 | OS는 Linux 중 Ubuntu LTS 20.04 버전으로 한정한다.    |
+| CR-02 | Cache 솔루션에 대한 개발 언어는 Golang으로 구현한다. |
 
 
+
+CR-02 에서 개발 언어 Golang이 선택된 내용은 "별첨. 4. Cache 솔루션 개발 언어" 를 참고한다.
 
 # 3. 아키텍처 설계문제 분석
 
 ## 3.1 아키텍처 드라이버
 
 > 설계 핵심요구사항 선정, 선정사유 설명
+
+| ID    | 품질속성<br />상세화                             | 품질 요구사항                                                | 중요도 | 난이도 | QAS<br />ID         |
+| ----- | ------------------------------------------------ | ------------------------------------------------------------ | ------ | ------ | ------------------- |
+| AD-01 | Cache 솔루션의 응답속도                          | Cache 솔루션은 XX Byte 크기 Key와 XX Byte 크기 Value 의 Cache 를 10 TPS, <br />1개의 Cache 당 평균 30 ms(millisecond) 이내에 응답한다. | 상     | 상     | QAS-01,<br />QAS-02 |
+| AD-02 | Cache 솔루션의 응답보장                          | Cache 솔루션은  XX Byte 크기 Key와 XX Byte 크기 Value 의 Cache 를 12시간 동안 1,000 TPS, 1개의 Cache 당 평균 50 ms(millisecond) 이내에 응답한다. | 상     | 중     | QAS-02,<br />QAS-03 |
+| AD-03 | Cache 솔루션의  알고리즘 변경 용이               | Cache 솔루션는 운영 중 Cache를 유지하는 기간을 관리하는 알고리즘이 변경되면<br />정책 변경 즉시, 새로운 알고리즘 정책으로 Cache 를 관리한다. | 상     | 중     | QAS-04              |
+| AD-04 | Cache 솔루션의 데이터 정확성                     | 사용자가 Cache 솔루션에 Key로 "empid_26751, Value로 "김경환프로" Cache의 SET을 요청하여 성공으로 응답 받은 경우, 사용자가 Cache 솔루션에 Key "empid_26751" 인 Cache의 GET을 요청하는 경우, Value "김경환프로" 로  100% 동일하게 응답한다. | 중     | 상     | QAS-05,<br />QAS-07 |
+| AD-05 | Cache 솔루션의 구간 암호화                       | Cache 솔루션과 Cache Clinet 간의 통신 중 TCP 기반으로 인 경우 TLS 1.3 규격 기반으로 암호화하여 통신한다. | 중     | 중     | QAS-06              |
+| AD-06 | Cache 솔루션의 유지보수 용이성                   | Cache 솔루션에 새로운 Cache 알고리즘(LRU, Least Recent Used)이 추가하면 2개월 이내 Golang 언어에 대한 경력 5년 이상의 개발자로 4MM로 개발한다. | 중     | 중     | QAS-07              |
+| AD-07 | Cache 솔루션의 가용성                            | Infra가 확보되어 있는 환경에서 Cache 솔루션 담당자가 Cache 노드를 증설하는 경우 시스템 중단 없이 60분 이내에 처리한다. | 중     | 중     | QAS-08              |
+| AD-08 | 노드 장애 시 Cache 유실 방지                     | Cache 솔루션이 여러 개의 노드로 구성하고, 임의의 한 노드에서 장애가 발생하더라도 Cache는 유실되지 않는다. | 상     | 중     | QAS-09              |
+| AD-09 | 고객사 물류시스템의 응답속도                     | 물류시스템사용자 김경환 프로가 3,600 초 이내 조회한 운송장번호 A 를 다시 조회하면 Cache 솔루션에 저장된 데이터를 기반으로 1,000 ms 이내 운송장번호 A에 대한 배송상태를 확인한다. | 상     | 상     | QAS-11              |
+| AD-10 | 고객사 물류시스템의 응답보장                     | 물류시스템사용자 김경환 프로가 Cache에 없는 운송장번호 A의 배송상태를 조회하면, <br/>운송장번호 A의 배송상태는 Cache에 저장되고 김경환 프로에게 배송상태를 제공한다.<br/>3초 후, 김채이 프로가 운송장번호 A 를 조회하면 Cache에 저장된 <br/>운송장번호 A의 배송상태를 이용하여 1,000 ms 이내 배송상태를 제공한다. | 상     | 상     | QAS-12              |
+| AD-11 | 고객사 물류시스템의 요청 기능에 대한 동작 정확성 | 1,000 명의 물류시스템사용자가 동시에 운송장번호와 배송상태를 조회하면 동일한 운송장번호와 <br/>그 배송상태는 Cache 솔루션에 저장된 데이터를 기반으로 응답하며 <br/>사용자 김채이 프로가 요청한 기능에 대해 100% 정확하게 동작한다. | 상     | 중     | QAS-13              |
 
 
 
@@ -656,6 +1018,458 @@ Cache 솔루션의 특징인 성능과 안정성을 부하분산기 Apache jMete
 > 아키텍처 스타일 및 패턴 활용 계획
 >
 > 뷰/절차 활용 계획
+
+### 3.2.1 아키텍처 설계 문제 분석표
+
+|                설계문제                |                    아키텍처 드라이버                    |                      아키텍처 설계 전략                      | 이유<br />(이득/비용/위험요인 고려사항 포함) |
+| :------------------------------------: | :-----------------------------------------------------: | :----------------------------------------------------------: | :------------------------------------------: |
+|      ISSUE01. Cache솔루션의 성능       |             AD-01. Cache 솔루션의 응답속도              |              AS-01. Cache 를 보관하는 자료 구조              |                                              |
+|                                        |             AD-02. Cache 솔루션의 응답보장              |         AS-02. 요청에 대하여 동기화 및 비동기화 응답         |                                              |
+|                                        |                                                         |              AS-03. 요청에 대한 응답 코드 정의               |                                              |
+|     ISSUE02. Cache솔루션의 정확성      |           AD-04.Cache 솔루션의 데이터 정확성            |                            AS-04.                            |                                              |
+|                                        |                                                         |                  AS-05. Cache 의 만료 정책                   |                                              |
+|     ISSUE03. Cache솔루션의 신뢰성      |            AD-05. Cache 솔루션의 구간 암호화            |             AS-06. TCP 통신 시, TLS 기반 암호화              |                                              |
+|                                        |           AD-08. 노드 장애 시 Cache 유실 방지           |             AS-07. Node에 대한 Replication 구성              |                                              |
+| ISSUE04. Cache솔루션의 노드 확장용이성 |              AD-07. Cache 솔루션의 가용성               |           AS-08. Cache 솔루션에 대한 클러스터 구성           |                                              |
+|                                        |                                                         |               AS-09. Proxy를 활용한 Cache 분산               |                                              |
+| ISSUE05. Cache솔루션의 기능 변경용이성 |        AD-03. Cache 솔루션의  알고리즘 변경 용이        |   AS-10. Strategy Pattern을 이용한 알고리즘 캡슐화 및 교환   |                                              |
+|                                        |          AD-06. Cache 솔루션의 유지보수 용이성          |                            AS-11.                            |                                              |
+|   ISSUE06. 고객사 물류시스템의 성능    |           AD-09. 고객사 물류시스템의 응답속도           | AS-12. 근 실시간(Near Realtime)으로 배송상태조회에 대한 업무 프로세스 변경 |                                              |
+|                                        |                                                         | AS-13. 조회 빈도가 높은 업무 특성을 고려한 Cache솔루션과 Data Store의 배치 |                                              |
+|                                        |           AD-10. 고객사 물류시스템의 응답보장           |                            AS-14.                            |                                              |
+|  ISSUE07. 고객사 물류시스템의 정확성   | AD-11. 고객사 물류시스템의 요청 기능에 대한 동작 정확성 | AS-15. Cache를 조회 할 때, Key의 데이터 타입은 문자열, 비교 방법은 동등성(Equaliy) |                                              |
+
+
+
+다음은 위 설계 문제 분석표에 따른 아키텍처 설계 전략 이다. 
+
+아키텍처 설계 전략은 설계 문제, 아키텍처 드라이버, 설계 문제를 해결하는 설계 근거 그리고 위험요인, 고려사항 순으로 필요에 따라 구성 한다. 
+
+
+
+### 3.2.2 AS-01. Cache 를 보관하는 자료 구조
+
+- 설계 문제
+  - ISSUE01. Cache솔루션의 성능
+- 아키텍처 드라이버
+  - AD-01. Cache 솔루션의 응답속도
+- 설계 문제를 해결하는 설계 근거
+
+Cache를 저장하는 자료 구조에 대하여,  Big-O 표기법으로 Array, Slice, List, Map의 추가, 삭제, 읽기 동작에 성능 비교 자료 이다.
+
+| 동작 |    Array, Slice     |        List         |        Map        |
+| :--: | :-----------------: | :-----------------: | :---------------: |
+| 추가 |        O(N)         |        O(1)         |       O(1)        |
+| 삭제 |        O(N)         |        O(1)         |       O(1)        |
+| 읽기 | O(1) - Index의 접근 | O(N) - Index로 접근 | O(N) - Key로 접근 |
+
+Map은  Key와 Value의 쌍으로만 동작하는 특징을 갖는다.  그리고 Cache 는 Map과 마찬가지로 Key 와 Value 로 구성되는 특징을 갖는다. 동일한 Key를 가진 Cache를 추가하는 경우, Map 자료구조의 특징에 의해 최근에 추가되는 Cache가 남게 된다. 따라서 동일한 Key를 갖는 Cache를 처리하는 기능을 Map 자료구조의 특징으로 만족 시킨다.
+
+Array, Slice 그리고 List에 비해  Map은 상대적으로 Memory를 적게 소모한다. Array, Slice, List 는 구성요소의 선 후 자료구조에 대해 연결하기 위하여 메모리 주소를 갖는 변수가 별도로 필요하다.
+
+따라서 Cache를 저장하는 자료구조는 Map을 선택한다.
+
+- 위험 요인
+  - Map은 Index를 사용해서 접근할 수 없고 입력한 순서가 보장되지 않는다. 
+
+- 고려 사항
+  - 입력한 순서에 대한 유효TTL 처리를 위한 별도 처리가 필요하다.
+  - 읽기 동작 시, Key 가 존재하지 않는 경우에 대하여 응답에 대한 정의가 필요하다.
+
+
+
+### 3.2.3 AS-02. 요청에 대하여 동기화 및 비동기화 응답 
+
+- 설계 문제
+  - ISSUE01. Cache솔루션의 성능
+- 아키텍처 드라이버
+  - AD-02. Cache 솔루션의 응답보장
+- 설계 문제를 해결하는 설계 근거
+
+Cache 동작에 대해 동기 및 비동기 처리를 각각 지원 한다.
+
+Cache 조회에 대해서는 동기 및 비동기 처리를 지원한다. Cache 조회에 대한 동기 및 비동기 처리를 구분하는 요소는 Cache 크기와 조회 건 수이다. 
+다음과 같이 동기 및 비동기 처리에 대해 구분한다.
+
+|  항목  |  Cache 크기   |   건 수   |
+| :----: | :-----------: | :-------: |
+|  동기  | 100 Byte 이하 |   1 건    |
+| 비동기 | 100 Byte 초과 | 1 건 초과 |
+
+Cache 저장은 동기 응답만을 지원한다. Cache 솔루션에 Cache 저장에 대한 응답을 동기로 확인하는 것은 **Hit Ratio**와 밀접한 관련이 있다. Cache솔루션에 Cache 저장 완료 후 조회를 하여 **Hit Ratio**를 높이도록 한다. 
+
+Cache 삭제는 동기 응답만을 지원한다. Cahce 자료구조에 TTL 변수와 삭제Flag 변수를 고려한다.
+
+|   항목   |                     설명                     |                             비교                             |
+| :------: | :------------------------------------------: | :----------------------------------------------------------: |
+|   TTL    |  Cache에 대한 유효시간을 관리하는 변수이다.  |         초 단위로 Cache에 대한 유효시간을 관리한다.          |
+| 삭제Flag | Cahce에 대하여 삭제여부를 관리하는 변수이다. | DEL 명령어를 통해 Cache를 삭제하는 경우, Mark 처리한다.<br />별도의 쓰레드를 통해 Mark된 Cache에 대해 삭제한다. |
+
+- 위험 요인
+  - 비동기 처리 시, Cache 크기가 크고 다 수의 건수를 조회하면 Cache 솔루션과 Cache Client간 네트워크 대역폭에 영향을 미친다. 또한 Cache Client의 컴퓨팅 자원(CPU와 Memroy)가 Cache 처리를 위해 할당된다. 따라서 타 프로세스가 일시적으로 멈추는 등의 영향을 받는다.  
+
+
+- 고려 사항
+  - 비동기 처리 시, 10 건 이상 조회 하면 Cursor 기반의 Paging 처리를 지원하여 Cache를 연속적으로 처리한다.
+
+
+
+
+### 3.2.4 AS-03. 요청에 대한 응답 코드 정의
+
+- 설계 문제
+  - ISSUE01. Cache솔루션의 성능
+- 아키텍처 드라이버
+  - AD-02. Cache 솔루션의 응답보장
+- 설계 문제를 해결하는 설계 근거
+
+Cache Client의 요청에 대하여 정확한 커뮤니케이션을 위해 응답에 결과 이 외 응답코드를 함께 전달한다. 
+
+응답코드를 사용하면서 얻는 장점은 다음과 같다. 
+
+- 응답코드로 인해 응답이 성공인지 실패인지 또한, 구체적으로 어떤 성공인지 어떤 실패인지를 자세하게 알 수 있다.
+- Cache Client에서 응답 코드에 따른 처리 로직을 구현 할 수 있다.
+
+응답코드를 사용하면서 얻는 단점은 다음과 같다.
+
+- 응답의 Size가 응답코드가 포함 되면서 커진다.
+
+- 고려 사항
+  - 매우 잘 정리된 형식인 HTTP 상태코드를 기반으로 응답코드를 정의한다.
+    - 별첨. 5. HTTP 상태코드을 참조한다.
+
+  - 응답코드를 정상적인 응답(2XX), Cache자원이없는경우 응답(4XX), Cache솔루션에러응답(5XX)으로 분류한다. 
+
+
+
+
+### 3.2.5 AS-04. .....
+
+- 설계 문제
+  - 
+- 아키텍처 드라이버
+  - 
+- 설계 문제를 해결하는 설계 근거
+
+
+
+- 위험 요인
+
+
+
+- 고려 사항
+
+
+
+### 3.2.6 AS-05. Cache의 만료 정책
+
+- 설계 문제
+  - ISSUE02. Cache솔루션의 정확성
+- 아키텍처 드라이버
+  - AD-04.Cache 솔루션의 데이터 정확성
+- 설계 문제를 해결하는 설계 근거
+
+Cache솔루션은 Database 또는 Object Storage(이하 DB) 를 대신하여 제한된 메모리에 자주 사용되는 데이터를 두고 Client로부터의 요청에 빠른 응답을 위한 목적으로 사용된다. Cache솔루션에서 보관하는 데이터는 임시적인 성격을 갖는다. 영구적으로 보관되는 Database 또는 Object Storage에서 데이터 A가 변경되면 Cache솔루션에서 보관하는 데이터 A의 Cache는 즉시 가치를 잃게 된다.
+
+Cache의 유효성에 대해 다음과 같은 방법으로 보장한다.
+
+1. DB에서 데이터 A가 변경되면 Cache솔루션에 변경된 데이터 A로 다시 SET 한다.
+2. Cache솔루션에서 Cache를 보관하는 자료구조에 TTL(Time To Live) 변수를 두고 Cache에 대한 만료 정책을 사용한다. TTL 변수의 값이 0으로 되면 해당 Cache는 더이상 유효하지 않다.
+
+- 위험 요인
+  - Cache Stampede 현상이 발생할 가능성이 있다. TTL이 0으로 되면 이 Cache를 보고 있는 많은 애플리케이션들이 동시에 Cache를 갱신하기 위하여 DB로 요청을 한다. 따라서 DB에 Deplicate Read 현상과 읽어온 값을 쓰기 위해 Cache솔루션에 Duplicate Write 현상이 발생한다. 
+    전체 시스템의 처리량이 느려질 뿐만 아니라 불필요한 요청의 폭주로 장애 발생 가능성이 있다.
+
+
+**Cache Stampede 현상**
+
+![Cache_CacheStampede현상 drawio](https://user-images.githubusercontent.com/26420767/186102727-babe2800-349c-44df-8123-55b7084f67b6.png)
+
+- 고려 사항
+  - Cache Stampede 현상을 해결하기 위해 PER(Probablistic Early Recomputation) 알고리즘 도입을 고려한다. PER 알고리즘은 Cache의 TTL이 실제로 만료되기 전에 일정 확률로 Cache를 갱신하는 방법이다. DB에서 Key가 완전히 만료되기 전에 데이터를 먼저 읽어오게 함으로써 Cache Stampede 현상을 막는다.
+
+
+**Probablistic Early Recomputation 알고리즘**
+
+```go
+def fetch_aot(key, expiry_gap_ms):
+    ttl_ms = cache.pttl(key)	// pttl은 millisecond 단위
+    
+    if tttl_mx - (random() * expiry_gap_ms) > 0:
+        return cache.get(key)
+        
+    return nil
+    
+// Usage
+fetch_aot('foo', 20000)
+```
+
+
+
+### 3.2.7 AS-06. TCP 통신 시, TLS 기반 암호화 
+
+- 설계 문제
+  - ISSUE03. Cache솔루션의 신뢰성
+- 아키텍처 드라이버
+  - AD-05. Cache 솔루션의 구간 암호화
+- 설계 문제를 해결하는 설계 근거
+
+Unix Socket 통신을 제외한 TCP, UDP 통신은 네트워크를 기반으로 한다. 
+네트워크를 통한 커뮤니케이션은 다음과 같은 위험이 있다.
+
+|                   항목                   |                             내용                             |         비고         |
+| :--------------------------------------: | :----------------------------------------------------------: | :------------------: |
+|                   도청                   | 통신 중 패킷이 부정한 방법으로 복사되어서 개인 정보를 도둑 맞는 것 |        암호화        |
+|                내용 변경                 | 통신 중 패킷을 도둑 맞아서 정보가 부정한 방법으로 변경되는 것 |  암호화 및 전자서명  |
+|               부정 액세스                |          다른 사람의 컴퓨터에 허가 없이 침입하는 것          |    인증 및 방화벽    |
+| Dos 공격<br />(Denial of Service Attack) | 서버 등에 모두 처리 할 수 없는 양의 패킷을 보내서 기능을 마비시키는 것 |    방화벽 및 WAF     |
+|          컴퓨터 바이러스의 침입          |   컴퓨터에 위해를 가하는 목적으로 만들어진 프로그램의 침입   | WAF 및 백신 프로그램 |
+
+ 
+
+위험으로부터 보호하는 기술은 다음과 같다. 
+
+|   항목   | 내용                                                         |     비고      |
+| :------: | :----------------------------------------------------------- | :-----------: |
+|  암호화  | - 데이터를 어떤 규칙을 근거로 가공하고, 제 3자가 쉽게 읽을 수 없도록 하는 것 | TLS, SSL, SSH |
+| 전자서명 | - 데이터가 변경되지 않았는지를 판단하는 장치<br />- 데이터를 특수한 방법으로 수치화하고, 이것을 암호화한 것<br />  1. 송신 측) 데이터를 특수한 방법으로 수치화<br />  2. 송신 측) 산출한 수치1을 암호화 <br />  3. 수신 측) 암호화된 수치를 복호화<br />  4. 수신측) 송신측과 같은 방법으로 데이터를 수치화하고, 1에서 얻은 수치와 동일하면 데이터가 변경되지 않았다고 판단 |               |
+|   인증   | - 정보 A가 A 사용자에게 유일하게 속하는 사실을 확인하고 이를 증명하는 행위 |               |
+|  방화벽  | - 패킷을 제어하는 기능을 갖고 있는 소프트웨어나 하드웨어     |               |
+
+위험으로부터 보호하는 기술 중 Cache솔루션이 제공함으로써 신뢰성을 높이는 기술, 통신구간에 대한 암호화를 선택한다.
+
+통신구간에 대한 암호화는 다음과 같은 방법이 있다.
+
+| 항목                                | 내용                                                       | 비고               |
+| ----------------------------------- | ---------------------------------------------------------- | ------------------ |
+| VPN<br />(Virtual Private Network)  | - 공중망의 회선을 사설망처럼 이용하는 가상 사설망          | SSL VPN, IPSec VPN |
+| 전용선                              | - 송수신 시스템 간에 송수신 시스템만을 위한 개별 전송 회선 |                    |
+| TLS<br />(Transport Layer Security) | - 모든 종류의 네트워크 트래픽에 대한 암호화 지원           | TLS 1.3 최신 버전  |
+
+통신구간에 대한 암호화 방법 중 Cache 솔루션의 기능을 통해 제공 가능한 TLS 를 선택한다.
+
+TLS에 대한 상세자료는 별첨 6. TLS를 참고한다. 
+
+- 고려 사항
+  - 신뢰성 있는 통신을 위한 TCP 기반 통신에 대해서만 통신구간 암호화로 TLS를 적용한다.
+
+
+
+
+### 3.2.8 AS-07, AS-08, AS-09
+
+- 설계 문제
+  - ISSUE03. Cache솔루션의 신뢰성
+  - ISSUE04. Cache솔루션의 노드 확장용이성
+- 아키텍처 드라이버
+  - AD-08. 노드 장애 시 Cache 유실 방지
+  - AD-07. Cache 솔루션의 가용성
+- 설계 전략
+  - AS-07. Node에 대한 Replication 구성
+  - AS-08. Cache 솔루션에 대한 클러스터 구성
+  - AS-09. Proxy를 활용한 Cache 분산
+  
+- 사전 조건
+  - Cache솔루션은 클러스터로 구성된다. 
+
+- 설계 문제를 해결하는 설계 근거
+
+클러스터는 다음 목적에 의해 시스템 구성에 사용된다.
+
+| 항목                | 내용                                                         | 비고       |
+| ------------------- | ------------------------------------------------------------ | ---------- |
+| 고가용성<br />(HA)  | - 시스템의 가용성을 높이기 위한 방법 중 하나이다. <br />- 하나의 Node에 장애가 발생하면 다른 노드가 서비스를 이어받아(FailOver) 계속해서 서비스 되도록 한다. | 장애극복   |
+| 고계산용<br />(HPC) | - 고성능의 계산 능력을 제공하기 위하여 사용된다. <br />- HPC 클러스터를 구성하는 모든 Node는 네트워크에 연결되어 상호간에 통신이 가능하므로 다수의 프로세서가 협동적으로 문제를 풀 수 있는 환경을 제공한다. | 과학계산용 |
+| 부하분산<br />(LVS) | - 대규모 서비스를 제공하기 위한 목적으로 사용되며 주로 웹서비스 등에 활용가치가 높다.<br />- 동일한 서비스를 제공하는 여러 개의 Node를 네트워크에 연결하여 Load Balancer(L4, L7) 으로 분산하여 서비스 한다. | 웹서비스   |
+
+"AD-08. 노드 장애 시 Cache 유실 방지"를 위한 설계 전략으로 고가용성(HA) 클러스터 - "AS-07. Node에 대한 Replication 구성"을 선택한다.
+
+Replication은 Master(Active)-Slave(Standby)로 구성한다.
+Master Node에 장애(Fault)가 발생하면 Slave Node가 Master로 승격하고 Active 모드로 변경한다.   
+
+![Cache_Replication drawio](https://user-images.githubusercontent.com/26420767/186146149-1d09aec4-fbf8-4218-9c5f-ca03c8cd1b93.png)
+
+Master Node의 장애를 탐지하기 위해 Slave Node는 Master Node로 Heartbeat(Master와 Slave 간 주기적인 메시지 교환)을 주기적으로 요청한다.
+
+장애 탐지를 위한 항목은 다음과 같다.
+
+|        항목         | 내용                                                         | 비고 |
+| :-----------------: | :----------------------------------------------------------- | :--: |
+| Heartbeat 요청 주기 | - 일정시간 간격으로 대상 Node에 Heartbeat를 요청하여 상태를 확인한다. |      |
+| Hearbeat 실패 횟수  | - Heartbeat가 실패하여도 수용 가능한 횟수이다.<br />- 실패 횟수를 초과하면 대상 Node에 장애가 발생한 것으로 판단한다. |      |
+
+**장애 발생 최대 시간**은 다음과 같은 수식으로 표현한다.
+$$
+장애발생최대시간 = (Heartbeat요청주기 * Heartbeat실패횟수) + 장애극복시간
+$$
+
+
+
+"AD-07. Cache 솔루션의 가용성"를 위한 설계전략으로 부하분산(LVS) 클러스터 - "AS-08. Cache 솔루션의 가용성 구성"와 "AS-09. Proxy를 활용한 Cache 분산"을 선택한다.
+
+|               항목                | 내용                                                         | 비고 |
+| :-------------------------------: | ------------------------------------------------------------ | ---- |
+| AS-08. Cache 솔루션의 가용성 구성 | - Cache클러스터를 구성하는 Node를 2개 이상 배치하고 각 Node는 서로 다른 Cache를 가지고 서비스한다. |      |
+| AS-09. Proxy를 활용한 Cache 분산  | - Proxy는 Cache의 Key를 이용한 Function으로 각 Node가 서비스하는 Cache에 대해 라우팅 서비스를 제공한다. <br />- 함수는 Cache의 Key를 Hash화 하여 언제나 동일한 값을 반환하도록 설계한다. |      |
+
+![Cache_LVS_Step1 drawio](https://user-images.githubusercontent.com/26420767/186281839-353a24d9-8e5a-4f07-8174-e9ff3f07f3c3.png)
+
+
+
+Proxy가 SPOF(Single Point Of Failure) 이므로 이중화를 통해 가용성을 확보한다. 그리고 VIP(Virtual IP)를 Client에 제공하여 한 노드의 Proxy에 장애가 발생하여도 VIP가 Take Over 하여 여분의 Proxy로 지속적인 서비스를 제공하도록 한다. Proxy 서버에서 분산을 위해 사용하는 Function은 공유하여 Proxy #1 또는 Proxy #2 에서 Key A를 Function에 Parameter로 입력하면 동일하게 Node #2로 Cache를 요청하도록 한다. 
+
+![Cache_LVS_Step2 drawio](https://user-images.githubusercontent.com/26420767/186283166-52fd81ec-9a4c-4a04-a20e-f6df06fd7992.png)
+
+
+
+위 다이어그램에 "AS-07. Node에 대한 Replication 구성" 을 적용하면 다음과 같은 아키텍처를 갖는다.
+
+![Cache_LVS_Step3 drawio](https://user-images.githubusercontent.com/26420767/186284116-4efc6116-b4a1-4ed8-b4c8-7adbd33d566c.png)
+
+ 
+
+- 고려 사항
+  - Proxy 에서 Cache클러스터에 속한 모든 Node의 정보를 관리 한다.
+  - Proxy 에서 Node의 장애 극복에 대한 코디네이션한다.
+    - 장애 극복에 대한 처리와 Client 요청에 대한 분산 처리에 대한 컨트럴타워 역할을 수행한다.
+
+
+
+### 3.2.9 AS-00. .....
+
+- 설계 문제
+  - 
+- 아키텍처 드라이버
+  - 
+- 설계 문제를 해결하는 설계 근거
+
+
+
+- 위험 요인
+
+
+
+- 고려 사항
+
+
+
+### 3.2.10 AS-00. .....
+
+- 설계 문제
+  - 
+- 아키텍처 드라이버
+  - 
+- 설계 문제를 해결하는 설계 근거
+
+
+
+- 위험 요인
+
+
+
+- 고려 사항
+
+
+
+
+
+### 3.2.10 AS-00. .....
+
+- 설계 문제
+  - 
+- 아키텍처 드라이버
+  - 
+- 설계 문제를 해결하는 설계 근거
+
+
+
+- 위험 요인
+
+
+
+- 고려 사항
+
+
+
+
+
+### 3.2.10 AS-00. .....
+
+- 설계 문제
+  - 
+- 아키텍처 드라이버
+  - 
+- 설계 문제를 해결하는 설계 근거
+
+
+
+- 위험 요인
+
+
+
+- 고려 사항
+
+
+
+### 3.2.10 AS-00. .....
+
+- 설계 문제
+  - 
+- 아키텍처 드라이버
+  - 
+- 설계 문제를 해결하는 설계 근거
+
+
+
+- 위험 요인
+
+
+
+- 고려 사항
+
+
+
+### 3.2.10 AS-00. .....
+
+- 설계 문제
+  - 
+- 아키텍처 드라이버
+  - 
+- 설계 문제를 해결하는 설계 근거
+
+
+
+- 위험 요인
+
+
+
+- 고려 사항
+
+
+
+### 3.2.10 AS-00. .....
+
+- 설계 문제
+  - 
+- 아키텍처 드라이버
+  - 
+- 설계 문제를 해결하는 설계 근거
+
+
+
+- 위험 요인
+
+
+
+- 고려 사항
+
+
+
+
+
+
+
+## 3.3 SW Stack
 
 
 
@@ -714,6 +1528,8 @@ Cache 솔루션의 특징인 성능과 안정성을 부하분산기 Apache jMete
 > 현장 활용도 점검
 
 
+
+# 6. 현장 활용
 
 # 별첨
 
@@ -788,3 +1604,260 @@ DB 설치, 백업, 가용성에 대한 부분을 사용자가 직접 관리 해�
 
 
 AWS Summit Seoul 2017 - 클라우드 기반 AWS 데이터베이스 선택 옵션 참고
+
+
+
+## 3. 고객사 물류시스템의 응답시간 선정
+
+### 3.1 Seow의 응답시간 분류
+
+인터넷 서비스 이용자의 응답시간에 따른 심리를 분석한 Seow(2008)는 응답시간을 다음과 같이 분류하였다.
+
+|   Category    |  Respone Time  | Guidelines for software design                               |
+| :-----------: | :------------: | ------------------------------------------------------------ |
+| Instantaneous |   0.2 Second   | Response time for input button: 5~100ms<br/> Time for displaying menu: 200ms |
+|   Immediate   | 0.5 ~ 1 Second | Time for turning page<br/> Expected time for page up or down |
+|  Continuous   |  2 ~ 3 Second  | Need alert information of system periodically<br/> Must give feedback if response time is over 5 second |
+|    Captive    | 7 ~ 10 Second  | Users leave the web pages                                    |
+
+
+
+### 3.2 고객사 물류 시스템 사용자의 기대 응답시간
+
+시스템 사용자 중 최근 6개월 (2022.01 ~ 2022.06) 간 상위 10명(시스템 사용율 80%)을 선정하여 시스템에 대하여 Seow의 응답시간 분
+
+류[^Seow의 응답시간 분류]와 기대 응답시간에 대해 조사하였다.  
+
+다음은 사용자의 Seow의 응답시간 분류와 기대 응답시간에 대해 조사에 대한 결과이다.
+
+|      부서      |  성명  | Seow의 응답시간 분류 | 기대 응답시간 |         비고          |
+| :------------: | :----: | :------------------: | :-----------: | :-------------------: |
+|  세포주2그룹   | 한규민 |      Immediate       |     1 초      |                       |
+|    SCM그룹     | 오소영 |      Continuous      |     2 초      |                       |
+|    분석그룹    | 정어진 |    Instantaneous     |    0.2 초     | 최대한 빠른 응답 필요 |
+|  세포주1그룹   | 설가인 |      Continuous      |     3 초      |                       |
+|  세포주1그룹   | 김지나 |      Immediate       |     1 초      |                       |
+|  공정개발그룹  | 김은솔 |      Continuous      |     2 초      |                       |
+|    SCM그룹     | 이우주 |      Continuous      |     1 초      |                       |
+|    SCM그룹     | 김영현 |      Immediate       |     1 초      |                       |
+|    분석그룹    | 김성진 |      Continuous      |     3 초      |                       |
+| 바이오분석그룹 | 이보람 |      Immediate       |     1 초      |                       |
+
+조사 결과를 바탕으로 PI 담당자가 정의한 사용자의 기대 응답시간은 **Immediate 분류에 해당하는 1 초** 이다.
+
+
+
+[^Seow의 응답시간 분류]: S. C. Seow, Designing and engineering time. Addison-Wesley, Boston, 2008.
+
+
+
+## 4. Cache 솔루션 개발 언어
+
+### 4.1 개발 언어 후보 개요
+
+개발 언어는 2022.08 기준, 가장 최신 버전으로 선택하여 BMT를 수행한다. 
+
+개발 언어에 대한 요구사항은 다음과 같다.
+
+- 객체 지향 언어
+- 다양한 플랫폼 지원 (Linux, Windows, OS X)
+- Cloud 환경과 Container 환경에 대한 지원
+- Pointer에 대한 지원
+  - Cache 데이터 구조에 대한 빠른 지원 및 메모리 주소를 통한 제어
+
+
+
+### 4.2 개발 언어 BMT
+
+### 4.2.1 개발 언어 항목별 비교
+
+|           항목            | 설명                                                         | 가중치 | 점수 | Java | C++  | golang | Python |
+| :-----------------------: | ------------------------------------------------------------ | :----: | :--: | :--: | :--: | :----: | :----: |
+| 병행성<br />(Concurrency) |                                                              |        |      |      |      |        |        |
+|    멀티코어 환경 지원     |                                                              |        |      |      |      |        |        |
+|      멀티쓰레딩 지원      |                                                              |        |      |      |      |        |        |
+|         정적언어          |                                                              |        |      |      |      |        |        |
+|          강타입           |                                                              |        |      |      |      |        |        |
+|        컴파일 언어        |                                                              |        |      |      |      |        |        |
+|       Pointer 지원        | 데이터 구조에 대한 세밀한 지원                               |        |      |      |      |        |        |
+|           성능            |                                                              |        |      |      |      |        |        |
+|  Garbage Collection 지원  |                                                              |        |      |      |      |        |        |
+|    다양한 플랫폼 지원     |                                                              |        |      |      |      |        |        |
+|      Cloud 환경 지원      |                                                              |        |      |      |      |        |        |
+|    Container 환경 지원    |                                                              |        |      |      |      |        |        |
+|         기술지원          | 국내에 활성화된 커뮤니티 또는 <br />레퍼런스가 있는 기술지원 업체 |        |      |      |      |        |        |
+|        릴리즈 주기        | 메이저 버전 릴리즈 주기 평균 1년                             |        |      |      |      |        |        |
+|                           |                                                              |        | 점수 |      |      |        |        |
+
+
+
+### 4.2.2 코드 복잡도와 Concurrency 관점 언어별 특징
+
+![코드 복잡도와 Concurrency 관점 언어별 특징](https://user-images.githubusercontent.com/26420767/183367593-7e2a1d1d-3333-438e-90f3-639539315d63.png)
+
+
+
+### 4.2.3 Code Readability와 Efficiency 관점 언어별 특징
+
+![Code Readability와 Efficiency 관점 언어별 특징](https://user-images.githubusercontent.com/26420767/183367535-5046f718-da47-415e-84ba-71c00f753e4c.png)
+
+
+
+### 4.3 golang 언어 개요
+
+#### 4.3.1 golang 정의
+
+- 명료한 문법을 가지고 있는 컴파일 언어
+  - 2009년 Google 이 제작
+  - 컴파일 속도가 빨라 인터프리터 언어처럼 사용 가능
+  - 다양한 플랫폼을 지원
+  - 문서화가 된 공통 라이브러리 지원
+- 라이선스
+  - BSD 3-clause
+
+
+
+#### 4.3.2 golang 특징
+
+| 분류   | 특징                                             | 설명                                                         |
+| ------ | ------------------------------------------------ | ------------------------------------------------------------ |
+| 언어적 | Fast Performance                                 | - 컴파일 언어로 빠른 컴파일 속도 제공                        |
+|        | Garbage Colletion                                | - 가상 머신 없이 가비지 컬랙션 제공<br />- 메모리 효율성     |
+|        | Concurrency & Scalability                        | - 언어차원에서 동시성과 병렬성(멀티코어 환경) 지원<br />- 정적타입, 강 타입포인터 연산이 존재하지 않는 포인터 지원클래스, 상속, Assertions, 오버로딩 미지원 |
+|        | 높은 생산성, 통일성                              |                                                              |
+|        | Cross Platform 지원                              | - Windows<br />- Linux<br />- OS X<br />- 모바일에서도 지원 예정<br />  - Android<br />  - iOS <br />  - https://github.com/golang/go/wiki/Mobile |
+|        | Error Checks                                     |                                                              |
+| 문법적 | No Type Inheritance                              |                                                              |
+|        | No Method or Operator Overloading                |                                                              |
+|        | No support for Pointer Arithmetic                |                                                              |
+|        | No support for Assertions                        |                                                              |
+|        | No Exceptions - instead use an error return type |                                                              |
+|        | Dependency Management                            |                                                              |
+
+
+
+#### 4.3.3 Goroutine 비동기 매커니즘
+
+Erlang에서 영향 받은 메카니즘으로 각각 병렬로 동작하며 메시지 채널을 통해 값을 주고 받는 방식으로 이벤트 처리 및 병렬 프로그래밍에 유용하다.
+
+- Unbuffered Channels
+
+<img width="556" alt="UnbufferedChannels" src="https://user-images.githubusercontent.com/26420767/183370129-6c99bf7d-7537-45b8-af53-c3b53ea7a256.png">
+
+- Buffered Channels
+
+![BufferedChannels](https://user-images.githubusercontent.com/26420767/183370351-10c7ab43-5b1b-4274-9665-3abe8f322a22.png)
+
+
+
+#### 4.3.4 Native Binary 지원
+
+다른 머신 플랫폼을 타켓으로 할 경우, 플랫폼에 맞도록 배포를 해야 한다.
+
+- VM Based Languages
+
+![VMBasedLanguages](https://user-images.githubusercontent.com/26420767/183370690-62c06462-a8d5-4f3d-8039-3d2fa6c24335.png)
+
+- golang
+
+![Golang](https://user-images.githubusercontent.com/26420767/183370767-7afa8840-55d3-40f7-b5d3-ae6e637f2c19.png)
+
+
+
+#### 4.3.5 golang 버전에 따른 출시일 및 특징
+
+| 버전 | 출시일(Release Date) | 특징                                                         |
+| ---- | -------------------- | ------------------------------------------------------------ |
+| 1.19 | 2022-08-02           | - 메모리 모델을 C++/Java/Rust 등에서 사용하는 모델과 맞춤<br />  - Atomic 값을 사용하기 쉽게 atomic.Int64 및 atomic.Pointer[T] 같은 타입 추가<br />- LoongArch 64 지원(Linux 5.19 이상)<br />- RISC-V 10% 이상 성능 개선(함수 인자 및 결과를 레지스터를 이용하여 전달 지원)<br />- 런타임에 Soft Memory Limit 지원 |
+| 1.18 | 2022-03-15           | - Generics 지원<br />- AMD64 아키텍처의 최소 대상 버전을 선택하는 GOAMD64 환경 변수 지원 |
+| 1.17 | 2021-08-16           | - unsafe.Pointer 안전 규칙을 준수하는 코드 작성 간소화 지원<br />- 슬라이스에서 배열 포인터로의 변환 |
+| 1.16 | 2021-02-16           | - module 기본 옵션 채택                                      |
+| 1.15 | 2020-08-11           |                                                              |
+| 1.14 | 2020-02-25           |                                                              |
+| 1.13 | 2019-09-03           |                                                              |
+| 1.12 | 2019-02-25           |                                                              |
+| 1.11 | 2018-08-24           | - 모듈이라는 패키지 관리 기능이 추가                         |
+| 1.10 | 2018-02-16           |                                                              |
+| 1.9  | 2017-08-24           |                                                              |
+| 1.8  | 2017-02-16           | - 32비트 MIPS 명령어 지원<br />- 컴파일러 프론트엔드 추가<br />- 가비지 컬렉션 개선<br />- Cgo의 오버헤드 개선 |
+| 1.7  | 2016-08-15           | - 컴파일 속도의 개선, 실행 퍼포먼스 향상<br />- /x/net/context 패키지의 기본 패키지화 |
+| 1.6  | 2016-02-17           | - HTTP/2가 기본으로 지원<br />- 템플릿 문법의 개선           |
+| 1.5  | 2015-08-19           | - Go 컴파일러가 Go로 작성                                    |
+| 1.4  | 2014-12-10           |                                                              |
+| 1.3  | 2014-06-18           |                                                              |
+| 1.2  | 2013-12-01           |                                                              |
+| 1.1  | 2013-05-13           |                                                              |
+
+
+
+#### 4.3.6 golang 사용사례
+
+- 솔루션 영역
+  - CockroachDB 개발에 사용 
+  - Youtube 개발에 사용
+  - Docker 개발에 사용
+  - Kubernetes(컨테이넌 관리소프트웨어) 사용
+  - Terraform 에 사용
+- 서비스 영역
+  - 국내
+    - 카카오엔터프라이즈
+    - 당근마켓
+    - 왓차
+    - 버즈빌
+  - 해외
+    - 우버
+    - 넷플릭스
+    - BBC
+
+
+
+### 4.3.7 golang 자료구조 성능 비교
+
+다음은 Big-O 표기법으로 Array, Slice, List, Map의 추가, 삭제, 읽기 동작에 성능 비교 자료 이다.
+
+| 동작 |    Array, Slice     |        List         |        Map        |
+| :--: | :-----------------: | :-----------------: | :---------------: |
+| 추가 |        O(N)         |        O(1)         |       O(1)        |
+| 삭제 |        O(N)         |        O(1)         |       O(1)        |
+| 읽기 | O(1) - Index의 접근 | O(N) - Index로 접근 | O(N) - Key로 접근 |
+
+Map은  Key와 Value의 쌍으로만 동작하기 때문에 Index를 사용해서 접근할 수 없고 입력한 순서가 보장되지 않는다. Array, Slice 그리고 List에 비해 상대적으로 Memory를 적게 소모한다.
+
+[^1,000명]: 
+
+
+
+## 5. HTTP 상태코드
+
+참고자료 : https://developer.mozilla.org/ko/docs/Web/HTTP/Status
+
+
+
+## 6. TLS
+
+
+
+## 9. 용어
+
+|             용어             | 설명                                                         |   비고   |
+| :--------------------------: | ------------------------------------------------------------ | :------: |
+|   LRU(Least Recently Used)   | - Cache 항목 추가를 위한 공간을 확보하기 위해 Cache에서 필요 없는 항목을 eviction 알고리즘<br />- 가장 오랜된 항목들을 evict 하는 알고리즘 | 알고리즘 |
+|    RTT(Round Trime Time)     | - 요청이 경과된 시간으로, Client로 응답이 올 때까지 Client에서 서버로 가는 요청 경관 시간 포함 |          |
+| SLA(Service Level Agreement) | - 사용자에 대한 수용할 수 있는 웹 서비스 요청 응답 시간을 유지하기 위해 허용되는 최대 RTT<br />- 응답시간이 SLA를 넘어서는 경우 웹 서비스 요청을 생성하는 데 수용할 수 없는 응답시간이 나타남 |          |
+|          Heartbeat           | - 정상 작동을 나태나거나 시스템의 일부를 동기화하는 주기 신호 |          |
+|                              |                                                              |          |
+|                              |                                                              |          |
+|                              |                                                              |          |
+|                              |                                                              |          |
+|                              |                                                              |          |
+|                              |                                                              |          |
+|                              |                                                              |          |
+|                              |                                                              |          |
+|                              |                                                              |          |
+|                              |                                                              |          |
+|                              |                                                              |          |
+|                              |                                                              |          |
+|                              |                                                              |          |
+|                              |                                                              |          |
+|                              |                                                              |          |
+
