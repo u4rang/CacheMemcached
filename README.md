@@ -6,16 +6,16 @@
 
 |    날짜    |             내용             | 작성자 |   비고    |
 | :--------: | :--------------------------: | :----: | :-------: |
-| 2022.03.02 |           최초작성           | 김경환 | 주제 선정 |
-| 2022.03.15 |       시스템 개요 작성       | 김경환 |           |
-| 2022.03.31 |      요구사항 정의 작성      | 김경환 |   기능    |
-| 2022.04.10 |   요구사항 정의 추가 작성    | 김경환 |  비기능   |
-| 2022.04.29 |       1차 피드백 반영        | 김경환 |           |
-| 2022.05.31 | 아키텍처 설계 문제 분석 작성 | 김경환 |           |
-| 2022.07.11 |       2차 피드백 반영        | 김경환 |           |
-| 2022.07.31 |   아키텍처 상세 설계 작성    | 김경환 |           |
-| 2022.08.26 |       3차 피드백 반영        | 김경환 |           |
-| 2022.09.02 |       4차 피드백 반영        | 김경환 |           |
+| 2022.03.02 |           최초작성           | 김삼성 | 주제 선정 |
+| 2022.03.15 |       시스템 개요 작성       | 김삼성 |           |
+| 2022.03.31 |      요구사항 정의 작성      | 김삼성 |   기능    |
+| 2022.04.10 |   요구사항 정의 추가 작성    | 김삼성 |  비기능   |
+| 2022.04.29 |       1차 피드백 반영        | 김삼성 |           |
+| 2022.05.31 | 아키텍처 설계 문제 분석 작성 | 김삼성 |           |
+| 2022.07.11 |       2차 피드백 반영        | 김삼성 |           |
+| 2022.07.31 |   아키텍처 상세 설계 작성    | 김삼성 |           |
+| 2022.08.26 |       3차 피드백 반영        | 김삼성 |           |
+| 2022.09.02 |       4차 피드백 반영        | 김삼성 |           |
 |            |                              |        |           |
 |            |                              |        |           |
 
@@ -30,6 +30,7 @@
 |             용어             | 설명                                                         |   비고   |
 | :--------------------------: | ------------------------------------------------------------ | :------: |
 |      고객사 물류시스템       | 고객사에서 연구개발 물품 및 위탁생산하는 의약품에 대한 배송상태를 조회하는 시스템 |   업무   |
+|           SDSCache           | 자체개발하는 Golang 기반의 Cache솔루션                       |  솔루션  |
 |   LRU(Least Recently Used)   | - Cache 항목 추가를 위한 공간을 확보하기 위해 Cache에서 필요 없는 항목을 eviction 알고리즘<br />- 가장 오랜된 항목들을 evict 하는 알고리즘 | 알고리즘 |
 |    RTT(Round Trime Time)     | - 요청이 경과된 시간으로, Client로 응답이 올 때까지 Client에서 서버로 가는 요청 경관 시간 포함 |          |
 | SLA(Service Level Agreement) | - 사용자에 대한 수용할 수 있는 웹 서비스 요청 응답 시간을 유지하기 위해 허용되는 최대 RTT<br />- 응답시간이 SLA를 넘어서는 경우 웹 서비스 요청을 생성하는 데 수용할 수 없는 응답시간이 나타남 |          |
@@ -56,7 +57,7 @@
 
 # Executive Message
 
-고객사 물류시스템의 문제점 해결을 위해 다음 두 가지를 집중하였습니다.
+고객사 물류시스템의 문제점 해결을 위해 다음 2 개의 사항에 집중한다.
 
 - 고객사 물류시스템의 아키텍처 변경
 - 고객사 물류시스템에서 요구하는 Cache 기능에 대해 자체 Cache  설계 및 개발, 적용
@@ -108,7 +109,7 @@
 
 2022년, IT 산업에서는 2 가지의 Opensource 이슈가 있다. 
 
-첫 번째는 Opensource 라이센스 변경 이슈 이다. 변경에 따라 사용하는 Opensource 더 이상 사용하기 불가하여 대체 솔루션으로 변경해야 하는 상황이다.  최근 사례로는 Object Storage 인 minIO 가 있다. 라이센스 변경에 따라 minIO를 사용하는 솔루션은 소스코드를 공개 해야 하는 의무가 발생하였다.50
+첫 번째는 Opensource 라이센스 변경 이슈 이다. 변경에 따라 사용하는 Opensource 더 이상 사용하기 불가하여 대체 솔루션으로 변경해야 하는 상황이다.  최근 사례로는 Object Storage 인 minIO 가 있다. 라이센스 변경에 따라 minIO를 사용하는 솔루션은 소스코드를 공개 해야 하는 의무가 발생하였다.
 
 두 번째는 프로테스트웨어 이다. 프로테스트웨어는 개발자가 스스로 자신의 코드를 훼손하는 사보타주 행위이다. 개발자가 자신의 소프트웨어를 수정할 권리가 있지만 이 같은 행동은 Opensource 생태계의 신뢰를 손상한다.
 
@@ -120,7 +121,7 @@
 | 2022년 2월 | 특정 테라폼 모듈이 라이센스 항목을 변경하여, 러시아의 침공을 인정하고 "푸틴은 멍청이(Putin khuylo!)" 라는 내용에 동의해야만 사용가능하게 만든 사건 |
 | 2022년 3월 | npm 리포지토리에 호스팅된 자바스크립트 구성요소, node-ipc 개발자가 러시아의 우크라이나 침공을 비판하기 위해 사용자의 컴퓨터에 임의로 파일을 추가하거나 삭제하는 코드를 배포하는 사건 |
 
-위와 같은 Opensource 이슈 때문에, IT컨설팅, 시스템 통합(SI) 과 IT유지보수 그리고 CSP 사업을 하는 당 사는 Opensource 기반 솔루션 중 Cache 솔루션을 선택하여 내제화(內製化)하여 고객사에 적용하고, CSP 사업에 관리형(Managed), 완전 관리형(Fully Managed) 서비스로 제공하기로 결정하였다.
+위와 같은 Opensource 이슈 때문에, IT컨설팅, 시스템 통합(SI) 과 IT유지보수 그리고 CSP 사업을 하는 당 사는 Opensource 기반 솔루션 중 SDSCache을 선택하여 내제화(內製化)하여 고객사에 적용하고, CSP 사업에 관리형(Managed), 완전 관리형(Fully Managed) 서비스로 제공하기로 결정하였다.
 
 
 
@@ -159,28 +160,30 @@ Global 선도
 
 금번 프로젝트의 Business Context는 다음과 같다.
 
-![BusinessContext](https://user-images.githubusercontent.com/26420767/183408332-44a72b13-4460-422d-84c8-28e6bacf7c71.png)
+![BusinessContext](https://user-images.githubusercontent.com/26420767/190298551-01578682-94c4-4979-a895-b6efe687af41.png)
 
 
 
-Cache 솔루션의 주요 Stakeholder와 주요 Concern는 다음과 같다.
+SDSCache의 주요 Stakeholder와 주요 Concern는 다음과 같다.
 
-![주요관심사](https://user-images.githubusercontent.com/26420767/183408469-8daad8f1-dc61-4c28-a35b-12f191e19598.png)
+![주요관심사](https://user-images.githubusercontent.com/26420767/190299433-f5c98d6e-17c9-41a3-b9f9-0f1366691a5d.png)
 
 
 
 ### 1.1.4 Business Goal
 
-Cache 솔루션이 제공됨에 따라 Stakeholder들이 기대하는 Business 목표이다.
+SDSCache에 대하여 Stakeholder들이 기대하는 Business 목표이다.
 
-|   Stakeholder    |  ID   | Statement                                                    | Importance(상, 중, 하) |
-| :--------------: | :---: | ------------------------------------------------------------ | :--------------------: |
-| 물류시스템개발자 | BG-01 | Cache 솔루션의 효율적인 대체                                 |           상           |
-| 물류시스템운영자 | BG-02 | 안정적인 운영과 Cache 솔루션 오픈소스 이슈 Hedge             |           상           |
-| 물류시스템사용자 | BG-03 | Cache 솔루션 도입으로 안정적인 서비스 기대                   |           상           |
-| CSP시스템개발자  | BG-04 | 관리형, 완전관리형 Cache 솔루션 개발                         |           중           |
-| CSP시스템운영자  | BG-05 | Cache 솔루션 오픈소스 이슈 Hedge와 Cache 솔루션에 대한 VOC 해결 |           중           |
-| CSP시스템사용자  | BG-06 | 관리형, 완전관리형 Cache 솔루션으로 관리 요소 감소 기대      |           중           |
+|                         Stakeholder                          |  ID   | Statement                                              | Importance(상, 중, 하) |
+| :----------------------------------------------------------: | :---: | ------------------------------------------------------ | :--------------------: |
+|                    고객사물류시스템개발자                    | BG-01 | SDSCache 안정적인 적용                                 |           상           |
+|                    고객사물류시스템운영자                    | BG-02 | 고객사 물류 시스템의 안정적인 운영                     |           상           |
+| 고객사물류시스템개발자,<br />고객사물류시스템운영자,<br />CSP시스템운영자 | BG-03 | SDSCache로 오픈소스 이슈 Hedge                         |           상           |
+|                    고객사물류시스템사용자                    | BG-04 | SDSCache 도입으로 안정적인 서비스 기대                 |           상           |
+|                       CSP시스템개발자                        | BG-11 | 관리형, 완전관리형 SDSCache 개발                       |           중           |
+|                       CSP시스템운영자                        | BG-12 | 안정적인 CSP 시스템 운영                               |           중           |
+|                       CSP시스템운영자                        | BG-13 | 다양한 Cache 상품 제공                                 |           상           |
+|                       CSP시스템사용자                        | BG-14 | 관리형, 완전관리형 SDSCache 기반 관리 포인트 감소 기대 |           중           |
 
 
 
@@ -190,14 +193,14 @@ Cache 솔루션이 제공됨에 따라 Stakeholder들이 기대하는 Business �
 
 #### 1.2.1.1 고객사 물류 시스템의 Software Stack
 
-|     항목     |  Software  | Version |    비고     |
-| :----------: | :--------: | :-----: | :---------: |
-|     Java     |  OpenJDK   |   1.8   | Opensource  |
-|  Framework   | SpringBoot |   2.5   | Opensource  |
-|  Framework   |    Lego    |         | 당사 솔루션 |
-| UI Framework |   Vue.js   |   2.X   | Opensource  |
-|      UI      |   UI Dev   |         | 당사 솔루션 |
-|   Database   | PostgreSQL |   10    | Opensource  |
+|     항목     |  Software  | Version |    비고    |
+| :----------: | :--------: | :-----: | :--------: |
+|     Java     |  OpenJDK   |   1.8   | Opensource |
+|  Framework   | SpringBoot |   2.5   | Opensource |
+|  Framework   |    Lego    |         | S사 솔루션 |
+| UI Framework |   Vue.js   |   2.X   | Opensource |
+|      UI      |   UI Dev   |         | S사 솔루션 |
+|   Database   | PostgreSQL |   10    | Opensource |
 
 
 
@@ -207,14 +210,17 @@ Cache 솔루션이 제공됨에 따라 Stakeholder들이 기대하는 Business �
 
 ![RUNTIME_VIEW_AS-IS_물류시스템](https://user-images.githubusercontent.com/26420767/182987494-547db422-e569-4af8-802c-f44fcb3dcb37.png)
 
-물류 시스템 내에서 Cache인 Ignite를 사용하는 기능은 공통기능 인증 및 권한, 세션 그리고 메뉴이다. 
-물류 업무에서는 Cache를 사용하지 않고 매번 데이터를 DB에서 조회한다. 따라서 물류 업무 중 조회 기능에 대해 느리다는 의견의 SR이 있다.  또한 DB에서 발생하는 Warning 메시지가 업무시간 중 빈번하게 발생한다.
+고객사 물류시스템에서 사용중인 기존 Cache Ignite로 사용하는 기능은 인증 및 권한, 세션 그리고 메뉴이다. 
+고객사 물류 업무는 시스템 구축 시 요구사항 중 업무 데이터는 DB에  저장하고 DB에서 직접 조회하는 항목이 있다. 
+따라서, 업무에서는 Cache를 사용하지 않고 매번 데이터를 DB에서 조회한다. 시간이 지나면서 일부 물류 업무의 조회 기능, 배송상태 조회에 대해 느리다는 의견의 SR이 있다.
+또한 DB에서 Exclusive Lock의 발생으로 Warning 메시지가 업무시간 중 빈번하게 고객사 물류 시스템 운영자에게 전송된다.
 
 
 
 #### 1.2.1.3 고객사 물류 시스템의 Module View
 
-다음은 공통 시스템을 제외한 물류시스템(myLogi)의 Module View 이다.
+다음은 공통 시스템을 제외한 고객사 물류 시스템(myLogi)의 Module View 이다. 
+1.2.1.2에서 언급한 문제점들이 고객사 물류 시스템 중 Delivery Module에서 발생한다. 
 
 ![MODULE_VIEW_AS-IS_물류시스템](https://user-images.githubusercontent.com/26420767/182988462-4bc61589-cecf-4bd6-8368-65e27be31c06.png)
 
@@ -222,14 +228,14 @@ Cache 솔루션이 제공됨에 따라 Stakeholder들이 기대하는 Business �
 
 #### 1.2.1.4 고객사 물류 시스템의 성능 이슈 분석
 
-고객사 물류 시스템의 배송 상태를 확인하는 기능은 다수의 사용자에 의해 조회된다. 물류 시스템은 조회가 발생할 때 마다 상품의 배송 상태에 대해 배송사가 제공하는 API를 호출하여 정보를 제공한다. 그리고 상품의 배송 정보를 저장하는 테이블에 갱신한다.
+고객사 물류 시스템의 배송 상태를 확인하는 기능은 다수의 사용자에 의해 조회된다. 고객사 물류 시스템은 사용자에 의해 조회가 발생하면 매 번 상품의 배송 상태를 배송사가 제공하는 API를 호출하여 정보를 제공한다. 그리고 상품의 배송 정보를 저장하는 테이블에 갱신한다.
 
 사용자가 배송 상태를 자주 조회하는 업무시간, 즉 오전 10시부터 오후 4시까지 다음과 같이 2가지 문제가 발생한다.
 
 | 항목 | 문제                                                         | 비고 |
 | :--: | ------------------------------------------------------------ | ---- |
-| 문1. | "사용자로 부터 배송 상태를 조회하는데, 조회가 느리다." 라는 SR이 1주일에 2 ~3회 건 정도  접수된다. |      |
-| 문2. | 물류시스템 운영담당자는 ARMS 로부터 **DML Row Lock** 에 대한 Warning 메시지를 1일 5회 이상 전달 받는다. |      |
+| 문1. | "고객사 물류 시스템 사용자로 부터 배송 상태를 조회하는데, 조회가 느리다." 라는 SR이 1주일에 2 ~3회 건 정도  접수된다. |      |
+| 문2. | 고객사 물류 시스템 운영담당자는 ARMS 로부터 **DML Row Lock** 에 대한 Warning 메시지를 1일 5회 이상 전달 받는다. |      |
 
 
 
@@ -248,11 +254,12 @@ Cache 솔루션이 제공됨에 따라 Stakeholder들이 기대하는 Business �
 Warning 메시지가 발생하는 업무는 "사용자가 외부 API(Nuxt서비스)를 조회하여 배송상태를 조회" 이다. 
 다음은 Warning 메시지가 발생하는 업무인 "배송상태조회"의 Sequence Diagram 이다.
 
-![SEQ_AS-IS_배송상태조회](https://user-images.githubusercontent.com/26420767/182987235-7654843a-88b2-4d9c-973a-93867d82d59a.png)
+![SEQ_AS-IS_배송상태조회](https://user-images.githubusercontent.com/26420767/190858293-fad0d5e8-c708-4077-9e12-485150bb9f1c.png)
 
 
 
-응답 메시지의 데이터 타입 및 크기가 문제를 발생하는지 확인하기 위해 조사하였다. 배송사에서 배송에 대한 상태정보를 조회하면 다음과 같은 배송상태 정보를 받는다.
+응답 메시지의 데이터 타입 및 크기가 문제를 발생하는지 확인하기 위해 조사하였다. 
+배송사에서 배송에 대한 상태정보를 조회하면 다음과 같은 배송상태 정보를 받는다.
 
 | 항목        | 설명           | 비고                                                         |
 | ----------- | -------------- | ------------------------------------------------------------ |
@@ -260,6 +267,8 @@ Warning 메시지가 발생하는 업무는 "사용자가 외부 API(Nuxt서비�
 | 데이터 크기 | 1500 Byte 이내 | - 예제의 크기는 962 Byte<br />- 2022년 1월부터 6월까지 사용된 배송번호에 따른 배송상태의 데이터 중 크기가 가장 큰 것은 1480 Byte |
 
 
+
+다음은 배송사로부터 받는 JSON 기반의 응답의 샘플이다.
 
 ~~~json
 {
@@ -285,27 +294,32 @@ Warning 메시지가 발생하는 업무는 "사용자가 외부 API(Nuxt서비�
 
 
 
-앞에서 정의한 2가지 문제에 대해 Sequence Diagram 으로 분석하면 다음과 같다.
+위 2 가지 문제에 대해 Sequence Diagram 에서 표현하면 다음과 같다.
 
-![SEQ_AS-IS_배송상태조회_문제점분석](https://user-images.githubusercontent.com/26420767/182991294-f62ff374-e5ad-4440-86e6-5bc9dfcf9d02.png)
+![SEQ_AS-IS_배송상태조회_문제점분석](https://user-images.githubusercontent.com/26420767/190858317-4859afbc-66b9-4866-a585-e98a78f3e0a4.png)
 
 
 
-| 항목 | 원인분석                                                     | 비고 |
-| :--: | ------------------------------------------------------------ | ---- |
-| 문1. | 배송상태를 실시간 동기 방식으로 조회 한다. <br />외부 시스템인 Nuxt의 상태 또는 네트워크 상태 등 외부 요인으로 인하여 지연이 발생한다. |      |
-| 문2. | 여러 사용자가 동시에 같은 송장번호를 조회 한다.<br /> 송장번호의 배송 상태를  갱신하기 위한 DML Row Lock 이 발생하며  시스템 자원의 불필요한 이벤트 발생과 응답속도을 지연한다. |      |
+| 항목 | 원인분석                                                     | 비고                                                         |
+| :--: | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| 문1. | 배송상태조회업무에서 Cache를 사용하지 않는다.                | 분석 설계단계에서 식약청 공시 조회 및 배송상태조회 기능에 대해<br /> Cache 기능 미사용을 업무 요건으로 정의하였다. |
+| 문2. | 배송상태를 실시간 동기 방식으로 조회 한다. <br />외부 시스템인 Nuxt의 상태 또는 네트워크 상태 등 외부 요인으로 인하여 지연이 발생한다. |                                                              |
+| 문3. | 여러 사용자가 동시에 같은 송장번호를 조회 한다.<br /> 송장번호의 배송 상태를  갱신하기 위한 DML Row Lock 이 발생하며 시스템 자원의 불필요한 이벤트 발생과 응답 속도 지연이 발생한다. | 배송상태에 대해 이력으로 관리하지 않는다.                    |
+
+
+
+DML Row Lock 이벤트가 자주 발생하는 시스템의 경우, Transaction Lock 경합이 발생하여 전체 서비스가 느려지거나 성능 상의 문제를 야기한다. 그리고 대부분의 경우 비즈니스 로직 또는 Transcation 처리 로직이 잘못 구현된 경우가 많다.
 
 
 
 #### 1.2.1.5 고객사 물류시스템에서 사용하는 Cache솔루션에 대한 요구 기능
 
-고객사 물류시스템의 업무에서 사용하는 Cache 솔루션에 대한 요구 기능은 다음과 같다.
+고객사 물류시스템의 업무에서 사용하는 SDSCache에 대한 요구 기능은 다음과 같다.
 
 |  분류  |                항목                 | 설명                                                         |
 | :----: | :---------------------------------: | ------------------------------------------------------------ |
 | 비기능 |         3 ms 이하 응답속도          | Cache의 GET, SET, DEL 동작에 대한 기대 응답속도              |
-| 비기능 |           3,000 QPS 지원            | 초당 10,000 QPS(Queries Per Second) 성능                     |
+| 비기능 |           3,000 QPS 지원            | 초당 3,000 QPS(Queries Per Second) 성능                      |
 | 비기능 |          Multi Thread 지원          | Single Thread 환경에서 시간이 오래 걸리는 동작으로 인한 Cache솔루션 전체 성능 저하 방지 |
 |  기능  |     TTL(Time To Live) 기능 지원     | Cache에 대한 시간에 의한 만료정책                            |
 |  기능  | Cache 만료정책 알고리즘의 변경 지원 | 운영 중 Cache솔루션의 메모리 사용이 100%가 되면 알고리즘에 의해 Cache를 메모리에서 삭제 |
@@ -358,7 +372,7 @@ Single Thread를 지원하는 솔루션의 문제 중 시간이 오래 걸리는
 
 ##### 1.2.1.5.5 Cache 만료정책 알고리즘의 변경 지원
 
-운영 중 Cache 솔루션의 메모리 사용이 100%가 되면 업무 요건을 분석한다. 그리고 업무 요건에 적합한 알고리즘으로 변경하도록 지원한다.
+운영 중 SDSCache의 메모리 사용이 100%가 되면 업무 요건을 분석한다. 그리고 업무 요건에 적합한 알고리즘으로 변경하도록 지원한다.
 
 
 
@@ -369,13 +383,13 @@ Single Thread를 지원하는 솔루션의 문제 중 시간이 오래 걸리는
 
 
 
-### 1.2.2 기존 Cache 솔루션 분석
+### 1.2.2 기존 SDSCache 분석
 
-2021년부터 2022년까지 지난 1 년간 오픈소스 기반 Cache솔루션에 대한 관심도와 선진 CSP 社에서 제공하는 Cache 솔루션을 조사한다. Cache의 기본적인 기능과 Cache 솔루션 별 특화된 기능을  조사한다. 
+2021년부터 2022년까지 지난 1 년간 오픈소스 기반 Cache솔루션에 대한 관심도와 선진 CSP 社에서 제공하는 SDSCache을 조사한다. Cache의 기본적인 기능과 SDSCache 별 특화된 기능을  조사한다. 
 
 
 
-#### 1.2.2.1 Cache 솔루션의 관심도에 관한 Google Trend
+#### 1.2.2.1 SDSCache의 관심도에 관한 Google Trend
 
 널리 사용되는 Cache솔루션을 조사하여 다음과 같은 목록을 도출하였다.
 
@@ -405,7 +419,7 @@ Single Thread를 지원하는 솔루션의 문제 중 시간이 오래 걸리는
 
 
 
-선진 CSP에서 사용하는 대표적인 Opensource Cache 솔루션은 **Redis**와 **Memcached** 이다.
+선진 CSP에서 사용하는 대표적인 Opensource SDSCache은 **Redis**와 **Memcached** 이다.
 
 
 
@@ -417,7 +431,7 @@ Single Thread를 지원하는 솔루션의 문제 중 시간이 오래 걸리는
 
 
 
-#### 1.2.2.4 Opensource Cache 솔루션 대표 기능 분석
+#### 1.2.2.4 Opensource SDSCache 대표 기능 분석
 
 다음은 대표적인 기능에 대한 각 솔루션이 지원하는 여부이다.
 
@@ -434,7 +448,7 @@ Single Thread를 지원하는 솔루션의 문제 중 시간이 오래 걸리는
 |          자동 장애조치가 있는 다중 가용 영역           |   아니요    |    아니요    |
 |                         지속성                         |   아니요    |    아니요    |
 
-Memcached와 Redis의 **공통점은 In Memory와 Key-Value 방식**이다. Cache 솔루션은 Memcached을 기본으로  Redis의 장점을 취하여 설계한다.
+Memcached와 Redis의 **공통점은 In Memory와 Key-Value 방식**이다. SDSCache은 Memcached을 기본으로  Redis의 장점을 취하여 설계한다.
 
 [^고급 데이터 유형]: string, set, sorted set, hashes, list
 
@@ -473,7 +487,7 @@ Memcached와 Redis의 **공통점은 In Memory와 Key-Value 방식**이다. Cach
 |  delete   |           키 삭제            |                        |
 | flush_all |         모두 비우기          |                        |
 |   stats   |          통계 보기           |                        |
-|  version  |        서버 버전 출력        |                        |
+|  version  |       솔루션 버전 출력       |                        |
 | verbosity |        로그 레벨 증가        |                        |
 |   quit    |        텔넷 세션 종료        |                        |
 
@@ -554,9 +568,9 @@ Memcached와 Redis의 **공통점은 In Memory와 Key-Value 방식**이다. Cach
 
 
 
-#### 1.2.2.7 Opensource Cache 솔루션 문제점 분석
+#### 1.2.2.7 Opensource SDSCache 문제점 분석
 
-다음은 Opensource Cache 솔루션 Memcached와 Redis 에 대한 문제점 분석이다.
+다음은 Opensource SDSCache Memcached와 Redis 에 대한 문제점 분석이다.
 
 ##### 1.2.2.7.1 Memcached의 문제점
 
@@ -718,11 +732,11 @@ DB Service 상품에 Redis 만 지원한다. 하지만 지원하는 Redis 는 Co
 
 
 
-## 1.4 Cache 솔루션 RoadMap 및 프로젝트 범위
+## 1.4 SDSCache RoadMap 및 프로젝트 범위
 
-### 1.4.1 Cache 솔루션 RoadMap
+### 1.4.1 SDSCache RoadMap
 
-Cache 솔루션은 우선 내제화한다. 내제화의 단계는 크게 Standalone 과 Cluster 단계로 구분한다. Standalone 에서는 Cache 의 기본적인 기능인 읽기, 쓰기, 삭제을 구현한다. Cluster 단계 에서는 여러 개의 노드로 구성하여 가용성 및 안정성을 확보하도록 한다. 가용성 부분에서는 Active-Standby와 Active-Active 에 대하여 단계적으로 확보한다. 그리고 CSP 사업에서 활용하도록 관리형 서비스 단계와 완전 관리형 서비스 단계로 한다.
+SDSCache은 우선 내제화한다. 내제화의 단계는 크게 Standalone 과 Cluster 단계로 구분한다. Standalone 에서는 Cache 의 기본적인 기능인 읽기, 쓰기, 삭제을 구현한다. Cluster 단계 에서는 여러 개의 노드로 구성하여 가용성 및 안정성을 확보하도록 한다. 가용성 부분에서는 Active-Standby와 Active-Active 에 대하여 단계적으로 확보한다. 그리고 CSP 사업에서 활용하도록 관리형 서비스 단계와 완전 관리형 서비스 단계로 한다.
 
 ![image-20220410234147561](https://raw.githubusercontent.com/u4rang/save-image-repo/main/img/image-20220410234147561.png)
 
@@ -734,10 +748,12 @@ Cache 솔루션은 우선 내제화한다. 내제화의 단계는 크게 Standal
 | :----------------: | :-------------------------------------------------: | :-------: |
 | 고객사 물류 시스템 | 배송 상태 조회 기능 문제 분석 및 대안 아키텍처 설계 |   포함    |
 |                    |  배송 상태 조회 기능 대안 아키텍처 적용 및 테스트   |   포함    |
-|                    |          대안 아키텍처에 Cache 솔루션 활용          |   포함    |
-|    Cache 솔루션    |          Cache 기본 기능 및 아키텍처 설계           |   포함    |
+|                    |            대안 아키텍처에 SDSCache 활용            |   포함    |
+|      SDSCache      |          Cache 기본 기능 및 아키텍처 설계           |   포함    |
 |                    |           Cache Replication 아키텍처 설계           |   포함    |
 |                    |           Cache 기본 기능 개발 및 테스트            |   포함    |
+|                    |       Cache Client 기본 기능 및 아키텍처 설계       |   포함    |
+|                    |        Cache Client 기본 기능 개발 및 테스트        |   포함    |
 |                    |        Cache Replication 기능 개발 및 테스트        |  미포함   |
 
 
@@ -746,42 +762,68 @@ Cache 솔루션은 우선 내제화한다. 내제화의 단계는 크게 Standal
 
 ## 2.1 System Overview
 
-![SystemContextDiagram](https://user-images.githubusercontent.com/26420767/183411357-35970741-dcbe-45fe-a956-41cfe1b3930d.png)
+System Context는 다음과 같이 아키텍처 재설계 영역과 설계 및 구현, 테스트 영역으로 나뉜다.
+아키텍처 재설계 영역은 고객사 물류 시스템이 대상이다. 설계 및 구현, 테스트 영역은 SDSCache와 접속 및 인터페이스를 제공하는 SDSCacheClient이 대상이다.  
+
+![SystemContext](https://user-images.githubusercontent.com/26420767/190321135-7a41f8c1-78dc-41f8-87d5-4ede668b2ac5.png)
+
+본 프로젝트에서 개발하는 Cache솔루션을 이하 문서에서는 SDSCache로 명칭한다.
 
 
 
 ### 2.1.1 External Entity
 
-|    구분    | 설명                                                         |
-| :--------: | ------------------------------------------------------------ |
-|   myLogi   | - 상품에 대한 배송 계획 수립 및 배송사에 최신 배송 상태를 조회하여 배송 상태 정보를 제공한다.<br />- 기대사항 : 사용자가 배송 계획 수립 및 배송 상태 확인을 1,000 ms 이하의 응답속도로 제공해야 한다. |
-| 신규시스템 | - 고객사의 A업무을 정보화하여 서비스를 제공한다.<br />- 기대사항 : 고객사 A 업무 담당자가 기대하는 기능을 정확하게 제공해야 한다. |
-|  SDSCache  | - 보통의 Cache 솔루션이 제공하는 GET, SET, DEL 기능을 myLogi 및 신규시스템에 제공한다. <br />- 기대사항 : Cache 솔루션은 myLogi 및 신규시스템이 기대하는 기능을 정확하게 제공해야 한다. |
+|   구분   | 설명                                                         |
+| :------: | ------------------------------------------------------------ |
+|  myLogi  | - 상품에 대한 배송 계획 수립 및 배송사에 최신 배송 상태를 조회하여 배송 상태 정보를 제공한다.<br />- 기대사항 : 사용자가 배송 계획 수립 및 배송 상태 확인을 1,000 ms 이하의 응답속도로 제공해야 한다. |
+| SDSCache | - 보통의 SDSCache이 제공하는 GET, SET, DEL, TOUCH, TTL 기능을 고객사 물류 시스템에 제공한다. <br />- 기대사항 : SDSCache은 고객사 물류 시스템이 요청하는 기능을 3ms 이내 정확하게 제공해야 한다. |
 
 
 
 ### 2.1.2 External Interface
 
-|   분류   |           구분           | 설명                                                         |
-| :------: | :----------------------: | ------------------------------------------------------------ |
-| SDSCache |      SET KEY VALUE       | - 역할 : KEY와 VALUE 저장<br />- User Interface : TCP / UDP / Unix Socket<br />- 특성<br />  - 부하 상황에서도 10 ms 이내로 전송한다.<br />  - 기존 Cache 를 대체하는 표준화된 인터페이스를 제공한다. |
-| SDSCache |         GET KEY          | - 역할 : KEY에 따른 VALUE 조회<br />- User Interface : TCP / UDP / Unix Socket<br />- 특성<br />  - 부하 상황에서도 10 ms 이내로 전송한다.<br />  - 기존 Cache 를 대체하는 표준화된 인터페이스를 제공한다. |
-| SDSCache |         DEL KEY          | - 역할 : KEY에 따른 VALUE 삭제<br />- User Interface : TCP / UDP / Unix Socket<br />- 특성<br />  - 부하 상황에서도 10 ms 이내로 전송한다.<br />  - 기존 Cache 를 대체하는 표준화된 인터페이스를 제공한다. |
-| SDSCache |    EXPIRE KEY SECOND     | - 역할 : KEY에 TTL(Time To Live)을 설정<br />- User Interface : TCP / UDP / Unix Socket<br />- 특성<br />  - 지정한 시간 이 후 Cache를 자동 삭제한다. |
-| SDSCache |         TTL KEY          | - 역할 : 남은 TTL을 초 단위로 확인<br />- User Interface : TCP / UDP / Unix Socket<br />- 특성<br />  - Cache의 유효시간을 확인한다. |
-|  myLogi  | RETRIEVE DELIVERY STATUS | - 역할 : 송장번호에 따른 배송상태 조회<br />- User Interface : REST API<br />- 특성<br />  - 외부 배송사의 API 규약에 따라 호출한다.<br />  - 외부 시스템의 환경에 따라 myLogi 서비스 품질에 영향을 미친다. |
+|   분류   |                             구분                             | 설명                                                         |
+| :------: | :----------------------------------------------------------: | ------------------------------------------------------------ |
+| SDSCache |  SET KEY FLAG EXPIRATION_SECOND VALUE_LENGTH/r/n<br />VALUE  | - 역할 : KEY와 VALUE 저장<br />- User Interface : TCP / UDP / Unix Socket<br />- 특성<br />  - 부하 상황에서도 10 ms 이내로 전송한다.<br />  - 기존 Cache 를 대체하는 표준화된 인터페이스를 제공한다. |
+| SDSCache |                           GET KEY                            | - 역할 : KEY에 따른 VALUE 조회<br />- User Interface : TCP / UDP / Unix Socket<br />- 특성<br />  - 부하 상황에서도 10 ms 이내로 전송한다.<br />  - 기존 Cache 를 대체하는 표준화된 인터페이스를 제공한다. |
+| SDSCache |                           DEL KEY                            | - 역할 : KEY에 따른 VALUE 삭제<br />- User Interface : TCP / UDP / Unix Socket<br />- 특성<br />  - 부하 상황에서도 10 ms 이내로 전송한다.<br />  - 기존 Cache 를 대체하는 표준화된 인터페이스를 제공한다. |
+| SDSCache | APPEND KEY FLAG EXPIRATION_SECOND ALUE_LENGTH/r/n<br />VALUE | - 역할 : 기존 KEY의 VALUE 뒤에 새 VALUE 추가<br />- User Interface : TCP / UDP / Unix Socket<br />- 특성<br />  - 부하 상황에서도 10 ms 이내로 전송한다.<br />  - 기존 Cache 를 대체하는 표준화된 인터페이스를 제공한다. |
+| SDSCache | PREPEND KEY FLAG EXPIRATION_SECOND ALUE_LENGTH/r/n<br />VALUE | - 역할 : 기존 KEY의 VALUE 앞에 새 VALUE 추가<br />- User Interface : TCP / UDP / Unix Socket<br />- 특성<br />  - 부하 상황에서도 10 ms 이내로 전송한다.<br />  - 기존 Cache 를 대체하는 표준화된 인터페이스를 제공한다. |
+| SDSCache |                     INCR KEY [INCR_NUM]                      | - 역할 : 양의 정수인 Value 에 대해 INCR_NUM 을 더하기<br />- User Interface : TCP / UDP / Unix Socket<br />- 특성<br />  - 부하 상황에서도 10 ms 이내로 전송한다.<br />  - 기존 Cache 를 대체하는 표준화된 인터페이스를 제공한다. |
+| SDSCache |                     DECR KEY [DECR_NUM]                      | - 역할 : 양의 정수인 Value 에 대해 INCR_NUM 을 빼기<br />- User Interface : TCP / UDP / Unix Socket<br />- 특성<br />  - 부하 상황에서도 10 ms 이내로 전송한다.<br />  - 기존 Cache 를 대체하는 표준화된 인터페이스를 제공한다. |
+| SDSCache |                          FLUSH_ALL                           | - 역할 : SDSCache의 유효한 모든 Cache를 삭제한다.<br />- User Interface : TCP / UDP / Unix Socket<br />- 특성<br />  - 부하 상황에서도 10 ms 이내로 전송한다.<br />  - 기존 Cache 를 대체하는 표준화된 인터페이스를 제공한다. |
+| SDSCache |                 TOUCH KEY EXPIRATION_SECOND                  | - 역할 : KEY에 TTL(Time To Live)을 설정<br />- User Interface : TCP / UDP / Unix Socket<br />- 특성<br />  - 지정한 시간 이 후 Cache를 자동 삭제한다. |
+| SDSCache |                           TTL KEY                            | - 역할 : 남은 TTL을 초 단위로 확인<br />- User Interface : TCP / UDP / Unix Socket<br />- 특성<br />  - Cache의 유효시간을 확인한다. |
+|  myLogi  |                   RETRIEVE DELIVERY STATUS                   | - 역할 : 송장번호에 따른 배송상태 조회<br />- User Interface : REST API<br />- 특성<br />  - 외부 배송사의 API 규약에 따라 호출한다.<br />  - 외부 시스템의 환경에 따라 고객사 물류 시스템의 서비스 품질에 영향을 미친다. |
 
 
 
 ### 2.1.3 System Feature
 
-|  ID   |                Title                |                             설명                             | 중요도 |   Biz. Goal ID    |
-| :---: | :---------------------------------: | :----------------------------------------------------------: | :----: | :---------------: |
-| SF-01 | 대량의 KEY, VALUE 조회 및 저장 기능 | 시스템이 요청하는 대량의 KEY, VALUE 조회 및 저장을 안정적으로 서비스 한다. |   상   | BG-02,<br />BG-03 |
-| SF-02 |        정확한 명령 수행 기능        | 시스템이 요청하는 명령들에 대해 유실 없이 100% 서비스 한다.  |   상   | BG-02,<br />BG-03 |
-| SF-03 |      표준화된 인터페이스 제공       | 기존 Cache를 효율적으로 대체 할 수 있도록 표준화된 인터페이스를 제공한다. |   상   | BG-01,<br />BG-05 |
-| SF-04 |          유연한 확장 기능           |     Cache 부하 상황에 따른 유연한 확장 기능을 제공한다.      |   중   | BG-04,<br />BG-06 |
-| SF-05 |       장애 발생 시 복구 기능        |      Cache 장해 사항 발생 시 빠른 복구 시간을 보장한다.      |   중   | BG-04,<br />BG-06 |
+System Feature에 대해 고객사 물류 시스템과 SDSCache로 나누어 정의한다.
+
+
+
+#### 2.1.3.1 고객사 물류 시스템에 대한 System Feature
+
+고객사 물류 시스템은 운영 중인 시스템으로 기존 아키텍처에서 Pain Point를 해결하기 위한 재설계에 대한 System Feature를 정의한다.
+
+|  ID   |                            Title                             |                             설명                             | 중요도 |               Biz. Goal ID                |
+| :---: | :----------------------------------------------------------: | :----------------------------------------------------------: | :----: | :---------------------------------------: |
+| SF-01 |           일부 조회성 업무에 대한 Cache 기능 활용            | 업무 규칙에 따라 일정 시간동안 SDSCache에 저장된 Cache를<br /> 제공하여 빠른 응답속도를 보장한다. |   상   | BG-01,<br />BG-02,<br />BG-03,<br />BG-04 |
+| SF-02 | Batch로 외부 데이터 가져와서 <br />Online에서 저장된 데이터 제공 | 업무 규칙에 따라 일정 시간동안 유효성을 가진 데이터에 대해 <br />Batch로 외부 REST API 호출하여 SDSCache, Database에 저장한다.<br />Online에서는 SDSCache와 Database에 저장된 데이터로 서비스한다. |   상   |             BG-02,<br />BG-04             |
+
+
+
+#### 2.1.3.2 SDSCache에 대한 System Feature
+
+|  ID   |                Title                |                             설명                             | 중요도 |               Biz. Goal ID                |
+| :---: | :---------------------------------: | :----------------------------------------------------------: | :----: | :---------------------------------------: |
+| SF-11 | 대량의 KEY, VALUE 조회 및 저장 기능 | 시스템이 요청하는 대량의 KEY, VALUE 조회 및 저장을 안정적으로 서비스 한다. |   상   |       BG-03,<br />BG-11,<br />BG-13       |
+| SF-12 |        정확한 명령 수행 기능        | 시스템이 요청하는 명령들에 대해 유실 없이 100% 서비스 한다.  |   상   |       BG-03,<br />BG-11,<br />BG-13       |
+| SF-13 |      표준화된 인터페이스 제공       | 기존 Cache를 효율적으로 대체 할 수 있도록 표준화된 인터페이스를 제공한다. |   상   |       BG-03,<br />BG-11,<br />BG-13       |
+| SF-14 |          유연한 확장 기능           |     Cache 부하 상황에 따른 유연한 확장 기능을 제공한다.      |   중   | BG-02,<br />BG-03,<br />BG-12,<br />BG-14 |
+| SF-15 |           장애 전파 차단            | Cluster 구성 시, 한 개 Node에 장애가 발생하여도 서비스에 영향이 없다. |   중   | BG-02,<br />BG-03,<br />BG-12,<br />BG-14 |
 
 
 
@@ -791,9 +833,66 @@ Cache 솔루션은 우선 내제화한다. 내제화의 단계는 크게 Standal
 >
 > 전체 범위와 구현 대상 범위를 구분
 
-### 2.2.1 Cache 솔루션에 대한 기능 요구사항
+### 2.2.1 고객사 물류 시스템에 대한 기능 요구사항
 
-![UseCaseDiagram_Cache](https://user-images.githubusercontent.com/26420767/183437733-eeb12eea-0744-4a9f-96d0-e55f6344e93b.png)
+![UseCaseDiagram_고객사물류시스템](https://user-images.githubusercontent.com/26420767/190331408-2ed95923-faf2-48c9-a216-3ff239edb30b.png)
+
+
+
+다음은 고객사 물류 시스템에 대한 Usecase 이다.
+
+|  ID   |       Title       |                             설명                             | 중요도 | 난이도 | System Feature ID |
+| :---: | :---------------: | :----------------------------------------------------------: | :----: | :----: | :---------------: |
+| UC-01 | 배송상태조회한다  | 고객사 물류 시스템 사용자 김삼성 프로가 상품의 송장번호로 배송상태를 조회한다. |   상   |   하   | SF-01,<br />SF-02 |
+| UC-02 | 배송상태갱신한다. | 고객사 물류 시스템 Batch가 상품의 송장번호로 배송상태를 조회한다. |   상   |   상   | SF-01,<br />SF-02 |
+| UC-03 | 배송상태저장한다. |    상품의 배송상태정보를 Database와 SDSCache에 저장한다.     |   상   |   중   | SF-01,<br />SF-02 |
+
+
+
+### 2.2.1.1 UC-01 배송상태조회한다
+
+|  UC-01   | 배송상태조회한다                                             |
+| :------: | ------------------------------------------------------------ |
+|   설명   | 고객사 물류 시스템 사용자 김삼성 프로가 상품의 송장번호로 배송상태를 조회한다. |
+|  행위자  | 고객사 물류 시스템 사용자                                    |
+| 선행조건 | 상품의 송장번호가 유효하다.                                  |
+| 후행조건 | -                                                            |
+| 기존동작 | 1. 고객사 물류 시스템 사용자 김삼성 프로가 상품의 배송상태정보를 조회한다.<br />2. 고객사 물류 시스템은 DB에 저장된 상품의 최신의 조회 일시를 가진 배송상태정보를 제공한다. |
+| 추가동작 | -                                                            |
+
+
+
+### 2.2.1.2 UC-02 배송상태갱신한다
+
+|  UC-02   | 배송상태갱신한다                                             |
+| :------: | ------------------------------------------------------------ |
+|   설명   | 고객사 물류 시스템 Batch가 상품의 송장번호로 배송상태를 조회한다. |
+|  행위자  | 고객사 물류 시스템  Batch                                    |
+| 선행조건 | 상품의 송장번호가 유효하다.                                  |
+| 후행조건 | -                                                            |
+| 기존동작 | 1. 고객사 물류 시스템 Batch가 상품의 송장정보를 조회한다..<br />2. 고객사 물류 시스템 Batch는 상품의 배송사에서 제공하는 API에 송장번호로 배송상태를 조회한다. |
+| 추가동작 | -                                                            |
+
+
+
+### 2.2.1.3 UC-03 배송상태저장한다
+
+|  UC-03   | 배송상태저장한다                                             |
+| :------: | ------------------------------------------------------------ |
+|   설명   | 상품의 배송상태정보를 Database와 SDSCache에 저장한다.        |
+|  행위자  | 고객사 물류 시스템 Batch                                     |
+| 선행조건 | UC-03 이 정상적으로 동작한다.                                |
+| 후행조건 | -                                                            |
+| 기존동작 | 1. 고객사 물류 시스템 Batch 은 조회한 상품의 배송상태정보와 조회 일시에 대해 Database에 저장한다.<br />2. 고객사 물류 시스템 Batch 은 조회한 상품의 배송상태정보에 대해 SDSCache에 저장한다. |
+| 추가동작 | -                                                            |
+
+
+
+
+
+### 2.2.2 SDSCache에 대한 기능 요구사항
+
+![UseCaseDiagram_Cache](https://user-images.githubusercontent.com/26420767/190337585-3f699401-8548-4138-85d4-61a516b2a220.png)
 
 다음은 Cache의 기본 기능이며 주요 UseCase이다.
 
@@ -805,222 +904,197 @@ Cache 솔루션은 우선 내제화한다. 내제화의 단계는 크게 Standal
 
 다음은 **"Cache Mode적용한다"**에 대한 상세 UseCase 이다.
 
-![UseCaseDiagram_Cache_CacheMode](https://user-images.githubusercontent.com/26420767/183441224-961c08c4-494a-4d12-88a7-c298260aa741.png)
+![UseCaseDiagram_Cache_CacheMode](https://user-images.githubusercontent.com/26420767/190337834-46a74534-8a94-4c16-a14e-8c9f60ceedfa.png)
 
 
 
-다음은  Cache 솔루션에 대한 UseCase 목록이다.
+다음은  SDSCache에 대한 UseCase 목록이다.
 
 |  ID   |          Title          |                             설명                             | 중요도 | 난이도 |       System Feature ID       |
 | :---: | :---------------------: | :----------------------------------------------------------: | :----: | :----: | :---------------------------: |
-| UC-01 |      Cache추가한다      |    Database, AP 에서 조회한 데이터 A를 Cache에 저장한다.     |   상   |   상   | SF-01,<br />SF-02,<br />SF-03 |
-| UC-02 |      Cache삭제한다      | Cache에 저장된 데이터 A를 Cache에서 더이상 사용하지 않도록 관리하다. |   상   |   상   |       SF-01.<br />SF-02       |
-| UC-03 |      Cache조회한다      |             Cache에 저장된 데이터 A를 조회한다.              |   상   |   상   | SF-01,<br />SF-02,<br />SF-03 |
-| UC-04 |       TTL설정한다       | Cache의 데이터 A에 TTL(Time to Live )을 설정하여 유효시간을 관리한다. |   상   |   상   |       SF-02,<br />SF-03       |
-| UC-05 |      Cache제거한다      |                Cache의 데이터 A를 무효화한다.                |   상   |   상   |       SF-02,<br />SF-03       |
-| UC-06 |    CacheMode적용한다    |      Local, Partition, Replication 중 Mode를 적용한다.       |   중   |   상   |       SF-04,<br />SF-05       |
-| UC-07 |    Cache모니터링한다    | Cache 솔루션에 대하여 서버 리소스에서부터 Cache 의 HitRatio까지 모니터링한다. |   상   |   상   |             SF-03             |
-| UC-08 |  Cache알고리즘적용한다  |  Cache 솔루션의 HitRatio를 높이기 위한 알고리즘을 선택한다.  |   중   |   상   |             SF-04             |
-| UC-09 |  Cache알고리즘추가한다  |  Cache 솔루션의 HitRatio를 높이기 위한 알고리즘을 추가한다.  |   중   |   상   |             SF-04             |
-| UC-10 |    LocalMode설정한다    | 데이터가 읽기 전용 또는 특정 만료 빈도로 주기적으로 새로 고쳐질 수 있는 시나리오에 적합한 Local Mode를 설정한다. |   중   |   상   |       SF-03,<br />SF-04       |
-| UC-11 |  PartitionMode설정한다  | 데이터 세트가 작고 업데이트가 자주 발생하지 않는 시나리오에 적합한 Partitioned Mode를 설정한다. |   중   |   상   |       SF-03,<br />SF-04       |
-| UC-12 | ReplicationMode설정한다 | 대규모 데이터 세트로 작업하고 업데이트가 빈번한 시나리오에 적합한 Replicated Mode를 설정한다. |   중   |   상   |       SF-03,<br />SF-04       |
-| UC-13 |    Cache노드관리한다    |  Cache 솔루션이 Cluster 인 경우 노드를 추가하거나 삭제한다.  |   중   |   중   |       SF-04,<br />SF-05       |
+| UC-11 |      Cache추가한다      | 외부 REST API와 Database 에서 조회한 데이터를 SDSCache에 저장한다 |   상   |   상   | SF-11,<br />SF-12,<br />SF-13 |
+| UC-12 |      Cache삭제한다      | SDSCache에 저장된 Cache를 SDSCache에서 더이상 사용하지 않도록 관리하다 |   상   |   상   |       SF-12.<br />SF-13       |
+| UC-13 |      Cache조회한다      |              SDSCache에 저장된 Cache를 조회한다              |   상   |   상   | SF-11,<br />SF-12,<br />SF-13 |
+| UC-14 |       TTL설정한다       |  Cache에 TTL(Time to Live )을 설정하여 유효시간을 관리한다   |   상   |   상   |       SF-12,<br />SF-13       |
+| UC-15 |      Cache제거한다      |              SDSCache에 저장된 Cache를 삭제한다              |   상   |   상   |       SF-12,<br />SF-13       |
+| UC-16 |    CacheMode적용한다    |       Local, Partition, Replication 중 Mode를 적용한다       |   중   |   상   |             SF-15             |
+| UC-17 |    Cache모니터링한다    |       SDSCache에 대하여 Cache HitRatio를 모니터링한다        |   중   |   상   |             SF-12             |
+| UC-18 |  Cache알고리즘적용한다  |    SDSCache의 HitRatio를 높이기 위한 알고리즘을 선택한다.    |   중   |   상   |             SF-13             |
+| UC-19 |  Cache알고리즘추가한다  |    SDSCache의 HitRatio를 높이기 위한 알고리즘을 추가한다.    |   중   |   상   |             SF-13             |
+| UC-1A |    LocalMode설정한다    | 데이터가 읽기 전용 또는 특정 만료 빈도로 주기적으로 새로 고쳐질 수 있는 시나리오에 적합한 Local Mode를 설정한다. |   중   |   상   |             SF-14             |
+| UC-1B |  PartitionMode설정한다  | 대규모 데이터 세트로 작업하고 업데이트가 빈번한 시나리오에 적합한 Partitioned Mode를 설정한다. |   중   |   상   |             SF-14             |
+| UC-1C | ReplicationMode설정한다 | 데이터 세트가 작고 업데이트가 자주 발생하지 않는 시나리오에 적합한 Replicated Mode를 설정한다. |   중   |   상   |             SF-14             |
+| UC-1D |    Cache노드관리한다    | SDSCache가 Cluster 로 구성된 경우, 노드를 추가하거나 삭제한다. |   중   |   중   |             SF-14             |
+
+Cache의 Cluster Mode에 대한 상세 설명은 별첨 "2. Cache의 Cluster 유형"을 참고한다.
 
 
 
-### 2.2.1.1 UC-01 Cache추가한다
+### 2.2.2.1 UC-11 Cache추가한다
 
-|  UC-01   | Cache추가한다                                                |
+|  UC-11   | Cache추가한다                                                |
 | :------: | ------------------------------------------------------------ |
-|   설명   | Database, API에서 조회한 데이터 A를 Cache에 저장한다         |
-|  행위자  | 물류시스템, CSP시스템사용자                                  |
-| 선행조건 | 조회하는 데이터 A가 Cache 솔루션에 미존재                    |
+|   설명   | 외부 REST API와 Database 에서 조회한 데이터를 SDSCache에 저장한다 |
+|  행위자  | 고객사 물류 시스템, CSP 시스템 사용자                        |
+| 선행조건 | 조회하는 데이터 A의 Key가 SDSCache에 미존재                  |
 | 후행조건 | -                                                            |
-| 기존동작 | 1. 물류시스템이 Database 또는 API에서 데이터 A를 조회한다.<br />2. 물류시스템이 받은 데이터 A를 Cache 솔루션에 추가한다. |
+| 기존동작 | 1. 고객사 물류 시스템이 Database 또는 API에서 데이터 A를 조회한다<br />2. 고객사 물류 시스템이 받은 데이터 A를 SDSCache에 추가한다 |
 | 추가동작 | -                                                            |
 
 
 
-### 2.2.1.2 UC-02 Cache삭제한다
+### 2.2.2.2 UC-12 Cache삭제한다
 
-|  UC-02   | Cache삭제한다                                                |
+|  UC-12   | Cache삭제한다                                                |
 | :------: | ------------------------------------------------------------ |
-|   설명   | Cache에 저장된 데이터 A를 Cache에서 더이상 사용하지 않도록 관리한다 |
-|  행위자  | 물류시스템, CSP시스템사용자                                  |
-| 선행조건 | 조회하는 데이터 A가 Cache 솔루션에 존재                      |
-| 후행조건 | 데이터 A가 Cache 솔루션에 유효하지 않은 상태 또는 삭제       |
-| 기존동작 | 1. 물류시스템 또는 CSP시스템사용자이 Cache 솔루션의 데이터 A를 삭제 요청한다 |
-| 추가동작 | TTL 값 변경의 경우, UC-04 "TTL설정한다" 로 이동한다<br />데이터 무효화의 경우, UC-05 "Cache제거한다"로 이동한다 |
+|   설명   | SDSCache에 저장된 Cache를 SDSCache에서 더이상 사용하지 않도록 관리하다 |
+|  행위자  | 고객사 물류 시스템, CSP 시스템 사용자                        |
+| 선행조건 | 조회하는 데이터 A의 Key가 SDSCache에 존재                    |
+| 후행조건 | 데이터 A가 SDSCache에 유효하지 않은 상태 또는 삭제           |
+| 기존동작 | 1. 고객사물류시스템 또는 CSP시스템사용자이 SDSCache의 데이터 A를 삭제 요청한다 |
+| 추가동작 | TTL 값 변경의 경우, UC-07 "TTL설정한다" 로 이동한다<br />데이터 무효화의 경우, UC-08 "Cache제거한다"로 이동한다 |
 
 
 
-### 2.2.1.3 UC-03 Cache조회한다
+### 2.2.2.3 UC-13 Cache조회한다
 
-|  UC-03   | Cache조회한다                                                |
+|  UC-13   | Cache조회한다                                                |
 | :------: | ------------------------------------------------------------ |
-|   설명   | Cache에 저장된 데이터 A를 조회한다                           |
-|  행위자  | 물류시스템, CSP시스템사용자                                  |
-| 선행조건 | 조회하는 데이터 A가 Cache 솔루션에 존재                      |
+|   설명   | SDSCache에 저장된 Cache를 조회한다                           |
+|  행위자  | 고객사 물류 시스템, CSP 시스템 사용자                        |
+| 선행조건 | 조회하는 데이터 A가 SDSCache에 존재                          |
 | 후행조건 | -                                                            |
-| 기존동작 | 1. 물류시스템이 데이터 A를 Cache 솔루션에 조회한다.<br />2. Cache 솔루션은 데이터 A가 있으면 물류시스템에 제공한다. |
+| 기존동작 | 1. 고객사 물류 시스템이 데이터 A를 SDSCache에 조회한다<br />2. SDSCache은 데이터 A가 있으면 고객사 물류 시스템에 제공한다 |
 | 추가동작 | -                                                            |
 
 
 
-### 2.2.1.4 UC-04 TTL설정한다
+### 2.2.2.4 UC-14 TTL설정한다
 
-|  UC-04   | TTL설정한다                                                  |
+|  UC-14   | TTL설정한다                                                  |
 | :------: | ------------------------------------------------------------ |
-|   설명   | Cache의 데이터 A에 TTL(Time to Live )을 설정하여 유효시간을 관리한다 |
-|  행위자  | 물류시스템, CSP시스템사용자                                  |
-| 선행조건 | UC-02 "Cache삭제한다"                                        |
+|   설명   | Cache에 TTL(Time to Live )을 설정하여 유효시간을 관리한다    |
+|  행위자  | 고객사 물류 시스템, CSP 시스템사용자                         |
+| 선행조건 | UC-12 "Cache삭제한다"                                        |
 | 후행조건 | -                                                            |
-| 기존동작 | 1. 물류시스템 또는 CSP시스템사용자는 Cache의 데이터 A에 대해 삭제 지시한다.<br />2. Cache 솔루션은 Cache의 데이터 A에 대한 TTL을 변경하여 유효시간을 변경한다. <br />`expected expire time = current time + set expire time, 단위 second` |
-| 추가동작 | 1. 데이터 A가 만료되어도 Cache솔루션에서 제거되지 않는다.<br />2. 누군가 만료된 데이터 A에 엑세스 하려고 하면 Cache 솔루션은 데이터 A를 검사한다.<br />3. 데이터 A가 만료되었는지 확인 후 메모리에서 제거한다. |
+| 기존동작 | 1. 고객사 물류 시스템 또는 CSP시스템사용자는 Cache의 데이터 A에 대해 삭제 지시한다<br />2. SDSCache은 Cache의 데이터 A에 대한 TTL을 변경하여 유효시간을 변경한다 <br />`expected expire time = set expire time, 단위 second` |
+| 추가동작 | 1. 데이터 A가 만료되어도 Cache솔루션에서 제거되지 않는다<br />2. 누군가 만료된 데이터 A에 엑세스 하려고 하면 SDSCache은 데이터 A를 검사한다<br />3. 데이터 A가 만료되었는지 확인 후 메모리에서 제거한다 |
 
 
 
-### 2.2.1.5 UC-05 Cache제거한다
+### 2.2.2.5 UC-15 Cache제거한다
 
-|  UC-05   | Cache제거한다                                                |
+|  UC-15   | Cache제거한다                                                |
 | :------: | ------------------------------------------------------------ |
-|   설명   | Cache의 데이터 A를 무효화한다.                               |
-|  행위자  | 물류시스템, CSP시스템사용자                                  |
-| 선행조건 | UC-02 "Cache삭제한다"                                        |
+|   설명   | SDSCache에 저장된 Cache를 삭제한다                           |
+|  행위자  | 고객사 물류 시스템, CSP 시스템 사용자                        |
+| 선행조건 | UC-12 "Cache삭제한다"                                        |
 | 후행조건 | -                                                            |
-| 기존동작 | 1. 물류시스템 또는 CSP시스템사용자가 Cache 솔루션에 Cache의 데이터 A를 무효화를 지시한다.<br />2. Cache 솔루션은 데이터 A에 대해 무효화 처리한다. |
-| 추가동작 | 1. 데이터 A가 만료되어도 Cache솔루션에서 제거되지 않는다.<br />2. 누군가 만료된 데이터 A에 엑세스 하려고 하면 Cache 솔루션은 데이터 A를 검사한다.<br />3. 데이터 A가 만료되었는지 확인 후 메모리에서 제거한다. |
+| 기존동작 | 1. 고객사물류시스템 또는 CSP시스템사용자가 SDSCache 내 Cache의 데이터 A를 무효화를 지시한다<br />2. SDSCache은 데이터 A에 대해 메모리에서 삭제한다 |
+| 추가동작 | 1. 데이터 A가 만료되어도 SDSCache에서 제거되지 않는다<br />2. 만료된 데이터 A에 엑세스 하려고 하면 SDSCache은 데이터 A에 대한 유효성 검사한다<br />3. 데이터 A가 만료되었는지 확인 후 메모리에서 제거한다 |
 
 
 
-### 2.2.1.6 UC-06 CacheMode적용한다
+### 2.2.2.6 UC-16 CacheMode적용한다
 
-|  UC-06   | CacheMode적용한다                                            |
+|  UC-16   | CacheMode적용한다                                            |
 | :------: | ------------------------------------------------------------ |
-|   설명   | Local, Partitioned, Replicated 중 Mode를 적용한다            |
-|  행위자  | 물류시스템개발자, CSP시스템개발자                            |
-| 선행조건 | Cache솔루션이 Cluster 형태이다                               |
+|   설명   | Local, Partition, Replication 중 Mode를 적용한다             |
+|  행위자  | 고객사 물류 시스템 개발자, CSP시스템개발자                   |
+| 선행조건 | SDSCache솔루션이 Cluster로 구성된다.                         |
 | 후행조건 | -                                                            |
-| 기존동작 | 1. 물류시스템개발자 또는 CSP시스템개발자가 Cache 솔루션의 Cache Mode를 변경 지시한다. |
+| 기존동작 | 1. 고객사 물류 시스템 개발자 또는 CSP 시스템 개발자가 SDSCache의 Cache Mode를 변경 지시한다 |
 | 추가동작 | -                                                            |
 
 
 
-### 2.2.1.7 UC-07 Cache모니터링한다
+### 2.2.2.7 UC-17 Cache모니터링한다
 
-|  UC-07   | Cache모니터링한다                                            |
+|  UC-17   | Cache모니터링한다                                            |
 | :------: | ------------------------------------------------------------ |
-|   설명   | Cache 솔루션에 대하여 서버 리소스에서부터 Cache 의 HitRatio까지 모니터링한다 |
-|  행위자  | 물류시스템운영자, CSP시스템운영자                            |
+|   설명   | SDSCache에 대하여 Cache HitRatio를 모니터링한다              |
+|  행위자  | 고객사 물류 시스템 운영자, CSP 시스템 운영자                 |
 | 선행조건 | -                                                            |
 | 후행조건 | -                                                            |
-| 기존동작 | 1. 물류시스템운영자 또는 CSP시스템운영자가 Cache 솔루션의 주요지표 Hit Ratio을 요청한다.<br />2. Cache 솔루션은 다음의 식을 기반으로 Hit Ratio 정보를 제공한다.<br />`hit ratio = Total number of cache hits / (Total Number of cache hits + Number of cache misses)` |
+| 기존동작 | 1. 고객사 물류 시스템 운영자 또는 CSP 시스템 운영자가 SDSCache의 Hit Ratio을 요청한다<br />2. SDSCache는 다음 식을 바탕으로 Hit Ratio 정보를 제공한다.<br />`hit ratio = Total number of cache hits / (Total Number of cache hits + Number of cache misses)` |
 | 추가동작 | -                                                            |
 
 
 
-### 2.2.1.8 UC-08 Cache알고리즘적용한다
+### 2.2.2.8 UC-18 Cache알고리즘적용한다
 
-|  UC-08   | Cache알고리즘적용한다                                        |
+|  UC-18   | Cache알고리즘적용한다                                        |
 | :------: | ------------------------------------------------------------ |
-|   설명   | Cache 솔루션의 HitRatio 를 높이기 위한 알고리즘을 선택한다   |
-|  행위자  | CSP시스템개발자                                              |
+|   설명   | SDSCache의 HitRatio 를 높이기 위한 알고리즘을 선택한다       |
+|  행위자  | 고객사 물류 시스템 운영자, CSP 시스템 운영자                 |
 | 선행조건 | Hit Ratio 가 기존보다 좋은 Cache 알고리즘 A 존재             |
 | 후행조건 | -                                                            |
-| 기존동작 | 1. CSP시스템개발자는 Cache 솔루션에 새로운 Cache 알고리즘 A을 적용요청한다. |
+| 기존동작 | 1. 고객사 물류 시스템 운영자 또는 CSP 시스템 운영자는 SDSCache에 새로운 Cache 알고리즘 A을 적용 요청한다 |
 | 추가동작 | -                                                            |
 
 
 
-### 2.2.1.9 UC-09 Cache알고리즘추가한다
+### 2.2.2.9 UC-19 Cache알고리즘추가한다
 
-|  UC-09   | Cache알고리즘추가한다                                        |
+|  UC-19   | Cache알고리즘추가한다                                        |
 | :------: | ------------------------------------------------------------ |
-|   설명   | Cache 솔루션의 HitRatio를 높이기 위한 알고리즘을 추가한다    |
-|  행위자  | CSP시스템개발자                                              |
-| 선행조건 | - UC-08 "Cache알고리즘적용한다"<br />- Hit Ratio 가 기존보다 좋은 Cache 알고리즘 A 존재하며 Cache 솔루션에는 추가되지 않은 상태 |
+|   설명   | SDSCache의 HitRatio를 높이기 위한 알고리즘을 추가한다        |
+|  행위자  | CSP 시스템 개발자                                            |
+| 선행조건 | - UC-18 "Cache알고리즘적용한다"<br />- Hit Ratio 가 기존보다 좋은 Cache 알고리즘 A 존재하며 SDSCache에는 추가되지 않은 상태 |
 | 후행조건 | -                                                            |
-| 기존동작 | 1. CSP시스템개발자는 Cache 알고리즘A 을 템플릿에 맞추어 Cache 솔루션에 추가 지시한다.<br />2. Cache 솔루션은 Cache 알고리즘A 을 알고리즘 목록 중 하나로 등록한다. |
+| 기존동작 | 1. CSP 시스템 개발자는 Cache 알고리즘A 을 템플릿에 맞추어 SDSCache에 추가 지시한다<br />2. SDSCache은 Cache 알고리즘A 을 알고리즘 목록 중 하나로 등록한다 |
 | 추가동작 | -                                                            |
 
 
 
-### 2.2.1.10 UC-10 LocalMode설정한다
+### 2.2.2.10 UC-1A LocalMode설정한다
 
-|  UC-10   | LocalMode설정한다                                            |
+|  UC-1A   | LocalMode설정한다                                            |
 | :------: | ------------------------------------------------------------ |
-|   설명   | 데이터가 읽기 전용 또는 특정 만료 빈도로 주기적으로 새로 고쳐질 수 있는 시나리오에 적합한 Local Mode를 설정한다. |
-|  행위자  | 물류시스템개발자, CSP시스템개발자                            |
-| 선행조건 | UC-06 CacheMode적용한다<br />Cache솔루션이 Cluster 형태이다  |
+|   설명   | 데이터가 읽기 전용 또는 특정 만료 빈도로 주기적으로 새로 고쳐질 수 있는 시나리오에 적합한 Local Mode를 설정한다 |
+|  행위자  | 고객사 물류 시스템 개발자, CSP 시스템 개발자                 |
+| 선행조건 | UC-16 CacheMode적용한다                                      |
 | 후행조건 | -                                                            |
-| 기존동작 | 1. Cache솔루션은 다른 노드에 캐시 데이터를 배포하지 않는다.<br /> |
+| 기존동작 | 1. SDSCache은 다른 노드에 캐시 데이터를 배포하지 않는다      |
 | 추가동작 | -                                                            |
 
 
 
-### 2.2.1.11 UC-11 PartitionMode설정한다
+### 2.2.2.11 UC-1B PartitionMode설정한다
 
-|  UC-11   | PartitionMode설정한다                                        |
+|  UC-1B   | PartitionMode설정한다                                        |
 | :------: | ------------------------------------------------------------ |
-|   설명   | 데이터 세트가 작고 업데이트가 자주 발생하지 않는 시나리오에 적합한 Partitioned Mode를 설정한다 |
-|  행위자  | 물류시스템개발자, CSP시스템개발자                            |
-| 선행조건 | UC-06 CacheMode적용한다<br />Cache솔루션이 Cluster 형태이다  |
+|   설명   | 대규모 데이터 세트로 작업하고 업데이트가 빈번한 시나리오에 적합한 Partitioned Mode를 설정한다 |
+|  행위자  | 고객사 물류 시스템 개발자, CSP 시스템 개발자                 |
+| 선행조건 | UC-16 CacheMode적용한다<br />SDSCache는 Cluster 로 구성된다  |
 | 후행조건 | -                                                            |
-| 기존동작 | 1. 모든 노드에 데이터의 사본을 복사한다.                     |
+| 기존동작 | 1. 지정된 파티션 개수 만큼 노드에 데이터의 사본을 복사한다   |
 | 추가동작 | -                                                            |
 
 
 
-### 2.2.1.12 UC-12 ReplicationMode설정한다
+### 2.2.2.12 UC-1C ReplicationMode설정한다
 
-|  UC-12   | ReplicationMode설정한다                                      |
+|  UC-1C   | ReplicationMode설정한다                                      |
 | :------: | ------------------------------------------------------------ |
-|   설명   | 대규모 데이터 세트로 작업하고 업데이트가 빈번한 시나리오에 적합한 Replicated Mode를 설정한다 |
-|  행위자  | 물류시스템개발자, CSP시스템개발자                            |
-| 선행조건 | UC-06 CacheMode적용한다<br />Cache솔루션이 Cluster 형태이다  |
+|   설명   | 데이터 세트가 작고 업데이트가 자주 발생하지 않는 시나리오에 적합한 Replicated Mode를 설정한다 |
+|  행위자  | 고객사 물류 시스템 개발자, CSP 시스템 개발자                 |
+| 선행조건 | UC-16 CacheMode적용한다<br />SDSCache가 Cluster로 구성된다   |
 | 후행조건 | -                                                            |
-| 기존동작 | 1. 지정된 파티션 개수 만큼 노드에 데이터의 사본을 복사한다.  |
+| 기존동작 | 1. 모든 노드에 데이터의 사본을 복사한다                      |
 | 추가동작 | -                                                            |
 
 
 
-### 2.2.1.13 UC-13 Cache노드관리한다
+### 2.2.2.13 UC-1D Cache노드관리한다
 
-|  UC-13   | Cache노드관리한다                                            |
+|  UC-1D   | Cache노드관리한다                                            |
 | :------: | ------------------------------------------------------------ |
-|   설명   | Cache 솔루션이 Cluster 인 경우 노드를 추가하거나 삭제한다    |
-|  행위자  | 물류시스템운영자, CSP시스템운영자                            |
-| 선행조건 | Cache솔루션이 Cluster 형태이다                               |
+|   설명   | SDSCache가 Cluster 로 구성된 경우, 노드를 추가하거나 삭제한다 |
+|  행위자  | 고객사 물류 시스템 운영자, CSP 시스템 운영자                 |
+| 선행조건 | SDSCache가 Cluster로 구성된다                                |
 | 후행조건 | -                                                            |
-| 기존동작 | 1. 물류시스템운영자 또는 CSP시스템운영자가 Cache 솔루션에 노드 추가 및 삭제를 요청한다.<br />2. Cache 솔루션은 노드의 추가 삭제 작업을 수행한다. |
-| 추가동작 | -                                                            |
-
-
-
-### 2.2.2 고객사 물류 시스템에 대한 기능 요구사항
-
-![UseCaseDiagram_물류시스템](https://user-images.githubusercontent.com/26420767/183445187-50a42997-9915-4ce3-92fe-176b707d0d57.png)
-
-
-
-다음은 고객사 물류 시스템에 대한 Usecase 이다.
-
-|  ID   |      Title       |                             설명                             | 중요도 | 난이도 | System Feature ID |
-| :---: | :--------------: | :----------------------------------------------------------: | :----: | :----: | :---------------: |
-| UC-14 | 배송상태조회한다 | 물류시스템사용자 김경환 프로가 상품의 송장번호로 배송상태를 조회한다. |   상   |   상   | SF-01,<br />SF-02 |
-
-
-
-### 2.2.2.1 UC-14 배송상태조회한다
-
-|  UC-14   | 배송상태조회한다                                             |
-| :------: | ------------------------------------------------------------ |
-|   설명   | 물류시스템사용자 김경환 프로가 상품의 송장번호로 배송상태를 조회한다. |
-|  행위자  | 물류시스템사용자                                             |
-| 선행조건 | 상품의 송장번호가 유효하다.                                  |
-| 후행조건 | -                                                            |
-| 기존동작 | 1. 물류시스템사용자 김경환 프로가 상품의 배송상태를 조회한다.<br />2. 물류시스템은 상품의 배송사에서 제공하는 API에 송장번호로 배송상태를 조회한다. |
+| 기존동작 | 1. 고객사 물류 시스템 운영자 또는 CSP 시스템 운영자가 SDSCache에 노드 추가 및 삭제를 요청한다<br />2. SDSCache은 노드의 추가 삭제 작업을 수행한다 |
 | 추가동작 | -                                                            |
 
 
@@ -1029,22 +1103,77 @@ Cache 솔루션은 우선 내제화한다. 내제화의 단계는 크게 Standal
 
 > 아키텍처 품질속성별 명확하고 정량적인 달성목표 작성
 
-### 2.3.1 Cache 솔루션에 대한 품질 요구사항
 
-Cache 솔루션에 대한 품질 요구사항은 다음과 같다.
 
-| ID     | 품질속성   | 품질속성 상세화                         | 품질속성 시나리오                                            | 중요도 | 난이도 | System Feature ID |
-| ------ | ---------- | --------------------------------------- | ------------------------------------------------------------ | ------ | ------ | ----------------- |
-| QAS-01 | 성능       | Cache 솔루션의 응답속도                 | 물류시스템사용자 김경환 프로가 3,600 초 이내 조회한 운송장번호 A 를 다시 조회하면 <br/>Cache 솔루션에 저장된 데이터를 기반으로 1,000 ms 이내 운송장번호 A 를 확인한다. | 상     | 상     | SF-01,<br />SF-02 |
-| QAS-02 | 성능       | Cache 솔루션의 데이터 저장 및 응답 속도 | 물류시스템사용자 김경환 프로가 Cache에 없는 운송장번호 A의 배송상태를 조회하면, <br/>운송장번호 A의 배송상태는 Cache에 저장되고 김경환 프로에게 배송상태를 제공한다.<br/>1초 후, 김채이 프로가 운송장번호 A 를 조회하면 Cache에 저장된 <br/>운송장번호 A의 배송상태를 이용하여 1,000 ms 이내 배송상태를 제공한다.<br/> | 상     | 상     | SF-01,<br />SF-02 |
-| QAS-03 | 내구성     | Cache 솔루션의 응답보장                 | 1,000[^1,000명] 명의 물류시스템사용자가 동시에 운송장번호와 배송상태를 조회하면 동일한 운송장번호와 <br/>그 배송상태는 Cache 솔루션에 저장된 데이터를 기반으로 응답하며 <br/>물류사용자는 1,000 명의 요청에 따른 물류시스템의 부하에 대해 인지하지 못한다.<br/> | 상     | 중     | SF-02,<br />SF-04 |
-| QAS-04 | 유지보수성 | Cache 솔루션의 알고리즘  변경 용이      | Cache 알고리즘에 대한 정책이 변경되면<br />Cache 솔루션은 정책 변경 즉시, 새로운 알고리즘 정책으로 Cache 를 관리한다. | 상     | 중     | SF-03,<br />SF-04 |
-| QAS-05 | 정확성     | Cache 솔루션의 데이터 정확성            | Cache 솔루션은 같은 키에 대해서는 같은 값을 유효 TTL 이내 100 % 제공한다. | 중     | 상     | SF-01,<br />SF-02 |
-| QAS-06 | 보안       | Cache 솔루션의 구간 암호화              | 물류시스템과 Cache 솔루션 간의 통신은 TLS 기반으로 암호화하여 통신한다. | 중     | 중     | SF-03             |
-| QAS-07 | 유지보수성 | Cache 솔루션의 유지보수 용이성          | Cache 솔루션에 새로운 Cache 알고리즘(LRU)을 추가하면 <br/>2개월 이내 고급개발자 4MM로 개발한다.<br/> | 중     | 중     | SF-03,<br />SF-04 |
-| QAS-08 | 안정성     | Cache 솔루션의 정확성                   | Cache 솔루션은 배송상태의 키 A 인 캐시에 대해 배송상태 데이터를 물류시스템에게 100 % 제공한다. | 중     | 하     | SF-01,<br />SF-02 |
-| QAS-09 | 확장성     | Cache 솔루션의 가용성                   | Infra가 확보되어 있는 환경에서 Cache 솔루션 담당자가 Cache 노드를 증설하는 경우 시스템 중단 없이 60분 이내에 처리한다. | 중     | 중     | SF-04             |
-| QAS-10 | 신뢰성     | 노드 장애 시 Cache 유실 방지            | Cache 솔루션이 여러 개의 노드로 구성하고, 임의의 한 노드에서 장애가 발생하더라도 Cache는 유실되지 않는다. | 상     | 중     | SF-05             |
+### 2.3.1 고객사 물류 시스템에 대한 품질 요구사항
+
+고객사 물류시스템에 대한 품질 요구사항은 다음과 같다.
+
+|   ID   | 품질속성 |                  품질속성 상세화                  | 품질속성 시나리오                                            | 중요도 | 난이도 | System Feature ID |
+| :----: | :------: | :-----------------------------------------------: | ------------------------------------------------------------ | :----: | :----: | :---------------: |
+| QAS-01 |   성능   |           고객사 물류 시스템의 응답속도           | 고객사 물류 시스템 사용자 김삼성 프로가 3,600 초 이내 조회한 운송장번호 A 를 다시 조회하면 <br/>SDSCache에 저장된 데이터를 기반으로 1,000 ms 이내 운송장번호에 대한 배송상태정보를 확인한다 |   상   |   상   |       SF-01       |
+| QAS-02 |  안정성  |           고객사 물류 시스템의 응답보장           | 고객사 물류 시스템사용자 김삼성 프로가 Cache에 없는 운송장번호 A의 배송상태를 조회하면, <br/>운송장번호 A의 배송상태는 Cache에 저장되고 김삼성 프로에게 배송상태를 제공한다<br/>1초 후, 이삼성 프로가 운송장번호 A 를 조회하면 SDSCache에 저장된 <br/>운송장번호 A Cache를 이용하여 1,000 ms 이내 배송상태정보를 제공한다 |   상   |   상   | SF-01,<br />SF-02 |
+| QAS-03 |  기능성  | 고객사 물류 시스템의 요청 기능에 대한 동작 정확성 | 고객사 물류시스템 사용자 100 명이 동시에 각각의 배송상태정보를 조회 시,<br />같은 운송장번호에 대해서는 SDSCache의 Cache를 기반으로 응답한다 <br/>배송상태조회Batch는 1시간 단위로 배송상태정보를 최신화하여 Database와 SDSCache에 저장한다 |   상   |   중   |       SF-02       |
+
+
+
+#### 2.3.1.1 QAS-01 고객사 물류 시스템의 응답속도
+
+|  QAS-01  | 고객사 물류시스템의 응답속도                                 |
+| :------: | ------------------------------------------------------------ |
+| 품질속성 | 성능                                                         |
+|   설명   | 고객사 물류 시스템 사용자 김삼성 프로가 3,600 초 이내 조회한 운송장번호 A 를 다시 조회하면 <br/>SDSCache에 저장된 데이터를 기반으로 1,000 ms 이내 운송장번호에 대한 배송상태정보를 확인한다 |
+|   자극   | 고객사 물류 시스템 사용자 김삼성 프로                        |
+|   환경   | 고객사 물류 시스템이 SDSCache과 함께 정상적으로 서비스하는 중 |
+|   반응   | SDSCache가 Cache를 고객사 물류 시스템에 전송한다.            |
+|   측정   | `[요청 처리 속도] = [고객사물류시스템WEB서버의 Access Log에 Response기록한 시각] - [고객사물류시스템WEB서버의 Access Log에 Request기록한 시각]` |
+
+
+
+#### 2.3.1.2 QAS-02 고객사 물류 시스템의 응답보장
+
+|  QAS-02  | 고객사 물류시스템의 응답보장                                 |
+| :------: | ------------------------------------------------------------ |
+| 품질속성 | 신뢰성                                                       |
+|   설명   | 고객사 물류 시스템사용자 김삼성 프로가 Cache에 없는 운송장번호 A의 배송상태를 조회하면, <br/>운송장번호 A의 배송상태는 Cache에 저장되고 김삼성 프로에게 배송상태를 제공한다<br/>1초 후, 이삼성 프로가 운송장번호 A 를 조회하면 SDSCache에 저장된 <br/>운송장번호 A Cache를 이용하여 1,000 ms 이내 배송상태정보를 제공한다 |
+|   자극   | 고객사 물류 시스템사 용자 김삼성 프로                        |
+|   환경   | 고객사 물류 시스템이 SDSCache과 함께 정상적으로 서비스하는 중 |
+|   반응   | 고객사 물류 시스템이 조회한 운송장번호A의 배송상태정보를 고객사 물류 시스템 사용자 김삼성 프로에게 전달하고, <br />SDSCache에 Key는 운송장번호A, Value는 배송상태정보로 Cache를 저장하도록 한다. |
+|   측정   | `[트래픽 처리 속도] < 1,000 ms`                              |
+|   제약   | -                                                            |
+
+
+
+#### 2.3.1.3 QAS-03 고객사 물류 시스템의 요청 기능에 대한 동작 정확성
+
+|  QAS-03  | 고객사 물류시스템의 요청 기능에 대한 동작 정확성             |
+| :------: | ------------------------------------------------------------ |
+| 품질속성 | 정확성                                                       |
+|   설명   | 고객사 물류시스템 사용자 100 명이 동시에 각각의 배송상태정보를 조회 시,<br />같은 운송장번호에 대해서는 SDSCache의 Cache를 기반으로 응답한다 <br/>배송상태조회Batch는 1시간 단위로 배송상태정보를 최신화하여 Database와 SDSCache에 저장한다 |
+|   자극   | 고객사 물류 시스템 사용자                                    |
+|   환경   | 고객사 물류 시스템이 SDSCache과 함께 정상적으로 서비스하는 중 |
+|   반응   | 물류시스템은 운송장번호와 배송상태 정보에 대해 1차적으로 SDSCache을 확인하고, 없으면 Database와 API를 조회한다 <br />조회된 데이터는 물류시스템 사용자에게 전달하고, SDSCache에 전달하여 저장하도록 지시한다 |
+|   측정   | `[기대한결과응답횟수] / [전체요청회수] * 100`                |
+|   제약   | -                                                            |
+
+
+
+### 2.3.2 SDSCache에 대한 품질 요구사항
+
+SDSCache에 대한 품질 요구사항은 다음과 같다.
+
+|   ID   |  품질속성  |           품질속성 상세화           | 품질속성 시나리오                                            | 중요도 | 난이도 | System Feature ID |
+| :----: | :--------: | :---------------------------------: | ------------------------------------------------------------ | :----: | :----: | :---------------: |
+| QAS-11 |    성능    |          SDSCache 응답속도          | 고객사 물류 시스템 사용자 김삼성 프로가 3,600 초 이내 조회한 운송장번호 A 를 다시 조회하면 <br/>SDSCache에 저장된 데이터를 기반으로 1,000 ms 이내 운송장번호 A의 최신 배송상태정보를 확인한다 |   상   |   상   | SF-11,<br />SF-12 |
+| QAS-12 |    성능    | SDSCache의 데이터 저장 및 응답 속도 | 고객사 물류 시스템 사용자 김삼성 프로가 SDSCache에 없는 운송장번호 A의 배송상태정보를 조회하면, <br/>Database의 운송장번호 A에 대한 배송상태정보를 조회하여 SDSCache에 저장되고 김삼성 프로에게 배송상태를 제공한다<br/>1초 후, 이삼성 프로가 운송장번호 A 를 조회하면 SDSCache에 저장된 <br/>운송장번호 A의 배송상태정보를 이용하여 1,000 ms 이내 배송상태를 제공한다 |   상   |   상   |       SF-12       |
+| QAS-13 |   내구성   |         SDSCache의 응답보장         | 1,000[^1,000명] 명의 고객사 물류 시스템 사용자가 동시에 운송장번호와 배송상태를 조회하면 동일한 운송장번호와 <br/>그 배송상태는 SDSCache에 저장된 데이터를 기반으로 응답하며 <br/>고객사 물류 시스템 사용자는 1,000 명의 요청에 따른 고객사 물류 시스템의 부하에 대해 인지하지 못한다 |   상   |   중   | SF-11,<br />SF-14 |
+| QAS-14 | 유지보수성 |  SDSCache의 알고리즘  변경 용이성   | Cache 알고리즘에 대한 정책이 변경되면<br />SDSCache는 정책 변경 즉시, 새로운 알고리즘 정책으로 Cache 를 관리한다 |   상   |   중   | SF-12,<br />SF-13 |
+| QAS-15 |   정확성   |      SDSCache의 데이터 정확성       | SDSCache은 같은 Key에 대해서 같은 Value을 유효 TTL 이내 100 % 제공한다 |   중   |   상   |       SF-12       |
+| QAS-16 |    보안    |       SDSCache의 구간 암호화        | 고객사물류시스템과 SDSCache 간의 통신은 TLS 기반으로 암호화하여 통신한다 |   중   |   중   | SF-12,<br />SF-13 |
+| QAS-17 | 유지보수성 |     SDSCache의 유지보수 용이성      | SDSCache에 새로운 Cache 알고리즘(LRU)을 추가하면 <br/>2개월 이내 고급개발자 4MM로 개발한다 |   중   |   중   |       SF-13       |
+| QAS-18 |   안정성   |          SDSCache의 정확성          | SDSCache은 유효한 Key A 인 Cache를 고객사 물류 시스템에게 100 % 제공한다 |   중   |   중   | SF-11,<br />SF-12 |
+| QAS-19 |   확장성   |          SDSCache의 가용성          | Infra가 확보되어 있는 환경에서 SDSCache 담당자가 Cache 노드를 증설하는 경우 시스템 중단 없이 60분 이내에 처리한다 |   중   |   중   |       SF-14       |
+| QAS-1A |   내구성   |    노드 장애 시 Cache 유실 방지     | SDSCache이 여러 개의 노드로 구성하고, 임의의 한 노드에서 장애가 발생하더라도 Cache는 유실되지 않는다 |   중   |   중   |       SF-15       |
 
 응답속도 1,000 ms 에 대한 기준은 "별첨 3. 고객사 물류시스템의 응답시간 선정" 에 따른 결과이다.
 
@@ -1052,193 +1181,138 @@ Cache 솔루션에 대한 품질 요구사항은 다음과 같다.
 
 
 
-#### 2.3.1.1 QAS-01 Cache 솔루션의 응답속도
+#### 2.3.2.1 QAS-11 SDSCache의 응답속도
 
-|  QAS-01  | Cache 솔루션의 응답속도                                      |
+|  QAS-11  | SDSCache의 응답속도                                          |
 | :------: | ------------------------------------------------------------ |
 | 품질속성 | 성능                                                         |
-|   설명   | 물류시스템사용자 김경환 프로가 3,600 초 이내 조회한 운송장번호 A 를 다시 조회하면 <br/>Cache 솔루션에 저장된 데이터를 기반으로 1,000 ms 이내 운송장번호 A 를 확인한다. |
-|   자극   | 물류시스템사용자 김경환 프로                                 |
-|   환경   | 물류시스템이 Cache 솔루션과 함께 정상적으로 서비스하는 중    |
-|   반응   | Cache 솔루션이 Cached 데이터를 물류시스템에 전송한다.        |
-|   측정   | [요청 처리 속도] = [물류시스템사용자 김경환 프로가 요청한 시각] - [물류시스템WEB서버의 Access Log에 Response 기록한 시각] |
-|   제약   | [트래픽 처리 속도] < 1,000 ms                                |
+|   설명   | 고객사 물류 시스템 사용자 김삼성 프로가 3,600 초 이내 조회한 운송장번호 A 를 다시 조회하면 <br/>SDSCache에 저장된 데이터를 기반으로 1,000 ms 이내 운송장번호 A의 최신 배송상태정보를 확인한다 |
+|   자극   | 고객사 물류 시스템 사용자 김삼성 프로                        |
+|   환경   | 고객사 물류 시스템이 SDSCache와 함께 정상적으로 서비스하는 중 |
+|   반응   | SDSCache이 Cached 데이터를 고객사 물류 시스템에 전송한다     |
+|   측정   | `[요청 처리 속도] = [고객사물류시스템WEB서버의 Access Log에 Response기록한 시각] - [고객사물류시스템WEB서버의 Access Log에 Request기록한 시각]` |
+|   제약   | `[트래픽 처리 속도] < 1,000 ms`                              |
 
 
 
-#### 2.3.1.2 QAS-02 Cache 솔루션의 데이터 저장 및 응답 속도
+#### 2.3.2.2 QAS-12 SDSCache의 데이터 저장 및 응답 속도
 
-|  QAS-02  | Cache 솔루션의 데이터 저장 및 응답 속도                      |
+|  QAS-12  | SDSCache의 데이터 저장 및 응답 속도                          |
 | :------: | ------------------------------------------------------------ |
 | 품질속성 | 성능                                                         |
-|   설명   | 물류시스템사용자 김경환 프로가 Cache에 없는 운송장번호 A의 배송상태를 조회하면, <br/>운송장번호 A의 배송상태는 Cache에 저장되고 김경환 프로에게 배송상태를 제공한다.<br/>3초 후, 김채이 프로가 운송장번호 A 를 조회하면 Cache에 저장된 <br/>운송장번호 A의 배송상태를 이용하여 1,000 ms 이내 배송상태를 제공한다.<br/> |
-|   자극   | 물류시스템사용자 김경환 프로                                 |
-|   환경   | 물류시스템이 Cache 솔루션과 함께 정상적으로 서비스하는 중    |
-|   반응   | 물류시스템이 조회한 운송장번호A를 물류시스템사용자 김경환 프로에게 전달하고, Cache 솔루션에 운송장번호A를 저장하도록 한다. |
+|   설명   | 고객사 물류 시스템 사용자 김삼성 프로가 SDSCache에 없는 운송장번호 A의 배송상태정보를 조회하면, <br/>Database의 운송장번호 A에 대한 배송상태정보를 조회하여 SDSCache에 저장되고 김삼성 프로에게 배송상태를 제공한다<br/>1초 후, 이삼성 프로가 운송장번호 A 를 조회하면 SDSCache에 저장된 <br/>운송장번호 A의 배송상태정보를 이용하여 1,000 ms 이내 배송상태를 제공한다 |
+|   자극   | 고객사 물류 시스템 사용자 김삼성 프로                        |
+|   환경   | 고객사 물류 시스템이 SDSCache과 함께 정상적으로 서비스하는 중 |
+|   반응   | 고객사 물류 시스템이 조회한 운송장번호A의 배송상태정보를 고객사 물류 시스템 사용자 김삼성 프로에게 전달하고, <br />SDSCache에 Key는 운송장번호A, Value는 배송상태정보를 저장하도록 한다 |
 |   측정   | [트래픽 처리 속도] < 1,000 ms                                |
-|   제약   | -                                                            |
+|   제약   | 운송장번호 A가 등록되고 최초 Batch가 실행되기 전까지 최대 1시간 배송상태정보가 없다. |
 
 
 
-#### 2.3.1.3 QAS-03 Cache 솔루션의 응답보장
+#### 2.3.2.3 QAS-13 SDSCache의 응답보장
 
-|  QAS-03  | Cache 솔루션의 응답보장                                      |
+|  QAS-13  | SDSCache의 응답보장                                          |
 | :------: | ------------------------------------------------------------ |
 | 품질속성 | 내구성                                                       |
-|   설명   | 1,000 명의 물류시스템사용자가 동시에 운송장번호와 배송상태를 조회하면 동일한 운송장번호와 <br/>그 배송상태는 Cache 솔루션에 저장된 데이터를 기반으로 응답하며 <br/>물류사용자는 1,000 명의 요청에 따른 물류시스템의 부하에 대해 인지하지 못한다.<br/> |
-|   자극   | 1,000 명의 물류시스템사용자                                  |
-|   환경   | 물류시스템이 Cache 솔루션과 함께 정상적으로 서비스하는 중    |
-|   반응   | 물류시스템은 운송장번호와 배송상태 정보에 대해 1차적으로 Cache 솔루션을 확인하고, 없으면 Database와 API를 조회한다. 조회된 데이터는 물류시스템 사용자에게 전달하고, Cache 솔루션에 전달하여 저장하도록 지시한다. |
-|   측정   | `[요청 처리 속도] = [물류시스템WEB서버의 Access Log에 Request기록한 시각] - [물류시스템WEB서버의 Access Log에 Response 기록한 시각]<`br />`hit ratio = Total number of cache hits / (Total Number of cache hits + Number of cache misses` |
+|   설명   | 1,000 명의 고객사 물류 시스템 사용자가 동시에 운송장번호와 배송상태를 조회하면 동일한 운송장번호와 <br/>그 배송상태는 SDSCache에 저장된 데이터를 기반으로 응답하며 <br/>고객사 물류 시스템 사용자는 1,000 명의 요청에 따른 고객사 물류 시스템의 부하에 대해 인지하지 못한다 |
+|   자극   | 1,000 명의 고객사 물류 시스템 사용자                         |
+|   환경   | 고객사 물류 시스템이 SDSCache과 함께 정상적으로 서비스하는 중 |
+|   반응   | 고객사 물류 시스템은 운송장번호 A와 배송상태정보에 대해 1차적으로 SDSCache에 확인하고, 없으면 Database를 조회한다 <br />조회된 데이터는 고객사 물류 시스템 사용자에게 전달하고, SDSCache에 전달하여 저장하도록 지시한다 |
+|   측정   | `[요청 처리 속도] = [고객사물류시스템WEB서버의 AccessLog에 Response기록한 시각] - [물류시스템WEB서버의 Access Log에 Request기록한 시각]`<br />`hit ratio = Total number of cache hits / (Total Number of cache hits + Number of cache misses` |
 |   제약   | -                                                            |
 
 
 
-#### 2.3.1.4 QAS-04 Cache 솔루션의 알고리즘 변경 용이
+#### 2.3.2.4 QAS-14 SDSCache의 알고리즘 변경 용이
 
-|  QAS-04  | Cache 솔루션의 알고리즘 변경 용이                            |
+|  QAS-14  | SDSCache의 알고리즘 변경 용이                                |
 | :------: | ------------------------------------------------------------ |
 | 품질속성 | 유지보수성                                                   |
-|   설명   | Cache 알고리즘에 대한 정책이 변경되면<br />Cache 솔루션은 정책 변경 즉시, 새로운 알고리즘 정책으로 Cache 를 관리한다. |
+|   설명   | Cache 알고리즘에 대한 정책이 변경되면<br />SDSCache은 정책 변경 즉시, 새로운 알고리즘 정책으로 Cache 를 관리한다. |
 |   자극   | 업무의 특성에 따라 적용된 알고리즘 A보다 Hit Ratio 가 좋은 Cache 알고리즘 B 존재 |
-|   환경   | 물류시스템이 Cache 솔루션과 함께 정상적으로 서비스하는 중    |
-|   반응   | Cache 솔루션은 Cache 알고리즘 B로 변경한다. 변경 즉시, 변경된 알고리즘 B로 동작하다.. |
+|   환경   | 고객사 물류 시스템이 SDSCache과 함께 정상적으로 서비스하는 중 |
+|   반응   | SDSCache은 Cache 알고리즘 B로 변경한다. 변경 즉시, 변경된 알고리즘 B로 동작하다 |
 |   측정   | Cache 알고리즘이 변경되면 변경된 알고리즘 B으로 동작한다.    |
 
 
 
-#### 2.3.1.5 QAS-05 Cache 솔루션의 데이터 정확성
+#### 2.3.2.5 QAS-15 SDSCache의 데이터 정확성
 
-|  QAS-05  | Cache 솔루션의 데이터 정확성                                 |
+|  QAS-15  | SDSCache의 데이터 정확성                                     |
 | :------: | ------------------------------------------------------------ |
 | 품질속성 | 정확성                                                       |
-|   설명   | Cache 솔루션은 같은 키에 대해서는 같은 값을 유효 TTL 이내 100 % 제공한다. |
-|   자극   | 물류시스템사용자 김경환 프로                                 |
-|   환경   | 물류시스템이 Cache 솔루션과 함께 정상적으로 서비스하는 중    |
-|   반응   | 같은 키을 가진 데이터에 대해 일관된 결과를 제공한다.         |
-|   측정   | `hit ratio = Total number of cache hits / (Total Number of cache hits + Number of cache misses` |
+|   설명   | SDSCache은 같은 Key 에 대해서는 같은 값을 유효 TTL 이내 100 % 제공한다. |
+|   자극   | 고객사 물류 시스템 사용자 김삼성 프로                        |
+|   환경   | 고객사 물류 시스템이 SDSCache과 함께 정상적으로 서비스하는 중 |
+|   반응   | 같은 Key 을 가진 데이터에 대해 일관된 결과를 제공한다.       |
+|   측정   | `hit ratio = Total number of cache hits / (Total Number of cache hits + Number of cache misses)` |
 
 
 
-#### 2.3.1.6 QAS-06 Cache 솔루션의 구간 암호화
+#### 2.3.2.6 QAS-16 SDSCache의 구간 암호화
 
-|  QAS-06  | Cache 솔루션의 구간 암호화                                   |
+|  QAS-16  | SDSCache의 구간 암호화                                       |
 | :------: | ------------------------------------------------------------ |
 | 품질속성 | 보안                                                         |
-|   설명   | 물류시스템과 Cache 솔루션 간의 통신은 TLS 기반으로 암호화하여 통신한다. |
-|   자극   | 보안부서의 통신구간 암호화 강제화                            |
-|   환경   | 물류시스템이 Cache 솔루션과 함께 정상적으로 서비스하는 중    |
-|   반응   | TLS 기반으로 물류시스템과 Cache 솔루션은 네트워크 통신한다.  |
+|   설명   | 고객사 물류 시스템과 SDSCache 간의 통신은 TLS1.3 기반으로 암호화하여 통신한다. |
+|   자극   | 고객사 정보보호 부서의 통신구간 암호화 권장                  |
+|   환경   | 고객사 물류 시스템이 SDSCache과 함께 정상적으로 서비스하는 중 |
+|   반응   | TLS 기반으로 고객사 물류 시스템과 SDSCache은 네트워크 통신한다. |
 |   측정   | TLS1.3 기반 통신구간 암호화                                  |
 
 
 
-#### 2.3.1.7 QAS-07 Cache 솔루션의 유지보수 용이성
+#### 2.3.2.7 QAS-17 SDSCache의 유지보수 용이성
 
-| QAS-07   | Cache 솔루션의 유지보수 용이성                               |
-| -------- | ------------------------------------------------------------ |
+|  QAS-17  | SDSCache의 유지보수 용이성                                   |
+| :------: | ------------------------------------------------------------ |
 | 품질속성 | 유지보수성                                                   |
-| 설명     | Cache 솔루션에 새로운 Cache 알고리즘(LRU)을 추가하면 <br/>2개월 이내 고급개발자 4MM 로 개발한다. |
-| 자극     | 새로운 Cache 알고리즘(LRU) 추가                              |
-| 환경     | 물류시스템이 Cache 솔루션과 함께 정상적으로 서비스하는 중    |
-| 반응     | Cache 솔루션은 Cache 알고리즘(LRU) 를 추가한다. 추가 시, 他 알고리즘에 영향을 미치지 않는다. |
-| 측정     | 새로운 Cache 알고리즘 추가 후 기존 Cache 알고리즘 동작 이상 없음 확인 |
+|   설명   | SDSCache에 새로운 Cache 알고리즘(LRU)을 추가하면 <br/>2개월 이내 고급개발자 4MM 로 개발한다. |
+|   자극   | 새로운 Cache 알고리즘(LRU) 추가                              |
+|   환경   | 고객사 물류 시스템이 SDSCache과 함께 정상적으로 서비스하는 중 |
+|   반응   | SDSCache은 Cache 알고리즘(LRU) 를 추가한다. 추가 시, 他 알고리즘에 영향을 미치지 않는다. |
+|   측정   | 새로운 Cache 알고리즘 추가 후 기존 Cache 알고리즘 동작 이상 없음 확인 |
 
 
 
-#### 2.3.1.8 QAS-08 Cache 솔루션의 정확성
+#### 2.3.2.8 QAS-18 SDSCache의 정확성
 
-|  QAS-08  | Cache 솔루션의 정확성                                        |
+|  QAS-18  | SDSCache의 정확성                                            |
 | :------: | ------------------------------------------------------------ |
 | 품질속성 | 안정성                                                       |
-|   설명   | Cache 솔루션은 배송상태의 키 A 인 캐시에 대해 배송상태 데이터를 물류시스템에게 100 % 제공한다. |
-|   자극   | 물류시스템사용자 김경환 프로                                 |
-|   환경   | 물류시스템이 Cache 솔루션과 함께 정상적으로 서비스하는 중    |
-|   반응   | Cache에 저장된 배송상태의 키 A에 대해 유효 TTL 동안 데이터를 제공한다. |
-|   측정   | `hit ratio = Total number of cache hits / (Total Number of cache hits + Number of cache misses` |
+|   설명   | SDSCache은 유효한 Key A 인 Cache를 고객사 물류 시스템에게 100 % 제공한다. |
+|   자극   | 고객사 물류 시스템 사용자 김삼성 프로                        |
+|   환경   | 고객사 물류 시스템이 SDSCache과 함께 정상적으로 서비스하는 중 |
+|   반응   | SDSCache에 저장된 Key A에 대해 유효 TTL 동안 Cache를 제공한다. |
+|   측정   | `hit ratio = Total number of cache hits / (Total Number of cache hits + Number of cache misses)` |
 
 
 
-#### 2.3.1.9 QAS-09 Cache 솔루션의 가용성
+#### 2.3.2.9 QAS-19 SDSCache의 가용성
 
-| QAS-09   | Cache 솔루션의 가용성                                        |
-| -------- | ------------------------------------------------------------ |
+|  QAS-19  | SDSCache의 가용성                                            |
+| :------: | ------------------------------------------------------------ |
 | 품질속성 | 가용성                                                       |
-| 설명     | Infra가 확보되어 있는 환경에서 Cache 솔루션 담당자가 Cache 노드를 증설하는 경우 시스템 중단 없이 60분 이내에 처리한다. |
-| 자극     | Cache 솔루션의 노드 증설 시도                                |
-| 대상     | Cache 솔루션 클러스터                                        |
-| 환경     | 물류시스템이 Cache 솔루션과 함께 정상적으로 서비스하는 중    |
-| 반응     | 신규 Cache 노드가 Cache 솔루션 클러스터에 포함               |
-| 측정     | 노드 추가 결정 시점부터 60분 이내 신규 Cache 노드가 추가되어 서비스한다. |
+|   설명   | Infra가 확보되어 있는 환경에서 SDSCache 담당자가 Cache 노드를 증설하는 경우 시스템 중단 없이 60분 이내에 처리한다 |
+|   자극   | SDSCache의 노드 증설 시도                                    |
+|   대상   | SDSCache 클러스터                                            |
+|   환경   | 고객사 물류 시스템이 SDSCache과 함께 정상적으로 서비스하는 중 |
+|   반응   | 신규 Cache 노드가 SDSCache 클러스터에 포함                   |
+|   측정   | 노드 추가 결정 시점부터 60분 이내 신규 Cache 노드가 추가되어 서비스한다. |
 
 
 
-#### 2.3.1.10 QAS-10 노드 장애 시 Cache 유실 방지
+#### 2.3.2.10 QAS-1A 노드 장애 시 Cache 유실 방지
 
-| QAS-10   | 노드 장애 시 Cache 유실 방지                                 |
-| -------- | ------------------------------------------------------------ |
+|  QAS-1A  | 노드 장애 시 Cache 유실 방지                                 |
+| :------: | ------------------------------------------------------------ |
 | 품질속성 | 신뢰성                                                       |
-| 설명     | Cache 솔루션이 여러 개의 노드로 구성하고, 임의의 한 노드에서 장애가 발생하더라도 Cache는 유실되지 않는다. |
-| 자극     | Cache 솔루션 클러스터 중 임의의 한 개 노드에 장애            |
-| 대상     | Cache 솔루션 클러스터                                        |
-| 환경     | 물류시스템이 Cache 솔루션과 함께 정상적으로 서비스하는 중    |
-| 반응     | 임의의 한 개 노드에 장애가 발생, 나머지 Cache 솔루션 클러스터에서 정상적으로 서비스 |
-| 측정     | 장애 발생 전 후, 유효 Cache 의 개수와 내용이  100% 일치      |
-
-
-
-
-
-### 2.3.2 고객사 물류 시스템에 대한 품질 요구사항
-
-고객사 물류시스템에 대한 품질 요구사항은 다음과 같다.
-
-| ID     | 품질속성 | 품질속성 상세화                                  | 품질속성 시나리오                                            | 중요도 | 난이도 | System Feature ID             |
-| ------ | -------- | ------------------------------------------------ | ------------------------------------------------------------ | ------ | ------ | ----------------------------- |
-| QAS-11 | 성능     | 고객사 물류시스템의 응답속도                     | 물류시스템사용자 김경환 프로가 3,600 초 이내 조회한 운송장번호 A 를 다시 조회하면 <br/>Cache 솔루션에 저장된 데이터를 기반으로 1,000 ms 이내 운송장번호에 대한 배송상태를 확인한다. | 상     | 상     | SF-01,<br />SF-02             |
-| QAS-12 | 성능     | 고객사 물류시스템의 응답보장                     | 물류시스템사용자 김경환 프로가 Cache에 없는 운송장번호 A의 배송상태를 조회하면, <br/>운송장번호 A의 배송상태는 Cache에 저장되고 김경환 프로에게 배송상태를 제공한다.<br/>1초 후, 김채이 프로가 운송장번호 A 를 조회하면 Cache에 저장된 <br/>운송장번호 A의 배송상태를 이용하여 1,000 ms 이내 배송상태를 제공한다. | 상     | 상     | SF-01,<br />SF-02,<br />SF-03 |
-| QAS-13 | 정확성   | 고객사 물류시스템의 요청 기능에 대한 동작 정확성 | 1,000 명의 물류시스템사용자가 동시에 운송장번호와 배송상태를 조회하면 동일한 운송장번호와 <br/>그 배송상태는 Cache 솔루션에 저장된 데이터를 기반으로 응답하며 <br/>사용자 김채이 프로가 요청한 기능에 대해 100% 정확하게 동작한다. | 상     | 중     | SF-01,<br />SF-02             |
-
-
-
-#### 2.3.2.1 QAS-11 고객사 물류시스템의 응답속도
-
-| QAS-11   | 고객사 물류시스템의 응답속도                                 |
-| -------- | ------------------------------------------------------------ |
-| 품질속성 | 성능                                                         |
-| 설명     | 물류시스템사용자 김경환 프로가 3,600 초 이내 조회한 운송장번호 A 를 다시 조회하면 <br/>Cache 솔루션에 저장된 데이터를 기반으로 1,000 ms 이내 운송장번호 A에 대한 배송상태를 확인한다. |
-| 자극     | 물류시스템사용자 김경환 프로                                 |
-| 환경     | 물류시스템이 Cache 솔루션과 함께 정상적으로 서비스하는 중    |
-| 반응     | Cache 솔루션이 Cached 데이터를 물류시스템에 전송한다.        |
-| 측정     | [요청 처리 속도] = [물류시스템사용자 김경환 프로가 요청한 시각] - [물류시스템WEB서버의 Access Log에 Response 기록한 시각] |
-
-
-
-#### 2.3.2.2 QAS-12 고객사 물류시스템의 응답보장
-
-| QAS-12   | 고객사 물류시스템의 응답보장                                 |
-| -------- | ------------------------------------------------------------ |
-| 품질속성 | 성능                                                         |
-| 설명     | 물류시스템사용자 김경환 프로가 Cache에 없는 운송장번호 A의 배송상태를 조회하면, <br/>운송장번호 A의 배송상태는 Cache에 저장되고 김경환 프로에게 배송상태를 제공한다.<br/>3초 후, 김채이 프로가 운송장번호 A 를 조회하면 Cache에 저장된 <br/>운송장번호 A의 배송상태를 이용하여 1,000 ms 이내 배송상태를 제공한다. |
-| 자극     | 물류시스템사용자 김경환 프로                                 |
-| 환경     | 물류시스템이 Cache 솔루션과 함께 정상적으로 서비스하는 중    |
-| 반응     | 물류시스템이 조회한 운송장번호A를 물류시스템사용자 김경환 프로에게 전달하고, Cache 솔루션에 운송장번호A를 저장하도록 한다. |
-| 측정     | [트래픽 처리 속도] < 1,000 ms                                |
-| 제약     | -                                                            |
-
-
-
-#### 2.3.2.3 QAS-13 고객사 물류시스템의 요청 기능에 대한 동작 정확성
-
-| QAS-13   | 고객사 물류시스템의 요청 기능에 대한 동작 정확성             |
-| -------- | ------------------------------------------------------------ |
-| 품질속성 | 정확성                                                       |
-| 설명     | 1,000 명의 물류시스템사용자가 동시에 운송장번호와 배송상태를 조회하면 동일한 운송장번호와 <br/>그 배송상태는 Cache 솔루션에 저장된 데이터를 기반으로 응답하며 <br/>사용자 김채이 프로가 요청한 기능에 대해 100% 정확하게 동작한다. |
-| 자극     | 100,000 명의 물류시스템사용자                                |
-| 환경     | 물류시스템이 Cache 솔루션과 함께 정상적으로 서비스하는 중    |
-| 반응     | 물류시스템은 운송장번호와 배송상태 정보에 대해 1차적으로 Cache 솔루션을 확인하고, 없으면 Database와 API를 조회한다. 조회된 데이터는 물류시스템 사용자에게 전달하고, Cache 솔루션에 전달하여 저장하도록 지시한다. |
-| 측정     | [기대한결과응답횟수] / [전체요청회수] * 100                  |
-| 제약     | -                                                            |
+|   설명   | SDSCache이 여러 개의 노드로 구성하고, 임의의 한 노드에서 장애가 발생하더라도 Cache는 유실되지 않는다 |
+|   자극   | SDSCache 클러스터 중 임의의 한 개 노드에 장애                |
+|   대상   | SDSCache 클러스터                                            |
+|   환경   | 고객사 물류 시스템이 SDSCache과 함께 정상적으로 서비스하는 중 |
+|   반응   | 임의의 한 개 노드에 장애가 발생, 나머지 SDSCache 클러스터에서 정상적으로 서비스 |
+|   측정   | 장애 발생 전 후, 유효 Cache 의 개수와 내용이  100% 일치      |
 
 
 
@@ -1248,14 +1322,13 @@ Cache 솔루션에 대한 품질 요구사항은 다음과 같다.
 
 아키텍처 제약사항은 다음 2 가지이다.
 
-| ID    | 설명                                                 |
-| ----- | ---------------------------------------------------- |
-| CR-01 | OS는 Linux 중 Ubuntu LTS 20.04 버전으로 한정한다.    |
-| CR-02 | Cache 솔루션에 대한 개발 언어는 Golang으로 구현한다. |
+|  ID   | 설명                                                         |
+| :---: | ------------------------------------------------------------ |
+| CR-01 | OS는 Linux 중 Ubuntu LTS 20.04 버전으로 한정한다.            |
+| CR-02 | SDSCache에 대한 개발 언어는 Golang으로 구현한다.             |
+| CR-03 | SDSCache Client에 대한 개발 언어는 Java으로 구현한다.<br />고객사 물류 시스템이 Java 언어 기반이다. |
 
-
-
-CR-02 에서 개발 언어 Golang이 선택된 내용은 "별첨. 4. Cache 솔루션 개발 언어" 를 참고한다.
+CR-02 에서 개발 언어 Golang이 선택된 내용은 "별첨. 4. SDSCache 개발 언어" 를 참고한다.
 
 # 3. 아키텍처 설계문제 분석
 
@@ -1263,19 +1336,32 @@ CR-02 에서 개발 언어 Golang이 선택된 내용은 "별첨. 4. Cache 솔�
 
 > 설계 핵심요구사항 선정, 선정사유 설명
 
-| ID    | 품질속성<br />상세화                             | 품질 요구사항                                                | 중요도 | 난이도 | QAS<br />ID         |
-| ----- | ------------------------------------------------ | ------------------------------------------------------------ | ------ | ------ | ------------------- |
-| AD-01 | Cache 솔루션의 응답속도                          | Cache 솔루션은 XX Byte 크기 Key와 XX Byte 크기 Value 의 Cache 를 10 TPS, <br />1개의 Cache 당 평균 30 ms(millisecond) 이내에 응답한다. | 상     | 상     | QAS-01,<br />QAS-02 |
-| AD-02 | Cache 솔루션의 응답보장                          | Cache 솔루션은  XX Byte 크기 Key와 XX Byte 크기 Value 의 Cache 를 12시간 동안 1,000 TPS, 1개의 Cache 당 평균 50 ms(millisecond) 이내에 응답한다. | 상     | 중     | QAS-02,<br />QAS-03 |
-| AD-03 | Cache 솔루션의  알고리즘 변경 용이               | Cache 솔루션는 운영 중 Cache를 유지하는 기간을 관리하는 알고리즘이 변경되면<br />정책 변경 즉시, 새로운 알고리즘 정책으로 Cache 를 관리한다. | 상     | 중     | QAS-04              |
-| AD-04 | Cache 솔루션의 데이터 정확성                     | 사용자가 Cache 솔루션에 Key로 "empid_26751, Value로 "김경환프로" Cache의 SET을 요청하여 성공으로 응답 받은 경우, 사용자가 Cache 솔루션에 Key "empid_26751" 인 Cache의 GET을 요청하는 경우, Value "김경환프로" 로  100% 동일하게 응답한다. | 중     | 상     | QAS-05,<br />QAS-07 |
-| AD-05 | Cache 솔루션의 구간 암호화                       | Cache 솔루션과 Cache Clinet 간의 통신 중 TCP 기반으로 인 경우 TLS 1.3 규격 기반으로 암호화하여 통신한다. | 중     | 중     | QAS-06              |
-| AD-06 | Cache 솔루션의 유지보수 용이성                   | Cache 솔루션에 새로운 Cache 알고리즘(LRU, Least Recent Used)이 추가하면 2개월 이내 Golang 언어에 대한 경력 5년 이상의 개발자로 4MM로 개발한다. | 중     | 중     | QAS-07              |
-| AD-07 | Cache 솔루션의 가용성                            | Infra가 확보되어 있는 환경에서 Cache 솔루션 담당자가 Cache 노드를 증설하는 경우 시스템 중단 없이 60분 이내에 처리한다. | 중     | 중     | QAS-08              |
-| AD-08 | 노드 장애 시 Cache 유실 방지                     | Cache 솔루션이 여러 개의 노드로 구성하고, 임의의 한 노드에서 장애가 발생하더라도 Cache는 유실되지 않는다. | 상     | 중     | QAS-09              |
-| AD-09 | 고객사 물류시스템의 응답속도                     | 물류시스템사용자 김경환 프로가 3,600 초 이내 조회한 운송장번호 A 를 다시 조회하면 Cache 솔루션에 저장된 데이터를 기반으로 1,000 ms 이내 운송장번호 A에 대한 배송상태를 확인한다. | 상     | 상     | QAS-11              |
-| AD-10 | 고객사 물류시스템의 응답보장                     | 물류시스템사용자 김경환 프로가 Cache에 없는 운송장번호 A의 배송상태를 조회하면, <br/>운송장번호 A의 배송상태는 Cache에 저장되고 김경환 프로에게 배송상태를 제공한다.<br/>3초 후, 김채이 프로가 운송장번호 A 를 조회하면 Cache에 저장된 <br/>운송장번호 A의 배송상태를 이용하여 1,000 ms 이내 배송상태를 제공한다. | 상     | 상     | QAS-12              |
-| AD-11 | 고객사 물류시스템의 요청 기능에 대한 동작 정확성 | 1,000 명의 물류시스템사용자가 동시에 운송장번호와 배송상태를 조회하면 동일한 운송장번호와 <br/>그 배송상태는 Cache 솔루션에 저장된 데이터를 기반으로 응답하며 <br/>사용자 김채이 프로가 요청한 기능에 대해 100% 정확하게 동작한다. | 상     | 중     | QAS-13              |
+
+
+
+
+### 3.1.1 고객사 물류 시스템에 대한 아키텍처 드라이버
+
+|  ID   |               품질속성<br />상세화               | 품질 요구사항                                                | 중요도 | 난이도 |     QAS<br />ID     |
+| :---: | :----------------------------------------------: | ------------------------------------------------------------ | :----: | :----: | :-----------------: |
+| AD-01 |           고객사 물류시스템의 응답속도           | 고객사 물류 시스템 사용자 김삼성 프로가 3,600 초 이내 조회한 운송장번호 A 를 다시 조회하면 <br />SDSCache에 저장된 Cache를 기반으로 1,000 ms 이내 운송장번호 A에 대한 배송상태정보를 확인한다 |   상   |   상   |       QAS-01        |
+| AD-02 |           고객사 물류시스템의 응답보장           | 고객사 물류시스템사용자 김삼성 프로가 Cache에 없는 운송장번호 A의 배송상태정보를 조회하면, <br/>운송장번호 A의 배송상태는 Cache에 저장되고 김삼성 프로에게 배송상태를 제공한다.<br/>3초 후, 이삼성 프로가 운송장번호 A 를 조회하면 Cache에 저장된 <br/>운송장번호 A의 배송상태를 이용하여 1,000 ms 이내 배송상태를 제공한다 |   상   |   상   |       QAS-02        |
+| AD-03 | AD-03. 고객사 물류 시스템의 Database 안정성 확보 | 고객사 물류시스템 사용자 100 명이 동시에 각각의 배송상태정보를 조회 시,<br />같은 운송장번호에 대해서는 SDSCache의 Cache를 기반으로 응답한다 <br/>배송상태조회Batch는 1시간 단위로 배송상태정보를 최신화하여 Database와 SDSCache에 저장한다 |   상   |   상   | QAS-02,<br />QAS-03 |
+
+
+
+### 3.1.2 SDSCache에 대한 아키텍처 드라이버
+
+|  ID   |      품질속성<br />상세화       | 품질 요구사항                                                | 중요도 | 난이도 |     QAS<br />ID     |
+| :---: | :-----------------------------: | ------------------------------------------------------------ | :----: | :----: | :-----------------: |
+| AD-11 |       SDSCache의 응답속도       | SDSCache은 50 Byte 크기 Key와 1,000 Byte 크기 Value 의 Cache에 대해 <br />평균 3 ms 이내 응답한다 |   상   |   상   | QAS-11,<br />QAS-12 |
+| AD-12 |       SDSCache의 응답보장       | SDSCache은  50 Byte 크기 Key와 1,000 Byte 크기 Value 의 Cache 에 대해 <br />1시간 동안 1,000 TPS 에 대한 응답을 보장한다. |   상   |   중   |       QAS-13        |
+| AD-13 | SDSCache의 알고리즘 변경 용이성 | SDSCache는 운영 중 Cache를 유지하는 기간을 관리하는 알고리즘이 변경되면<br />정책 변경 즉시, 새로운 알고리즘 정책으로 Cache 를 관리한다 |   상   |   중   |       QAS-14        |
+| AD-14 |  노드 장애 시 Cache 유실 방지   | SDSCache이 여러 개의 노드로 구성하고, 임의의 한 노드에서 <br />장애가 발생하더라도 Cache는 유실되지 않는다 |   상   |   중   | QAS-19<br />QAS-1A  |
+| AD-15 |    SDSCache의 데이터 정확성     | 사용자가 SDSCache에 Key로 "empid_26751, Value로 "김삼성프로" <br />Cache의 SET을 요청하여 성공으로 응답 받은 경우, <br />사용자가 SDSCache에 Key "empid_26751" 인 Cache의 GET을 요청하는 경우,<br /> Value "김삼성프로" 로  100% 동일하게 응답한다 |   중   |   상   | QAS-15,<br />QAS-17 |
+| AD-16 |     SDSCache의 구간 암호화      | SDSCache과 CacheClient 간의 통신 중 TCP 기반으로 인 경우 <br />TLS 1.3 규격 기반으로 암호화하여 통신한다 |   중   |   중   |       QAS-16        |
+| AD-17 |   SDSCache의 유지보수 용이성    | SDSCache에 새로운 Cache 알고리즘(LRU, Least Recent Used)이 추가하면 <br />2개월 이내 Golang 언어에 대한 경력 5년 이상의 개발자로 4MM로 개발한다 |   중   |   중   |       QAS-17        |
+| AD-18 |        SDSCache의 가용성        | Infra가 확보되어 있는 환경에서 SDSCache 담당자가 Cache 노드를 <br />증설하는 경우 시스템 중단 없이 60분 이내에 처리한다 |   중   |   중   |       QAS-18        |
 
 
 
@@ -1289,24 +1375,33 @@ CR-02 에서 개발 언어 Golang이 선택된 내용은 "별첨. 4. Cache 솔�
 
 ### 3.2.1 아키텍처 설계 문제 분석표
 
-| 설계문제                                | 아키텍처 드라이버                                       | 아키텍처 설계 전략                                           | 이유<br />(이득/비용/위험요인 고려사항 포함)                 |
-| --------------------------------------- | ------------------------------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| ISSUE01. Cache솔루션의 성능             | AD-01. Cache 솔루션의 응답속도                          | AS-01. Cache 를 보관하는 자료 구조                           | Cache에서 저장하는 Value는 문자열 뿐만 아니라, List, Set, Sorted Set 이 필요하다. |
-|                                         | AD-02. Cache 솔루션의 응답보장                          | AS-02. 요청에 대하여 동기화 및 비동기화 응답                 | 업무에 따라 동기 및 비동기 응답 요건이 다르다. 따라서 동기 및 비동기 응답에 대하여 필요하다. |
-|                                         |                                                         | AS-03. 요청에 대한 응답 코드 정의                            | 응답에 대하여 명확한 정의를 하여 요청에 대한 결과를 정확하게 전달해야 한다. 따라서 표준화가 필요하다. |
-| ISSUE02. Cache솔루션의 정확성           | AD-04.Cache 솔루션의 데이터 정확성                      | AS-04. Cache를 조회 할 때, Key의 데이터 타입은 문자열, 비교 방법은 동등성(Equality) | 요청의 명확성을 위해 Unique 한 값을 갖는 Key에 대한 정의가 필요하다. |
-|                                         |                                                         | AS-05. Cache 의 만료 정책                                    | 기간에 대한 특징을 가진 Cache에 대하여 유효기간에 설정 및 방법에 대한 정의가 필요하다. |
-| ISSUE03. Cache솔루션의 신뢰성           | AD-05. Cache 솔루션의 구간 암호화                       | AS-06. TCP 통신 시, TLS 기반 암호화                          | Cache솔루션과 Cache Client 간 네트워크 구간에 대한 암호화가 필요하다. |
-|                                         | AD-08. 노드 장애 시 Cache 유실 방지                     | AS-07. Node에 대한 Replication 구성                          | 한 개의 노드에 장애가 발생하여도 지속적인 서비스 제공이 필요하다. |
-| ISSUE04. Cache솔루션의 노드 확장용이성  | AD-07. Cache 솔루션의 가용성                            | AS-08. Cache 솔루션에 대한 클러스터 구성                     | Cache의 분산 및 가용성, 성능을 만족하기 위해 클러스터 구성이 필요하다. |
-|                                         |                                                         | AS-09. Proxy를 활용한 Cache 분산                             | Cache를 분산하여 저장하여 Cache 클러스터를 효율적으로 사용하도록 고려해야 한다. |
-| ISSUE05. Cache솔루션의 기능 변경용이성  | AD-03. Cache 솔루션의  알고리즘 변경 용이               | AS-10. Strategy Pattern을 이용한 알고리즘 캡슐화 및 교환     | 알고리즘을 환경에 따라 영향도 없이 바꾸는 기능이 필요하다.   |
-|                                         | AD-06. Cache 솔루션의 유지보수 용이성                   | AS-11. TDD 방법론으로 추가 및 변경에 대한 실패 방지          | 요구사항 변경에 따른 Cache솔루션의 변경에 대한 지지대가 필요하다. |
-| ISSUE06. 고객사 물류시스템의 성능       | AD-09. 고객사 물류시스템의 응답속도                     | AS-12. 근 실시간(Near Realtime)으로 배송상태조회에 대한 업무 프로세스 변경 | 사용자의 업무 분석으로 근 실시간, 1시간 이내 배송상태조회가 필요하다. |
-|                                         |                                                         | AS-13. 조회가 많은 업무 특성을 고려한 Cache솔루션과 Data Store의 배치 | Cache솔루션과 Data Store에 대한 효율적인 배치가 필요하다.    |
-|                                         | AD-10. 고객사 물류시스템의 응답보장                     | AS-14. 트래킹이 필요한 배송상태에 대하여 Cache솔루션에서 보유하여 제공 | 1,000ms 이내 배송상태정보 요청에 대하여 응답해야 한다.       |
-| ISSUE07. 고객사 물류시스템 DB 경합 발생 | AD-11. 고객사 물류시스템의 DB 경합 발생 원인 제거       | AS-15.                                                       |                                                              |
-| ISSUE08. 고객사 물류시스템의 정확성     | AD-12. 고객사 물류시스템의 요청 기능에 대한 동작 정확성 | AS-04. Cache를 조회 할 때, Key의 데이터 타입은 문자열, 비교 방법은 동등성(Equality) | 요청의 명확성을 위해 Unique 한 값을 갖는 Key에 대한 정의가 필요하다. |
+#### 3.2.1.1 고객사 물류 시스템에 대한 설계 문제 분석표
+
+|               설계문제               |                아키텍처 드라이버                 |                      아키텍처 설계 전략                      | 이유<br />(이득/비용/위험요인 고려사항 포함)                 |
+| :----------------------------------: | :----------------------------------------------: | :----------------------------------------------------------: | ------------------------------------------------------------ |
+|  ISSUE01. 고객사 물류 시스템의 성능  |       AD-01. 고객사 물류 시스템의 응답속도       | AS-01. 근 실시간(Near Realtime)으로 배송상태조회에 대한 업무 프로세스 변경 | 사용자의 업무 분석으로 근 실시간, 1시간 이내 배송상태조회가 필요하다. |
+|                                      |                                                  | AS-02. 조회가 많은 업무 특성을 고려한 Cache솔루션과 Data Store의 배치 | Cache솔루션과 Data Store에 대한 효율적인 배치가 필요하다.    |
+| ISSUE02. 고객사 물류 시스템의 안정성 |       AD-02. 고객사 물류 시스템의 응답보장       | AS-03. 트래킹이 필요한 배송상태에 대하여 Cache솔루션에서 보유하여 제공 | 1,000ms 이내 배송상태정보 요청에 대하여 응답해야 한다.       |
+|                                      | AD-03. 고객사 물류 시스템의 Database 안정성 확보 | AS-04. 배송상태정보에 관한 조회 업무는 Online 시스템과 변경 업무는 Batch 시스템으로 각각 분리 | 동일 Raw에 대하여 여러 Transaction 에서 수정이 발생하여 DB 경합 이벤트가 발생하는 원인을 제거한다. |
+
+
+
+#### 3.2.1.2 SDSCache에 대한 설계 문제 분석표
+
+|                설계문제                |           아키텍처 드라이버           |                      아키텍처 설계 전략                      | 이유<br />(이득/비용/위험요인 고려사항 포함)                 |
+| :------------------------------------: | :-----------------------------------: | :----------------------------------------------------------: | ------------------------------------------------------------ |
+|        ISSUE11. SDSCache의 성능        |      AD-11. SDSCache의 응답속도       |              AS-11. Cache 를 보관하는 자료 구조              | Cache에서 저장하는 Value는 문자열 뿐만 아니라, List, Set, Sorted Set 이 필요하다. |
+|       ISSUE12. SDSCache의 정확성       |      AD-12. SDSCache의 응답보장       |              AS-12. 요청에 대한 응답 코드 정의               | 응답에 대하여 명확한 정의를 하여 요청에 대한 결과를 정확하게 전달해야 한다. 따라서 표준화가 필요하다. |
+|                                        |    AD-15.SDSCache의 데이터 정확성     | AS-13. Cache를 조회 할 때, Key의 데이터 타입은 문자열, 비교 방법은 동등성(Equality) | 요청의 명확성을 위해 Unique 한 값을 갖는 Key에 대한 정의가 필요하다. |
+|                                        |                                       |                  AS-14. Cache 의 만료 정책                   | 기간에 대한 특징을 가진 Cache에 대하여 유효기간에 설정 및 방법에 대한 정의가 필요하다. |
+|       ISSUE13. SDSCache의 신뢰성       |  AD-14. 노드 장애 시 Cache 유실 방지  |             AS-15. Node에 대한 Replication 구성              | 한 개의 노드에 장애가 발생하여도 지속적인 서비스 제공이 필요하다. |
+|                                        |     AD-16. SDSCache의 구간 암호화     |             AS-16. TCP 통신 시, TLS 기반 암호화              | 정보보호부서의 네트워크 보안 요청이 있으면,<br />Cache솔루션과 Cache Client 간 네트워크 구간에 대한 암호화가 필요하다. |
+| ISSUE14. Cache솔루션의 노드 확장용이성 |       AD-17. SDSCache의 가용성        |             AS-17. SDSCache에 대한 클러스터 구성             | Cache의 분산 및 가용성, 성능을 만족하기 위해 클러스터 구성이 필요하다. |
+|                                        |                                       |               AS-18. Proxy를 활용한 Cache 분산               | Cache를 분산하여 저장하여 Cache 클러스터를 효율적으로 사용하도록 고려해야 한다. |
+| ISSUE15. Cache솔루션의 기능 변경용이성 | AD-13. SDSCache의  알고리즘 변경 용이 |   AS-19. Strategy Pattern을 이용한 알고리즘 캡슐화 및 교환   | 알고리즘을 환경에 따라 영향도 없이 바꾸는 기능이 필요하다.   |
+|                                        |   AD-16. SDSCache의 유지보수 용이성   |     AS-1A. TDD 방법론으로 추가 및 변경에 대한 실패 방지      | 요구사항 변경에 따른 Cache솔루션의 변경에 대한 지지대가 필요하다. |
+
+
 
 다음은 위 설계 문제 분석표에 따른 아키텍처 설계 전략 이다. 
 
@@ -1314,12 +1409,151 @@ CR-02 에서 개발 언어 Golang이 선택된 내용은 "별첨. 4. Cache 솔�
 
 
 
-### 3.2.2 AS-01. Cache 를 보관하는 자료 구조
+### 3.2.2 아키텍처 설계 전략
+
+#### 3.2.2.1 고객사 물류 시스템에 대한 아키텍처 설계 전략
+
+##### 3.2.2.1.1 AS-01. 근 실시간(Near Realtime)으로 배송상태조회에 대한 업무 프로세스 변경
 
 - 설계 문제
-  - ISSUE01. Cache솔루션의 성능
+  - ISSUE01. 고객사 물류시스템의 성능
 - 아키텍처 드라이버
-  - AD-01. Cache 솔루션의 응답속도
+  - AD-01. 고객사 물류시스템의 응답속도
+- 설계 문제를 해결하는 설계 근거
+
+"1.3.2. 고객사 물류시스템의 배송상태조회의 실시간 필요에 대한 인터뷰" 에서 나온 배송시간 최신화에 대한 허용가능 최대 시간 1시간을 바탕으로 업무 프로세스를 근 실시간(Near Realtime)으로 변경한다.
+
+1시간 간격으로 배송상태를 업데이트 하는 방법으로는 배송상태를 조회하여 갱신하는 Batch 프로그램으로 배송상태를 조회하여 DB와 Cache솔루션에 저장한다. 사용자는 1차적으로 Cache에 저장된 배송상태를 조회하고 Cache에 배송상태가 없으면 DB에 저장된 배송상태를 조회한다. 
+
+개선된 업무 프로세스에 대한 Sequence Diagram은 다음과 같다.
+
+![SEQ_TOBE_배송상태조회](https://user-images.githubusercontent.com/26420767/190858807-573154d1-4dac-4107-a081-d81dddfafc8c.png)
+
+- 위험 요인
+  - Batch 프로그램에 대한 모니터링이 필요하다.
+
+- 고려 사항
+  - 새 송장번호가 추가되면 최초 1회는 즉시 Batch 프로그램에 의해 Nuxt서비스에 조회 후 배송상태정보 최신화를 고려한다.
+
+
+
+
+##### 3.2.2.1.2 AS-02. 조회가 많은 업무 특성을 고려한 Cache솔루션과 Data Store의 배치
+
+- 설계 문제
+  - ISSUE01. 고객사 물류시스템의 성능
+- 아키텍처 드라이버
+  - AD-01. 고객사 물류시스템의 응답속도
+- 설계 문제를 해결하는 설계 근거
+
+사용자가 배송상태를 조회할 때 Cache솔루션과 Data Store의 배치와 배치 프로그램이 외부 API를 조회하여 배송상태를 Cache솔루션과 Data Store에 갱신하는 것에 대하여 전략을 각각 가져간다. 
+
+Cache솔루션과 Data Store의 배치전략은 다음과 같이 읽기 2 개, 쓰기 3 개가 있다.
+
+a. [읽기] Cache Aside 패턴
+
+![_Cache_배치전략_CacheAside패턴 drawio](https://user-images.githubusercontent.com/26420767/186612163-c3d1bad5-71c2-4172-9970-d4c4408e655f.png)
+
+b. [읽기] Read Through 패턴
+
+![_Cache_배치전략_ReadThrough패턴 drawio](https://user-images.githubusercontent.com/26420767/186613693-8ef4dd94-c120-43b6-8823-fb4d758465ca.png)
+
+c. [쓰기] Write Selective 패턴
+
+![_Cache_배치전략__Write_Selective패턴 drawio](https://user-images.githubusercontent.com/26420767/186616567-488413ac-3013-479b-be49-c40ad649de99.png)
+
+d. [쓰기] Write Back 패턴
+
+![_Cache_배치전략_WriteBack패턴의 복사본 drawio](https://user-images.githubusercontent.com/26420767/186612975-1cbed571-1864-4be2-9171-f16180d7bd3f.png)
+
+e. [쓰기] Write Through 패턴
+
+![_Cache_배치전략__WriteThrough패턴 drawio](https://user-images.githubusercontent.com/26420767/186615045-6a4e397e-8968-4d5f-b16a-12c6079ea4fb.png)
+
+위 패턴을 비교표로 정리하면 다음과 같다.
+
+읽기를 위한 패턴 비교표
+
+|   항목   | Cache Aside 패턴                                             | Read Through 패턴                  |
+| :------: | ------------------------------------------------------------ | ---------------------------------- |
+|   특징   | - Cache 장애 대비 구성<br />- 정합성 문제 발생 가능<br />- 반복적인 조회에 적합 | - Cache에 저장하는 주체가 DB<br /> |
+| 선택여부 | 선택                                                         | 미선택                             |
+
+
+
+쓰기를 위한 패턴 비교표
+
+|   항목   | Write Selective 패턴                                         | Write Back 패턴                                              | Write Through 패턴                                           |
+| :------: | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
+|   툭징   | - DB에 저장 후 선택적으로 Cache 저장<br />- Cache에서 사용되는 데이터만 저장되어 리소스 절약<br />- Cache에 저장되는 데이터는 사용되는 데이터로 Hit Ratio 상승 | - Cache가 Queue의 역할<br />- Cache 장애 시 데이터 유실<br />- 정합성 확보<br />- 불필요한 리소스 저장 | - Cache에 저장 후 Cache가 DB에 반영<br />- 항상 동기화 되는 장점<br />- Cache에 사용되지 않는 데이터까지 저장되어 리소스 낭비와 Write 작업 부하 발생<br />- TTL을 사용하여 사용되지 않는 데이터를 삭제 |
+| 선택여부 | 선택                                                         | 미선택                                                       | 미선택                                                       |
+
+고객사 물류시스템의 배송상태에 대한 Cache와 Data Store의 배치 전략은 읽기를 위한 패턴은 "Cache Aside 패턴"이 쓰기를 위한 패턴은 "Write Selective 패턴" 을 선택한다.
+
+
+
+##### 3.2.2.1.3 AS-03. 트래킹이 필요한 배송상태에 대하여 SDSCache에서 제공 
+
+- 설계 문제
+  - ISSUE02. 고객사 물류시스템의 성능
+- 아키텍처 드라이버
+  - AD-02. 고객사 물류시스템의 응답보장
+- 설계 문제를 해결하는 설계 근거
+
+다음은 개선된 배송상태조회에 대한 Sequenece Diagram 이다.
+
+![SEQ_TOBE_배송상태조회_2](https://user-images.githubusercontent.com/26420767/190858822-4715050a-ecda-4340-b795-13213989582f.png)
+
+|         구분         | 설명                                                         |
+| :------------------: | ------------------------------------------------------------ |
+|        Batch         | 1시간 간격으로 배송상태를 업데이트 하는 방법으로는 배송상태를 조회하여 갱신하는 Batch 프로그램으로 <br />배송상태를 조회하여 Database와 SDSCache에 저장한다 |
+|       Online 1       | 고객사 물류시스템에서는 송장에 대한 배송상태를 1차로 SDSCache에서 조회한다 |
+| Online 2<br />(선택) | SDSCache에 배송상태정보가 없을 경우 DB에서 배송상태정보를 조회하고 SDSCache에 배송상태정보를 저장하여 <br />동일한 송장번호에 대해 SDSCache를 사용하도록 한다. |
+
+- 위험 요인
+  - 송장번호에 대한 배송상태정보가 Cache솔루션과 DB에 없는 경우, 사용자에게 배송상태정보를 제공 불가하다.
+- 고려 사항
+  - 새 송장번호가 추가되면 최초 1회는 즉시 배송상태를 조회하는 것에 대하여 고려한다.
+
+
+
+##### 3.2.2.1.4 AS-04. 배송상태정보에 관한 조회 업무는 Online 시스템과 변경 업무는 Batch 시스템으로 각각 분리
+
+- 설계 문제
+  - ISSUE02. 고객사 물류 시스템의 안정성
+- 아키텍처 드라이버
+  - AD-03. AD-03. 고객사 물류 시스템의 Database 안정성 확보
+- 설계 문제를 해결하는 설계 근거
+
+"1.2.1.4 고객사 물류 시스템의 성능 이슈 분석" 에서 문제점 2가지 중 "문2. 고객사 물류 시스템 운영담당자는 ARMS 로부터 **DML Row Lock** 에 대한 Warning 메시지를 1일 5회 이상 전달 받는다." 의 DML Row Lock 의 원인이다. 
+
+![Cache_dml_row_lcok_설명 drawio](https://user-images.githubusercontent.com/26420767/190860228-bea5ebd0-dfd9-45ac-a9ff-80c2cfc5cd7f.png)
+
+| 단계 | 설명                                                         | 비고                                    |
+| ---- | ------------------------------------------------------------ | --------------------------------------- |
+| 1    | Transaction 1. 에서 A Row 에 대한 배송상태정보 변경을 위해 row lock을 획득한다 | Tranaction 1. row lock 획득             |
+| 2    | Transaction 2. 에서도 A Row 에 대한 배송상태정보 변경을 위해 row lock을 획득을 시도하지만<br />이미 Transaction 1. 에서 row lock 을 소유하고 있기 때문에 Transaction 2.에서는 row lock waiting 상태가 발생한다. | DML Row Lock에 대한 Warning 메시지 발생 |
+| 3    | Transaction 1, 2 외 다수의 Transaction에서 A Row에 대한 배송상태정보 변경을 위해 row lock waiting 상태가 발생한다. |                                         |
+
+
+
+"1.3.2 고객사 물류시스템의 배송상태조회의 실시간 필요에 의한 인터뷰"를 기반으로 다수의 Transaction에서 변경 작업을 하지 않고, 한 개의 Transaction에서 일정 주기로 변경을 하고 나머지 Transaction 에서는 조회 작업을 하도록 한다.
+
+|      구분       | 설명                                                         | 비고                |
+| :-------------: | ------------------------------------------------------------ | ------------------- |
+| Batch 프로그램  | Nuxt 사에서 배송상태정보를 조회하여 Database 및 SDSCache에 저장한다. | 한 개의 Transaction |
+| Online 프로그램 | Database 및 SDSCache에서 배송상태정보를 조회한다.            | 다수의 Transaction  |
+
+
+
+#### 3.2.2.2 SDSCache에 대한 아키텍처 설계 전략
+
+##### 3.2.2.2.1 AS-11. Cache 를 보관하는 자료 구조
+
+- 설계 문제
+  - ISSUE11. Cache솔루션의 성능
+- 아키텍처 드라이버
+  - AD-11. SDSCache의 응답속도
 - 설계 문제를 해결하는 설계 근거
 
 Cache를 저장하는 자료 구조에 대하여,  Big-O 표기법으로 Array, Slice, List, Map의 추가, 삭제, 읽기 동작에 성능 비교 자료 이다.
@@ -1346,49 +1580,13 @@ Array, Slice 그리고 List에 비해  Map은 상대적으로 Memory를 적게 �
 
 
 
-### 3.2.3 AS-02. 요청에 대하여 동기화 및 비동기화 응답 
+
+##### 3.2.2.2.2 AS-12. 요청에 대한 응답 코드 정의
 
 - 설계 문제
-  - ISSUE01. Cache솔루션의 성능
+  - ISSUE11. Cache솔루션의 성능
 - 아키텍처 드라이버
-  - AD-02. Cache 솔루션의 응답보장
-- 설계 문제를 해결하는 설계 근거
-
-Cache 동작에 대해 동기 및 비동기 처리를 각각 지원 한다.
-
-Cache 조회에 대해서는 동기 및 비동기 처리를 지원한다. Cache 조회에 대한 동기 및 비동기 처리를 구분하는 요소는 Cache 크기와 조회 건 수이다. 
-다음과 같이 동기 및 비동기 처리에 대해 구분한다.
-
-|  항목  |  Cache 크기   |   건 수   |
-| :----: | :-----------: | :-------: |
-|  동기  | 100 Byte 이하 |   1 건    |
-| 비동기 | 100 Byte 초과 | 1 건 초과 |
-
-Cache 저장은 동기 응답만을 지원한다. Cache 솔루션에 Cache 저장에 대한 응답을 동기로 확인하는 것은 **Hit Ratio**와 밀접한 관련이 있다. Cache솔루션에 Cache 저장 완료 후 조회를 하여 **Hit Ratio**를 높이도록 한다. 
-
-Cache 삭제는 동기 응답만을 지원한다. Cahce 자료구조에 TTL 변수와 삭제Flag 변수를 고려한다.
-
-|   항목   |                     설명                     |                             비교                             |
-| :------: | :------------------------------------------: | :----------------------------------------------------------: |
-|   TTL    |  Cache에 대한 유효시간을 관리하는 변수이다.  |         초 단위로 Cache에 대한 유효시간을 관리한다.          |
-| 삭제Flag | Cahce에 대하여 삭제여부를 관리하는 변수이다. | DEL 명령어를 통해 Cache를 삭제하는 경우, Mark 처리한다.<br />별도의 쓰레드를 통해 Mark된 Cache에 대해 삭제한다. |
-
-- 위험 요인
-  - 비동기 처리 시, Cache 크기가 크고 다 수의 건수를 조회하면 Cache 솔루션과 Cache Client간 네트워크 대역폭에 영향을 미친다. 또한 Cache Client의 컴퓨팅 자원(CPU와 Memroy)가 Cache 처리를 위해 할당된다. 따라서 타 프로세스가 일시적으로 멈추는 등의 영향을 받는다.  
-
-
-- 고려 사항
-  - 비동기 처리 시, 10 건 이상 조회 하면 Cursor 기반의 Paging 처리를 지원하여 Cache를 연속적으로 처리한다.
-
-
-
-
-### 3.2.4 AS-03. 요청에 대한 응답 코드 정의
-
-- 설계 문제
-  - ISSUE01. Cache솔루션의 성능
-- 아키텍처 드라이버
-  - AD-02. Cache 솔루션의 응답보장
+  - AD-12. SDSCache의 응답보장
 - 설계 문제를 해결하는 설계 근거
 
 Cache Client의 요청에 대하여 정확한 커뮤니케이션을 위해 응답에 결과 이 외 응답코드를 함께 전달한다. 
@@ -1398,29 +1596,26 @@ Cache Client의 요청에 대하여 정확한 커뮤니케이션을 위해 응�
 - 응답코드로 인해 응답이 성공인지 실패인지 또한, 구체적으로 어떤 성공인지 어떤 실패인지를 자세하게 알 수 있다.
 - Cache Client에서 응답 코드에 따른 처리 로직을 구현 할 수 있다.
 
-응답코드를 사용하면서 얻는 단점은 다음과 같다.
-
-- 응답의 Size가 응답코드가 포함 되면서 커진다.
-
 - 고려 사항
-  - 매우 잘 정리된 형식인 HTTP 상태코드를 기반으로 응답코드를 정의한다.
-    - 별첨. 5. HTTP 상태코드을 참조한다.
+  - 타 Cache, Memcached와 Redis의 응답코드를 참고한다.
 
-  - 응답코드를 정상적인 응답(2XX), Cache자원이없는경우 응답(4XX), Cache솔루션에러응답(5XX)으로 분류한다. 
+다음은 Memcached와 Redis에서 사용하는 응답코드이다.
+
+[TODO. 여기 작성할 것]
 
 
 
-### 3.2.5 AS-04. Cache를 조회 할 때, Key의 데이터 타입은 문자열, 비교 방법은 동등성(Equality)
+##### 3.2.2.2.3 AS-13. Cache를 조회 할 때, Key의 데이터 타입은 문자열, 비교 방법은 동등성(Equality)
 
 - 설계 문제
   - ISSUE02. Cache솔루션의 정확성
-  - ISSUE08. 고객사 물류시스템의 정확성
+  - ISSUE12. 고객사 물류시스템의 정확성
 - 아키텍처 드라이버
-  - AD-04.Cache 솔루션의 데이터 정확성
+  - AD-04.SDSCache의 데이터 정확성
   - AD-12.고객사 물류시스템의 요청 기능에 대한 동작 정확성
 - 설계 문제를 해결하는 설계 근거
 
-Cache솔루션에 저장된 데이터를 조회하기 위해서는 Key 기반으로 조회한다. 
+SDSCache에 저장된 데이터를 조회하기 위해서는 Key 기반으로 조회한다. 
 
 사용자가 기대하는 데이터를 조회하기 위해서는 Key에 대해서 명확하게 구별하는 특징을 갖아야 한다. 
 
@@ -1480,12 +1675,12 @@ Cache솔루션에 저장된 데이터를 정확하게 조회하기 위해 Key의
 
 
 
-### 3.2.6 AS-05. Cache의 만료 정책
+##### 3.2.2.2.4 AS-14. Cache의 만료 정책
 
 - 설계 문제
-  - ISSUE02. Cache솔루션의 정확성
+  - ISSUE12. Cache솔루션의 정확성
 - 아키텍처 드라이버
-  - AD-04.Cache 솔루션의 데이터 정확성
+  - AD-15.SDSCache의 데이터 정확성
 - 설계 문제를 해결하는 설계 근거
 
 Cache솔루션은 Database 또는 Object Storage(이하 DB) 를 대신하여 제한된 메모리에 자주 사용되는 데이터를 두고 Client로부터의 요청에 빠른 응답을 위한 목적으로 사용된다. Cache솔루션에서 보관하는 데이터는 임시적인 성격을 갖는다. 영구적으로 보관되는 Database 또는 Object Storage에서 데이터 A가 변경되면 Cache솔루션에서 보관하는 데이터 A의 Cache는 즉시 가치를 잃게 된다.
@@ -1524,12 +1719,12 @@ fetch_aot('foo', 20000)
 
 
 
-### 3.2.7 AS-06. TCP 통신 시, TLS 기반 암호화 
+##### 3.2.2.2.5 AS-16. TCP 통신 시, TLS 기반 암호화 
 
 - 설계 문제
-  - ISSUE03. Cache솔루션의 신뢰성
+  - ISSUE13. Cache솔루션의 신뢰성
 - 아키텍처 드라이버
-  - AD-05. Cache 솔루션의 구간 암호화
+  - AD-16. SDSCache의 구간 암호화
 - 설계 문제를 해결하는 설계 근거
 
 Unix Socket 통신을 제외한 TCP, UDP 통신은 네트워크를 기반으로 한다. 
@@ -1564,31 +1759,31 @@ Unix Socket 통신을 제외한 TCP, UDP 통신은 네트워크를 기반으로 
 |               전용선                | - 송수신 시스템 간에 송수신 시스템만을 위한 개별 전송 회선 |                    |  미선택  |
 | TLS<br />(Transport Layer Security) | - 모든 종류의 네트워크 트래픽에 대한 암호화 지원           | TLS 1.3 최신 버전  |   선택   |
 
-통신구간에 대한 암호화 방법 중 Cache 솔루션의 기능을 통해 제공 가능한 TLS 를 선택한다.
+통신구간에 대한 암호화 방법 중 SDSCache의 기능을 통해 제공 가능한 TLS 를 선택한다.
 
 TLS에 대한 상세자료는 별첨 6. TLS를 참고한다. 
 
 - 고려 사항
-  - 신뢰성 있는 통신을 위한 TCP 기반 통신에 대해서만 통신구간 암호화로 TLS를 적용한다.
+  - 정보보호부서의 통신구간 암호화 요청을 확인하고,TLS기반 통신구간 암호화 적용한다.
 
 
 
 
-### 3.2.8 AS-07, AS-08, AS-09
+##### 3.2.2.2.6 AS-15, AS-17, AS-18
 
 - 설계 문제
-  - ISSUE03. Cache솔루션의 신뢰성
-  - ISSUE04. Cache솔루션의 노드 확장용이성
+  - ISSUE13. SDSCache의 신뢰성
+  - ISSUE14. SDSCache의 노드 확장용이성
 - 아키텍처 드라이버
-  - AD-08. 노드 장애 시 Cache 유실 방지
-  - AD-07. Cache 솔루션의 가용성
+  - AD-14. 노드 장애 시 Cache 유실 방지
+  - AD-18. SDSCache의 가용성
 - 설계 전략
-  - AS-07. Node에 대한 Replication 구성
-  - AS-08. Cache 솔루션에 대한 클러스터 구성
-  - AS-09. Proxy를 활용한 Cache 분산
+  - AS-15. Node에 대한 Replication 구성
+  - AS-17. SDSCache에 대한 클러스터 구성
+  - AS-18. Proxy를 활용한 Cache 분산
   
 - 사전 조건
-  - Cache솔루션은 클러스터로 구성된다. 
+  - SDSCache은 클러스터로 구성된다. 
 
 - 설계 문제를 해결하는 설계 근거
 
@@ -1600,7 +1795,7 @@ TLS에 대한 상세자료는 별첨 6. TLS를 참고한다.
 | 고계산용<br />(HPC) | - 고성능의 계산 능력을 제공하기 위하여 사용된다. <br />- HPC 클러스터를 구성하는 모든 Node는 네트워크에 연결되어 상호간에 통신이 가능하므로 다수의 프로세서가 협동적으로 문제를 풀 수 있는 환경을 제공한다. | 과학계산용 |
 | 부하분산<br />(LVS) | - 대규모 서비스를 제공하기 위한 목적으로 사용되며 주로 웹서비스 등에 활용가치가 높다.<br />- 동일한 서비스를 제공하는 여러 개의 Node를 네트워크에 연결하여 Load Balancer(L4, L7) 으로 분산하여 서비스 한다. | 웹서비스   |
 
-"AD-08. 노드 장애 시 Cache 유실 방지"를 위한 설계 전략으로 고가용성(HA) 클러스터 - "AS-07. Node에 대한 Replication 구성"을 선택한다.
+"AD-14. 노드 장애 시 Cache 유실 방지"를 위한 설계 전략으로 고가용성(HA) 클러스터 - "AS-15. Node에 대한 Replication 구성"을 선택한다.
 
 Replication은 Master(Active)-Slave(Standby)로 구성한다.
 Master Node에 장애(Fault)가 발생하면 Slave Node가 Master로 승격하고 Active 모드로 변경한다.   
@@ -1623,12 +1818,12 @@ $$
 
 
 
-"AD-07. Cache 솔루션의 가용성"를 위한 설계전략으로 부하분산(LVS) 클러스터 - "AS-08. Cache 솔루션의 가용성 구성"와 "AS-09. Proxy를 활용한 Cache 분산"을 선택한다.
+"AD-18. SDSCache의 가용성"를 위한 설계전략으로 부하분산(LVS) 클러스터 - "AS-08. SDSCache의 가용성 구성"와 "AS-09. Proxy를 활용한 Cache 분산"을 선택한다.
 
-| 항목                              | 내용                                                         | 비고 |
-| --------------------------------- | ------------------------------------------------------------ | ---- |
-| AS-08. Cache 솔루션의 가용성 구성 | - Cache클러스터를 구성하는 Node를 2개 이상 배치하고 각 Node는 서로 다른 Cache를 가지고 서비스한다. |      |
-| AS-09. Proxy를 활용한 Cache 분산  | - Proxy는 Cache의 Key를 이용한 Function으로 각 Node가 서비스하는 Cache에 대해 라우팅 서비스를 제공한다. <br />- 함수는 Cache의 Key를 Hash화 하여 언제나 동일한 값을 반환하도록 설계한다. |      |
+| 항목                             | 내용                                                         | 비고 |
+| -------------------------------- | ------------------------------------------------------------ | ---- |
+| AS-17. SDSCache의 가용성 구성    | - Cache클러스터를 구성하는 Node를 2개 이상 배치하고 각 Node는 서로 다른 Cache를 가지고 서비스한다. |      |
+| AS-18. Proxy를 활용한 Cache 분산 | - Proxy는 Cache의 Key를 이용한 Function으로 각 Node가 서비스하는 Cache에 대해 라우팅 서비스를 제공한다. <br />- 함수는 Cache의 Key를 Hash화 하여 언제나 동일한 값을 반환하도록 설계한다. |      |
 
 ![Cache_LVS_Step1 drawio](https://user-images.githubusercontent.com/26420767/186281839-353a24d9-8e5a-4f07-8174-e9ff3f07f3c3.png)
 
@@ -1653,15 +1848,15 @@ Proxy가 SPOF(Single Point Of Failure) 이므로 이중화를 통해 가용성�
 
 
 
-### 3.2.9 AS-10. Strategy Pattern을 이용한 알고리즘 캡슐화 및 교환
+##### 3.2.2.2.7 AS-19. Strategy Pattern을 이용한 알고리즘 캡슐화 및 교환
 
 - 설계 문제
-  - ISSUE05. Cache솔루션의 기능 변경용이성
+  - ISSUE15. SDSCache의 기능 변경용이성
 - 아키텍처 드라이버
-  - AD-03. Cache솔루션의  알고리즘 변경 용이
+  - AD-13. SDSCache의  알고리즘 변경 용이
 - 설계 문제를 해결하는 설계 근거
 
-Cache솔루션에서 업무 특성에 따라 Cache의 만료정책을 관리하는 알고리즘을 변경한다. 변경이 되는 알고리즘은 Cache의 만료정책에 대해서만 영향을 미칠 뿐 Cache솔루션의 다른 영역에 영향을 미치지 않는다. 즉, 알고리즘을 정의하고 각각을 캡슐화하여 교환하여 사용하도록 설계한다. 
+SDSCache에서 업무 특성에 따라 Cache의 만료정책을 관리하는 알고리즘을 변경한다. 변경이 되는 알고리즘은 Cache의 만료정책에 대해서만 영향을 미칠 뿐 Cache솔루션의 다른 영역에 영향을 미치지 않는다. 즉, 알고리즘을 정의하고 각각을 캡슐화하여 교환하여 사용하도록 설계한다. 
 위와 같은 요구사항을 만족하는 디자인 패턴은 Strategy Pattern이다. 
 
 |         항목          | 내용                                                         | 비고 |
@@ -1794,17 +1989,17 @@ func (c *SDSCache) Evict() {
 ```
 
 - 고려 사항
-  - Cache솔루션에서 제공할 알고리즘이 1개 또는 2개 인경우는 분기문으로 처리하는 것이 간편하다. 따라서 알고리즘의 갯수에 따라 적용여부를 판단한다.
+  - SDSCache에서 제공할 알고리즘이 1개 또는 2개 인경우는 분기문으로 처리하는 것이 간편하다. 따라서 알고리즘의 갯수에 따라 적용여부를 판단한다.
 
 
 
 
-### 3.2.10 AS-11. TDD 방법론으로 추가 및 변경에 대한 실패 방지
+##### 3.2.2.2.8 AS-1A. TDD 방법론으로 추가 및 변경에 대한 실패 방지
 
 - 설계 문제
-  - ISSUE05. Cache솔루션의 기능 변경용이성
+  - ISSUE15. Cache솔루션의 기능 변경용이성
 - 아키텍처 드라이버
-  - AD-06. Cache 솔루션의 유지보수 용이성
+  - AD-17. SDSCache의 유지보수 용이성
 - 설계 문제를 해결하는 설계 근거
 
 EPC/바이오 IT팀 CI 담당자들이 뽑은 시스템을 유지보수하는데 어려움 중 다음 우선순위가 높은 다음 2가지 이다.
@@ -1835,115 +2030,45 @@ EPC/바이오 IT팀에서 담당하는 많은 시스템들이 대부분 다음�
   - 고객사 물류시스템은 TDD 방법론으로 개발되지 않아 기존 코드에 대한 테스트 코드가 작성되어 있지 않다.
 
 - 고려 사항
-  - 당사는 ITSM으로 시스템을 관리 중이다. ITSM에서는 다음 단계로 진행하기 위해서는 산출물 등 근거자료가 필수이다. 따라서 고객사 물류시스템의 경우는 TDD 방법론을 적용하기는 어렵다. 따라서 ITSM에 등록되지 않은 시스템인 SDSCache솔루션에 대해서만 TDD방법론을 적용한다. 
+  - 당사는 ITSM으로 시스템을 관리 중이다. ITSM에서는 다음 단계로 진행하기 위해서는 산출물 등 근거자료가 필수이다. 따라서 고객사 물류시스템의 경우는 TDD 방법론을 적용하기는 어렵다. 따라서 ITSM에 등록되지 않은 시스템인 SDSCache에 대해서만 TDD방법론을 적용한다. 
 
 
-따라서, SDSCache솔루션은 TDD 방법론으로 진행하여 구축 완료 후 유지보수 기간 담당자가 변경되어도 변경에 대한 실패방지를 지원한다.
-
-
-
-### 3.2.11 AS-12. 근 실시간(Near Realtime)으로 배송상태조회에 대한 업무 프로세스 변경
-
-- 설계 문제
-  - ISSUE06. 고객사 물류시스템의 성능
-- 아키텍처 드라이버
-  - AD-09. 고객사 물류시스템의 응답속도
-- 설계 문제를 해결하는 설계 근거
-
-"별첨 4. 고객사 물류시스템의 배송상태조회의 실시간 필요에 대한 인터뷰" 에서 나온 배송시간 최신화에 대한 허용가능 최대 시간 1시간을 바탕으로 업무 프로세스를 근 실시간(Near Realtime)으로 변경한다.
-
-1시간 간격으로 배송상태를 업데이트 하는 방법으로는 배송상태를 조회하여 갱신하는 배치 프로그램으로 배송상태를 조회하여 DB와 Cache솔루션에 저장한다. 사용자는 1차적으로 Cache에 저장된 배송상태를 조회하고 Cache에 배송상태가 없으면 DB에 저장된 배송상태를 조회한다. 
-
-개선된 업무 프로세스에 대한 Sequence Diagram은 다음과 같다.
-
-![SEQ_TOBE_배송상태조회](https://user-images.githubusercontent.com/26420767/186371269-cab20a52-fdd6-457d-908b-e27043cfbc7e.png)
-
-- 위험 요인
-  - 배치 프로그램에 대한 모니터링이 필요하다.
-
-- 고려 사항
-  - 새 송장번호가 추가되면 최초 1회는 즉시 배송상태를 조회하는 것에 대하여 고려한다.
+따라서, SDSCache은 TDD 방법론으로 진행하여 구축 완료 후 유지보수 기간 담당자가 변경되어도 변경에 대한 실패방지를 지원한다.
 
 
 
+## 3.3 Software Stack
 
-### 3.2.12 AS-13. 조회가 많은 업무 특성을 고려한 Cache솔루션과 Data Store의 배치
+### 3.3.1 고객사 물류 시스템의 Software Stack
 
-- 설계 문제
-  - ISSUE06. 고객사 물류시스템의 성능
-- 아키텍처 드라이버
-  - AD-09. 고객사 물류시스템의 응답속도
-- 설계 문제를 해결하는 설계 근거
-
-사용자가 배송상태를 조회할 때 Cache솔루션과 Data Store의 배치와 배치 프로그램이 외부 API를 조회하여 배송상태를 Cache솔루션과 Data Store에 갱신하는 것에 대하여 전략을 각각 가져간다. 
-
-Cache솔루션과 Data Store의 배치전략은 다음과 같이 읽기 2 개, 쓰기 3 개가 있다.
-
-a. [읽기] Cache Aside 패턴
-
-![_Cache_배치전략_CacheAside패턴 drawio](https://user-images.githubusercontent.com/26420767/186612163-c3d1bad5-71c2-4172-9970-d4c4408e655f.png)
-
-b. [읽기] Read Through 패턴
-
-![_Cache_배치전략_ReadThrough패턴 drawio](https://user-images.githubusercontent.com/26420767/186613693-8ef4dd94-c120-43b6-8823-fb4d758465ca.png)
-
-c. [쓰기] Write Selective 패턴
-
-![_Cache_배치전략__Write_Selective패턴 drawio](https://user-images.githubusercontent.com/26420767/186616567-488413ac-3013-479b-be49-c40ad649de99.png)
-
-d. [쓰기] Write Back 패턴
-
-![_Cache_배치전략_WriteBack패턴의 복사본 drawio](https://user-images.githubusercontent.com/26420767/186612975-1cbed571-1864-4be2-9171-f16180d7bd3f.png)
-
-e. [쓰기] Write Through 패턴
-
-![_Cache_배치전략__WriteThrough패턴 drawio](https://user-images.githubusercontent.com/26420767/186615045-6a4e397e-8968-4d5f-b16a-12c6079ea4fb.png)
-
-위 패턴을 비교표로 정리하면 다음과 같다.
-
-읽기를 위한 패턴 비교표
-
-|   항목   | Cache Aside 패턴                                             | Read Through 패턴                  |
-| :------: | ------------------------------------------------------------ | ---------------------------------- |
-|   특징   | - Cache 장애 대비 구성<br />- 정합성 문제 발생 가능<br />- 반복적인 조회에 적합 | - Cache에 저장하는 주체가 DB<br /> |
-| 선택여부 | 선택                                                         | 미선택                             |
+| 항목         | Software   | Version | 비고       |
+| ------------ | ---------- | ------- | ---------- |
+| Java         | OpenJDK    | 1.8     | Opensource |
+| Framework    | SpringBoot | 2.5     | Opensource |
+| Framework    | Lego       |         | S사 솔루션 |
+| UI Framework | Vue.js     | 2.X     | Opensource |
+| UI           | UI Dev     |         | S사 솔루션 |
+| Database     | PostgreSQL | 10      | Opensource |
 
 
 
-쓰기를 위한 패턴 비교표
+### 3.3.2 SDSCache의 Software Stack
 
-|   항목   | Write Selective 패턴                                         | Write Back 패턴                                              | Write Through 패턴                                           |
-| :------: | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
-|   툭징   | - DB에 저장 후 선택적으로 Cache 저장<br />- Cache에서 사용되는 데이터만 저장되어 리소스 절약<br />- Cache에 저장되는 데이터는 사용되는 데이터로 Hit Ratio 상승 | - Cache가 Queue의 역할<br />- Cache 장애 시 데이터 유실<br />- 정합성 확보<br />- 불필요한 리소스 저장 | - Cache에 저장 후 Cache가 DB에 반영<br />- 항상 동기화 되는 장점<br />- Cache에 사용되지 않는 데이터까지 저장되어 리소스 낭비와 Write 작업 부하 발생<br />- TTL을 사용하여 사용되지 않는 데이터를 삭제 |
-| 선택여부 | 선택                                                         | 미선택                                                       | 미선택                                                       |
-
-고객사 물류시스템의 배송상태에 대한 Cache와 Data Store의 배치 전략은 읽기를 위한 패턴은 "Cache Aside 패턴"이 쓰기를 위한 패턴은 "Write Selective 패턴" 을 선택한다.
-
-
-
-### 3.2.13 AS-14. 트래킹이 필요한 배송상태에 대하여 Cache솔루션에서 제공 
-
-- 설계 문제
-  - ISSUE06. 고객사 물류시스템의 성능
-- 아키텍처 드라이버
-  - AD-10. 고객사 물류시스템의 응답보장
-- 설계 문제를 해결하는 설계 근거
-
-다음은 개선된 배송상태조회에 대한 Sequenece Diagram 이다.
-
-![SEQ_TOBE_배송상태조회](https://user-images.githubusercontent.com/26420767/186371269-cab20a52-fdd6-457d-908b-e27043cfbc7e.png)
-
-1시간 간격으로 배송상태를 업데이트 하는 방법으로는 배송상태를 조회하여 갱신하는 배치 프로그램으로 배송상태를 조회하여 DB와 Cache솔루션에 저장한다. 고객사 물류시스템에서는 송장에 대한 배송상태를 1차로 Cache솔루션에서 조회한다. 그리고 Cache솔루션에 배송상태정보가 없을 경우 DB에서 배송상태정보를 가지고 오고 Cache솔루션에 배송상태정보를 보관하도록 한다. 
-
-- 위험 요인
-  - 송장번호에 대한 배송상태정보가 Cache솔루션과 DB에 없는 경우, 사용자에게 배송상태정보를 제공 불가하다.
-- 고려 사항
-  - 새 송장번호가 추가되면 최초 1회는 즉시 배송상태를 조회하는 것에 대하여 고려한다.
+| 항목       | Software                     | Version | 비고                                     |
+| ---------- | ---------------------------- | ------- | ---------------------------------------- |
+| Golang     | Golang                       | 1.18    |                                          |
+| 라이브러리 | github.com/benbjohnson/clock | v1.3.0  | TTL 계산을 위한 Clock 라이브러리         |
+| 라이브러리 | github.com/rs/zerolog        | v1.27.0 | JSON 형식 Output 지원하는 Log 라이브러리 |
 
 
 
+### 3.3.3 SDSCache Client의 Software Stack
 
-## 3.3 SW Stack
+| 항목       | Software | Version | 비고                                 |
+| ---------- | -------- | ------- | ------------------------------------ |
+| Java       | OpenJDK  | 1.8     | Opensource                           |
+| 라이브러리 | Maven    | v1.3.0  | Build Tool                           |
+| 라이브러리 | junit    | 4.11    | 단위 테스트를 위한 테스트 라이브러리 |
 
 
 
@@ -1963,45 +2088,52 @@ e. [쓰기] Write Through 패턴
 
 ### 4.1.1 아키텍처 개념도
 
-시스템의 아키텍처 개념도는 다음과 같다. 고객사 물류 시스템과 SDSCache 솔루션 간은 TCP 통신 기반으로 연결되어 있다. 고객사 물류 시스템은 배송상태업데이트 기능을  위한 별도의 배치 컴포넌트가 분리된다. 고객사 물류 시스템은 SDSCache 솔루션에 종속되지 않기 위해 Proxy Pattern을 적용한다. 그리고 고객사 물류 시스템과 SDSCache 솔루션간의 의존성 방향을 고객사 물류 시스템에서 SDSCache 솔루션 방향이 아닌 반대방향으로 향하게 한다.  
+시스템의 아키텍처 개념도는 다음과 같다. 
+고객사 물류 시스템은 배송상태 업데이트를 위한 배치 컴포넌트를 별도로 분리한다. SDSCache는 별도의 서버에 실행하도록 구성한다.
 
-![Cache_아키텍처개념도 drawio](https://user-images.githubusercontent.com/26420767/187432551-3203b3f8-0188-4d9e-8870-bc2c25ebe342.png)
-
-
-
-다음은 고객사 물류 시스템에서 Cache를 사용하면서 ProxyCache 패키지를 만들어서 SDSCacheClient를 사용하게 한다. Cache 가 필요한 업무에서  ProxyCache 패키지을 사용하게 하여 SDSCache솔루션에게 종속되지 않도록 한다.
-
-[!SDSCache솔루션에 대해 Proxy로 감싸서 사용하면서 의존성 방향에 대해 강조]
+![Cache_아키텍처개념도 drawio](https://user-images.githubusercontent.com/26420767/191025653-4e48e194-eb68-4bb0-8aad-e15081164b9c.png)
 
 
 
 ### 4.1.2 시스템 구성도
 
-시스템 구성도는 다음과 같이 Layered Architecture Style로 나타낸다. Client Layer 에서 발생하는 사용자의 요청을 처리하기 위해 Web Layer가 있다. Web Layer는 On-premis에서는 다른 Service Layer나 Cache Layer와 서브넷은 다르지만 동일 네트워크에 놓을 수 있다. 하지만 Cloud에서는   Client Layer와 가깝게 위치하는 CDN에도 놓울 수 있다. 
-다음은 Service Layer이다. 사용자의 요청에 대하여 실제로 처리하는 영역이다. AS-IS와 다른 점은 두 가지 이다. 첫 번째 Batch Layer가 추가되어 Service Layer 내 Delivery Module 역할을 분담한다. 즉, 외부 서비스인 Nuxt 사의 API를 호출하여 배송상태에 대한 갱신하는 역할이다. 두번째 Cache Layer가 추가되었다. Batch Layer에서 갱신한 배송상태정보에 대하여 Service Layer가 요청하면 제공하는 역할이다.
-Cache Layer는 크게 5가지로 구성된다. 자세한 설명은 다음 표를 참고한다. 
+시스템 구성도는 다음과 같이 Layered Architecture Style로 나타낸다. Client Layer 에서 발생하는 사용자의 요청을 처리하기 위해 Web Layer가 있다. Web Layer는 On-premis에서는 다른 Service Layer나 Cache Layer와 서브넷은 다르지만 동일 네트워크에 놓을 수 있다. 하지만 Cloud에서는  Client Layer와 가깝게 위치하는 CDN에도 놓울 수 있다. 
+다음은 Service Layer이다. 사용자의 요청에 대하여 실제로 처리하는 영역이다. AS-IS와 다른 점은 두 가지 이다. 
+첫 번째 Batch Layer가 추가되어 Service Layer 내 Delivery Module 역할을 분담한다. 즉, 외부 서비스인 Nuxt 사의 API를 호출하여 배송상태에 대한 갱신하는 역할이다. 
+두번째 Cache Layer가 추가되었다. Batch Layer에서 갱신한 배송상태정보에 대하여 Service Layer가 요청하면 제공하는 역할이다.
 
-![Cache_시스템구성도 drawio](https://user-images.githubusercontent.com/26420767/187711319-870c667d-4541-4544-b2b7-9ba036baff7f.png)
+![Cache_시스템구성도 drawio](https://user-images.githubusercontent.com/26420767/191025787-9df414d5-bd28-416f-9f70-36fb5cf18c90.png)
 
+Cache Layer는 크게 7 가지로 구성된다. 자세한 설명은 다음 표를 참고한다. 
 
+|      Module      |                      역할                       |                  비고                  |
+| :--------------: | :---------------------------------------------: | :------------------------------------: |
+|   cache Module   | - Cache 구조체<br />- Object 구조체<br />- Main |                                        |
+|  server Module   |                  - Connection                   |        - Port Listen and Close         |
+|  handler Module  |             - 처리할 명령어를 전달              | - Key의 정합성 체크<br />- Error 처리  |
+|  command Module  |               - 주요 명령어 처리                | - TTL 기능<br />- 무효화 알고리즘 선택 |
+|   util Module    |       - 공통 기능<br />- Key 유효성 검사        |                                        |
+| constants Module |       - 명령어 정의<br />- 응답 코드 정의       |                                        |
+| Eviction Module  |                - Cache Eviction                 |     - Cache에 대한 유효성 알고리즘     |
 
-|        Module        |                   역할                   |                  비고                  |
-| :------------------: | :--------------------------------------: | :------------------------------------: |
-|     CRUD Module      | Cache에 대해 생성, 조회, 갱신, 삭제 기능 |                                        |
-| Communication Module |    Cache Client와의 통신에 대한 기능     |                  TLS                   |
-|     Util Module      |        Cache에서 필요한 공통 기능        | - Key의 정합성 체크<br />- Error 처리  |
-|   Eviction Module    |        Cache에 대하여 무효화 기능        | - TTL 기능<br />- 무효화 알고리즘 선택 |
-|    Storage Module    |   Cache의 구성요소에 대한 Storage 기능   |                                        |
+- 리시버(Receiver)를 통해 어떤 구조체(struct)의 메소드인지 명시
 
 
 
 ### 4.1.3 설계전략 및 적용 범위
 
-"3.2 아키텍처 문제분석 및 설계전략"에서 선택된 설계전략을 시스템 구성도에서 Layer 및 Module에서 적용하여 구현한다. 다음 그림에서는 각각의 설계전략이 시스템 구성도의 어느 부분에 적용되었는지 나타낸다. 일부 설계 전략은 여러 Layer 및 Module에 걸쳐서 나타난다. 이런 경우는 그 중 주요 요소에 배치하였다. 각각의 상세 내용은 실행 아키텍처에 상세하게 기술하였다.
+"3.2 아키텍처 문제분석 및 설계전략"에서 선택된 설계전략을 시스템 구성도에서 Layer 및 Module에서 적용하여 구현한다. 다음 그림에서는 각각의 설계전략이 시스템 구성도의 어느 부분에 적용되었는지 나타낸다. 일부 설계 전략은 여러 Layer 및 Module에 걸쳐서 나타난다. 이런 경우는 그 중 주요 요소에 배치하였다. 각각의 상세 내용은 실행 아키텍처에 상세하게 기술한다.
+
+![Cache_시스템구성도_설계전략및적용범위 drawio](https://user-images.githubusercontent.com/26420767/191029062-069970cc-1cfb-4eb1-b63f-89c8dde324f0.png)
 
 
 
 ### 4.1.4 구현 및 검증 대상
+
+이번 설계는 아키텍처 구현 및 검증을 포함하고 있다. 실제 구현 및 검증하는 범위는 시스템 구성도에서 다음 부분 이다. 
+고객사 물류시스템의 Service Layer와 Batch Layer 그리고 Cache Layer이다. 고객사 물류시스템의 Service Layer는 Batch Layer와의 기능을 분리 및 수정이 발생한다. 신규 신규 영역은 Batch Layer와 Cache Layer 이다. 
+
+![Cache_시스템구성도_구현및검증대상 drawio](https://user-images.githubusercontent.com/26420767/191029136-5f8f5d3c-4194-4f83-9076-a71dd2b5c18d.png)
 
 
 
@@ -2017,17 +2149,22 @@ Cache Layer는 크게 5가지로 구성된다. 자세한 설명은 다음 표를
 
 다음은 "실행 아키텍처 목차 별 설계 전략" 에 관한 표 이다.
 
-| 목차 | 상세 내용 | 세부 목차 | 관련 기능 요구사항 및 아키텍처 전략 |
-| ---- | --------- | --------- | ----------------------------------- |
-|      |           |           |                                     |
-|      |           |           |                                     |
-|      |           |           |                                     |
-|      |           |           |                                     |
-|      |           |           |                                     |
-|      |           |           |                                     |
-|      |           |           |                                     |
-|      |           |           |                                     |
-|      |           |           |                                     |
+|       목차        |                   상세 내용                   |                          세부 목차                           |             관련 기능 요구사항 및 아키텍처 전략              |
+| :---------------: | :-------------------------------------------: | :----------------------------------------------------------: | :----------------------------------------------------------: |
+| 4.2.1 시나리오 뷰 |       각 Use-Case의 상세 시나리오 기술        |                           SDSCache                           | UC-01. Cache추가한다.<br />UC-02. Cache삭제한다.<br />UC-03. Cache조회한다.<br />UC-04.TTL설정한다.<br />UC-05. Cache제거한다.<br />UC-07. Cache알고리즘적용한다.<br />UC-08.  Cache알고리즘추가한다. |
+|                   |                                               |                      고객사 물류 시스템                      |                   UC-14. 배송상태조회한다.                   |
+|   4.2.2 모듈 뷰   | 시스템의 모듈 및 코드 단위를 통한 서비스 설계 |                      Repository Module                       |              AS-01. Cache를 보관하는 자료 구조               |
+|                   |                                               |                       Eviction Module                        | AS-05. Cache 의 만료 정책<br />AS-10. Strategy Pattern을 이용한 알고리즘 캡슐화 및 교환 |
+|                   |                                               |                        Server Module                         |             AS-06. TCP 통신 시, TLS 기반 암호화              |
+|                   |                                               |                         Util Module                          | AS-04. Cache를 조회 할 때, Key의 데이터 타입은 문자열, 비교 방법은 동등성(Equality) |
+|                   |                                               |                        Handler Module                        |              AS-03. 요청에 대한 응답 코드 정의               |
+|                   |                                               |                        Client Module                         | AS-02. 요청에 대하여 동기화 및 비동기화 응답<br />  AS-09. Proxy를 활용한  Cache 분산 |
+|   4.2.3 실행 뷰   |           각 서비스의 실행 아키텍처           |                  Online과 Batch 서비스 분리                  | AS-12. 근 실시간(Near Realtime)으로 배송상태조회에 대한 업무 프로세스 변경 |
+|                   |                                               |                   Cache솔루션에서 자료제공                   | AS-14. 트래킹이 필요한 배송상태에 대하여 Cache솔루션에서 보유하여 제공 |
+|                   |                                               | Online 서비스에서 데이터 조회 시 Cache 먼저 조회 후, DB 조회 | AS-13. 조회가 많은 업무 특성을 고려한 Cache솔루션과 Data Store의 배치 |
+|   4.2.4 배치 뷰   |            시스템의 서버 배치 환경            |                                                              |                                                              |
+|                   |                                               |                                                              |                                                              |
+|                   |                                               |                                                              |                                                              |
 
 
 
@@ -2207,23 +2344,53 @@ Cache의 유형은 크게 클라이언트 측과 서버 측으로 나눈다.
 
 
 
-## 2. 비교대상 Redis와 Memcached에 대한 BMT
+## 2. Cache의 Cluster 유형
 
-### 2.1 BMT 환경
+Cache의 Cluster 유형은 다음과 같이 3가지 유형이 있다.
 
-
-
-### 2.2 Redis
-
-
-
-### 2.3 Memcached 
+|      항목       | Local                                                        | Replication                                                  | Partition                                                    |
+| :-------------: | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
+|      특징       | - 다른 노드에 데이터 배포 안됨                               | - 모든 노드에 데이터 사본 보유<br />                         | - 확장성이 뛰어난 분산 캐시 모드<br />- 클러스터 리스스를 최대한 활용 가능 |
+|    유의사항     | - 단일 노드에 장애 발생 시 데이터 손실 위험 존재             | - 노드가 추가될 수록 변경 시 더 많은 트래픽이 발생하여 성능 및 확장성 제한 | - 클러스터의 단일 노드 장애 발생 시 데이터 손실 위험 존재    |
+| 적합한 시나리오 | - 데이터가 읽기 전용 또는 특정 만료 빈도로 주기적으로 새로 고쳐질 수 있는 시나리오에 적합 | - 많이 변경되지 않은 비교적 작은 데이터 세트가 있는 시나리오에 적합 | - 대규모 데이터 세트로 작업하고 업데이트가 빈번한 시나리오에 적합 |
 
 
 
-## 2. CSP의 관리형(Managed), 완전관리형(Fully Managed) 서비스
+### 2.1 Local Mode
 
-### 2.1 완전관리형, Fully Managed
+![Cache_Cluster_LocalMode drawio](https://user-images.githubusercontent.com/26420767/190362394-7538c5b0-321b-4595-b97e-81165749e0c0.png)
+
+
+
+### 2.2 Replication Mode
+
+![Cache_Cluster_ReplicationMode drawio](https://user-images.githubusercontent.com/26420767/190362649-9211d2d6-1459-4452-90c0-947def2c0e05.png)
+
+
+
+### 2.3 Partition Mode
+
+![Cache_Cluster_PartitionMode drawio](https://user-images.githubusercontent.com/26420767/190362553-afa0be13-f906-48b1-ba69-6b58815a773b.png)
+
+
+
+## 3. 비교대상 Redis와 Memcached에 대한 BMT
+
+### 3.1 BMT 환경
+
+
+
+### 3.2 Redis
+
+
+
+### 3.3 Memcached 
+
+
+
+## 4. CSP의 관리형(Managed), 완전관리형(Fully Managed) 서비스
+
+### 4.1 완전관리형, Fully Managed
 
 사용자가 RDS, DynamoDB, ElastiCache, Redshift와 같은 DB 서비스를 이용하는 것으로 내부적으로 서버/OS가 있지만 사용자에게는 드러나지 않으며, DB 솔루션 설치 또한 필요 없이 바로 DB를 사용할 수 있다.
 
@@ -2235,7 +2402,7 @@ Redshift에 경우, 지속적 증분 백업을 다른 리전으로 복제하여 
 
 
 
-### 2.2 관리형, Managed
+### 4.2 관리형, Managed
 
 사용자가 AWS EC2에 DB를 직접 설치하여 운영하는 경우로 AWS에서 서버/OS 를 모두 제공하지만, DB 솔루션 설치 및 운영에 대한 부분은 제공하지 않는다.
 
@@ -2249,9 +2416,9 @@ AWS Summit Seoul 2017 - 클라우드 기반 AWS 데이터베이스 선택 옵션
 
 
 
-## 4. Cache 솔루션 개발 언어
+## 5. SDSCache 개발 언어
 
-### 4.1 개발 언어 후보 개요
+### 5.1 개발 언어 후보 개요
 
 개발 언어는 2022.08 기준, 가장 최신 버전으로 선택하여 BMT를 수행한다. 
 
@@ -2265,9 +2432,9 @@ AWS Summit Seoul 2017 - 클라우드 기반 AWS 데이터베이스 선택 옵션
 
 
 
-### 4.2 개발 언어 BMT
+### 5.2 개발 언어 BMT
 
-### 4.2.1 개발 언어 항목별 비교
+### 5.2.1 개발 언어 항목별 비교
 
 |           항목            | 설명                                                         | 가중치 | 점수 | Java | C++  | golang | Python |
 | :-----------------------: | ------------------------------------------------------------ | :----: | :--: | :--: | :--: | :----: | :----: |
@@ -2289,21 +2456,21 @@ AWS Summit Seoul 2017 - 클라우드 기반 AWS 데이터베이스 선택 옵션
 
 
 
-### 4.2.2 코드 복잡도와 Concurrency 관점 언어별 특징
+### 5.2.2 코드 복잡도와 Concurrency 관점 언어별 특징
 
 ![코드 복잡도와 Concurrency 관점 언어별 특징](https://user-images.githubusercontent.com/26420767/183367593-7e2a1d1d-3333-438e-90f3-639539315d63.png)
 
 
 
-### 4.2.3 Code Readability와 Efficiency 관점 언어별 특징
+### 5.2.3 Code Readability와 Efficiency 관점 언어별 특징
 
 ![Code Readability와 Efficiency 관점 언어별 특징](https://user-images.githubusercontent.com/26420767/183367535-5046f718-da47-415e-84ba-71c00f753e4c.png)
 
 
 
-### 4.3 golang 언어 개요
+### 5.3 golang 언어 개요
 
-#### 4.3.1 golang 정의
+#### 5.3.1 golang 정의
 
 - 명료한 문법을 가지고 있는 컴파일 언어
   - 2009년 Google 이 제작
@@ -2315,7 +2482,7 @@ AWS Summit Seoul 2017 - 클라우드 기반 AWS 데이터베이스 선택 옵션
 
 
 
-#### 4.3.2 golang 특징
+#### 5.3.2 golang 특징
 
 | 분류   | 특징                                             | 설명                                                         |
 | ------ | ------------------------------------------------ | ------------------------------------------------------------ |
@@ -2334,7 +2501,7 @@ AWS Summit Seoul 2017 - 클라우드 기반 AWS 데이터베이스 선택 옵션
 
 
 
-#### 4.3.3 Goroutine 비동기 매커니즘
+#### 5.3.3 Goroutine 비동기 매커니즘
 
 Erlang에서 영향 받은 메카니즘으로 각각 병렬로 동작하며 메시지 채널을 통해 값을 주고 받는 방식으로 이벤트 처리 및 병렬 프로그래밍에 유용하다.
 
@@ -2348,7 +2515,7 @@ Erlang에서 영향 받은 메카니즘으로 각각 병렬로 동작하며 메�
 
 
 
-#### 4.3.4 Native Binary 지원
+#### 5.3.4 Native Binary 지원
 
 다른 머신 플랫폼을 타켓으로 할 경우, 플랫폼에 맞도록 배포를 해야 한다.
 
@@ -2362,7 +2529,7 @@ Erlang에서 영향 받은 메카니즘으로 각각 병렬로 동작하며 메�
 
 
 
-#### 4.3.5 golang 버전에 따른 출시일 및 특징
+#### 5.3.5 golang 버전에 따른 출시일 및 특징
 
 | 버전 | 출시일(Release Date) | 특징                                                         |
 | ---- | -------------------- | ------------------------------------------------------------ |
@@ -2388,7 +2555,7 @@ Erlang에서 영향 받은 메카니즘으로 각각 병렬로 동작하며 메�
 
 
 
-#### 4.3.6 golang 사용사례
+#### 5.3.6 golang 사용사례
 
 - 솔루션 영역
   - CockroachDB 개발에 사용 
@@ -2409,7 +2576,7 @@ Erlang에서 영향 받은 메카니즘으로 각각 병렬로 동작하며 메�
 
 
 
-### 4.3.7 golang 자료구조 성능 비교
+### 5.3.7 golang 자료구조 성능 비교
 
 다음은 Big-O 표기법으로 Array, Slice, List, Map의 추가, 삭제, 읽기 동작에 성능 비교 자료 이다.
 
